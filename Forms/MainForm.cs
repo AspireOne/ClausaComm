@@ -37,8 +37,16 @@ namespace ClausaComm
 
         private void InitializeProgram()
         {
+            bool userExists = false;
             foreach (Contact contact in Contact.XmlFile.GetContacts())
+            {
                 AddContact(contact);
+                if (contact.IsUser)
+                    userExists = true;
+            }
+
+            if (!userExists)
+                AddContact(new Contact(Network.IpUtils.LocalIp) { Save = true });
 
             PanelOfContactPanels.SimulateClickOnFirstPanel();
         }
@@ -54,6 +62,8 @@ namespace ClausaComm
                 panel = new ContactPanel(contact, OwnProfilePanel) { OnClickAction = clickActionIfUser };
             else
                 panel = new ContactPanel(contact, PanelOfContactPanels) { OnClickActionContact = clickActionIfContact };
+
+            PanelOfContactPanels.SimulateClickOnFirstPanel();
         }
 
         private void ContactSearchBox_TextChanged(object sender, EventArgs e)

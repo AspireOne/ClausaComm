@@ -12,6 +12,9 @@ namespace ClausaComm.Components.Icons
 {
     public partial class PlusIcon : LineIconBase
     {
+
+        public PlusIcon(IContainer container) : base(container) { }
+
         protected override void OnPaint(PaintEventArgs pe)
         {
             base.OnPaint(pe);

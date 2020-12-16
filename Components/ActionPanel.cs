@@ -1,4 +1,5 @@
 ﻿using ClausaComm.Components.ContactData;
+using ClausaComm.Components.Icons;
 using ClausaComm.Properties;
 using System;
 using System.Collections.Generic;
@@ -31,18 +32,17 @@ namespace ClausaComm.Components
             UnderlineOnHover = true,
         };
 
-        private readonly AddCloseIcon RemoveContactIcon = new()
+        private readonly CloseIcon RemoveContactIcon = new()
         {
             ColorCircleOnHover = false,
             ColorLinesOnHover = false,
             ColorCircleOnClick = false,
             ColorLinesOnClick = true,
+            ShowCircle = false,
             LineColor = IconBase.DefaultIconColor,
-            CurrentIcon = AddCloseIcon.Icon.Cross,
             LineWidth = 2f,
             Location = new System.Drawing.Point(6, 12),
             Name = "RemoveContactIcon",
-            ShowCircle = false,
             Size = new System.Drawing.Size(43, 43),
             //p(this.RemoveContactIcon, "Remove Contact"),
             UnderlineOnHover = true,

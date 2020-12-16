@@ -32,7 +32,7 @@ namespace ClausaComm
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.LeftPanel = new System.Windows.Forms.Panel();
-            this.AddContactIcon = new ClausaComm.Components.AddCloseIcon(this.components);
+            this.AddContactIcon = new ClausaComm.Components.Icons.PlusIcon(this.components);
             this.PanelOfContactPanels = new ClausaComm.Components.PanelOfContactPanels(this.components);
             this.ContactSearchBox = new ClausaComm.Components.RoundTextBox();
             this.OwnProfilePanel = new System.Windows.Forms.Panel();
@@ -45,7 +45,7 @@ namespace ClausaComm
             this.IpLbl = new System.Windows.Forms.Label();
             this.Status = new ClausaComm.Components.ContactData.ContactStatus(this.components);
             this.NameLbl = new ClausaComm.Components.ContactData.ContactName(this.components);
-            this.RemoveContactIcon = new ClausaComm.Components.AddCloseIcon(this.components);
+            this.RemoveContactIcon = new ClausaComm.Components.Icons.CloseIcon(this.components);
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.CallContactIcon = new ClausaComm.Components.PhoneIcon(this.components);
             this.ProfilePicture = new ClausaComm.Components.ContactProfilePicture(this.components);
@@ -83,7 +83,6 @@ namespace ClausaComm
             this.AddContactIcon.ColorCircleOnHover = true;
             this.AddContactIcon.ColorLinesOnClick = false;
             this.AddContactIcon.ColorLinesOnHover = false;
-            this.AddContactIcon.CurrentIcon = ClausaComm.Components.AddCloseIcon.Icon.Plus;
             this.AddContactIcon.Cursor = System.Windows.Forms.Cursors.Hand;
             this.AddContactIcon.HoverCircleColor = System.Drawing.Color.FromArgb(((int)(((byte)(253)))), ((int)(((byte)(182)))), ((int)(((byte)(62)))));
             this.AddContactIcon.HoverLineColor = System.Drawing.Color.Gray;
@@ -261,7 +260,6 @@ namespace ClausaComm
             this.RemoveContactIcon.ColorLinesOnClick = true;
             this.RemoveContactIcon.ColorLinesOnHover = false;
             this.RemoveContactIcon.ContextMenuStrip = this.contextMenuStrip1;
-            this.RemoveContactIcon.CurrentIcon = ClausaComm.Components.AddCloseIcon.Icon.Cross;
             this.RemoveContactIcon.Cursor = System.Windows.Forms.Cursors.Hand;
             this.RemoveContactIcon.HoverCircleColor = System.Drawing.Color.White;
             this.RemoveContactIcon.HoverLineColor = System.Drawing.Color.FromArgb(((int)(((byte)(44)))), ((int)(((byte)(117)))), ((int)(((byte)(252)))));
@@ -348,8 +346,8 @@ namespace ClausaComm
         private System.Windows.Forms.Panel OwnProfilePanel;
         private Components.ChatPanel ChatPanel1;
         private Components.ContactProfilePicture ProfilePicture;
-        private Components.AddCloseIcon AddContactIcon;
-        private Components.AddCloseIcon RemoveContactIcon;
+        private Components.Icons.PlusIcon AddContactIcon;
+        private Components.Icons.CloseIcon RemoveContactIcon;
         private Components.PhoneIcon CallContactIcon;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.ToolTip toolTip1;

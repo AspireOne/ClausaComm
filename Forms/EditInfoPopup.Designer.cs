@@ -170,7 +170,7 @@ namespace ClausaComm.Forms
             this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.Name = "EditInfoPopup";
-            this.Text = "Save it!";
+            this.Text = "Change your info";
             ((System.ComponentModel.ISupportInitialize)(this.ProfilePictureBox)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
