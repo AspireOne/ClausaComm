@@ -26,7 +26,6 @@ namespace ClausaComm
                 CreateProgramDirectory();
         }
 
-
         private static void CreateProgramDirectory()
         {
             Directory.CreateDirectory(DirectoryPath);
@@ -39,6 +38,6 @@ namespace ClausaComm
 
         private static string GetPath(string filename) => Path.Combine(DirectoryPath, filename);
 
-        private static void CreateNewXml(string path) => new XDocument(new XElement("doc")).Save(path);
+        private static void CreateNewXml(string path) => new XDocument(new XElement(XmlRoot)).Save(path);
     }
 }

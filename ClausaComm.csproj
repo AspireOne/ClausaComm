@@ -9,6 +9,7 @@
     <Description>LAN chat</Description>
     <Copyright>Copyright © 2021 Matěj Pešl, Some Rights Reserved.</Copyright>
     <Nullable>disable</Nullable>
+    <StartupObject>ClausaComm.Program</StartupObject>
   </PropertyGroup>
 
   <ItemGroup>
@@ -28,6 +29,10 @@
 
   <ItemGroup>
     <Folder Include="Network\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="LiteNetLib" Version="0.9.4" />
   </ItemGroup>
 
 </Project>

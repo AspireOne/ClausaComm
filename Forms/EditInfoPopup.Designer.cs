@@ -36,7 +36,7 @@ namespace ClausaComm.Forms
             this.ProfilePictureLbl = new System.Windows.Forms.Label();
             this.IpLbl = new System.Windows.Forms.Label();
             this.IpBox = new ClausaComm.Components.RoundTextBox();
-            this.ProfilePictureBox = new ClausaComm.Components.ContactProfilePicture(this.components);
+            this.ProfilePictureBox = new ClausaComm.Components.ContactData.ContactProfilePicture(this.components);
             this.SaveButton = new ClausaComm.Components.SimpleLineButton(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.ProfilePictureBox)).BeginInit();
             this.SuspendLayout();
@@ -185,7 +185,7 @@ namespace ClausaComm.Forms
         private System.Windows.Forms.Label ProfilePictureLbl;
         private System.Windows.Forms.Label IpLbl;
         private Components.RoundTextBox IpBox;
-        private Components.ContactProfilePicture ProfilePictureBox;
+        private Components.ContactData.ContactProfilePicture ProfilePictureBox;
         private Components.SimpleLineButton SaveButton;
     }
 }

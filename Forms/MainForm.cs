@@ -14,9 +14,10 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using ClausaComm.Extensions;
-using ClausaComm.Components.Icons;
+using ClausaComm.Components;
+using ClausaComm.Utils;
 
-namespace ClausaComm
+namespace ClausaComm.Forms
 {
     public partial class MainForm : Form
     {
@@ -46,15 +47,15 @@ namespace ClausaComm
             }
 
             if (!userExists)
-                AddContact(new Contact(Network.IpUtils.LocalIp) { Save = true });
+                AddContact(new Contact(IpUtils.LocalIp) { Save = true });
 
             PanelOfContactPanels.SimulateClickOnFirstPanel();
         }
 
         public void AddContact(Contact contact)
         {
-            Action clickActionIfUser = new(() => { new EditInfoPopup(contact).ShowDialog(); });
-            Action<Contact> clickActionIfContact = new((Contact contact) => { ChangeChatContact(contact); });
+            Action clickActionIfUser = new(() => new EditInfoPopup(contact).ShowDialog());
+            Action<Contact> clickActionIfContact = new((Contact contact) => ChangeChatContact(contact));
 
             ContactPanel panel;
 
@@ -100,7 +101,12 @@ namespace ClausaComm
         {
             contact.Save = false;
             PanelOfContactPanels.RemovePanel(contact);
-            PanelOfContactPanels.SimulateClickOnFirstPanel();
+
+            if (!PanelOfContactPanels.Panels.Any())
+                ChatPanel1.Contact = null;
+            else
+                PanelOfContactPanels.SimulateClickOnFirstPanel();
+
         }
     }
 }

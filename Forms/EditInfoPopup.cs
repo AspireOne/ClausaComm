@@ -41,7 +41,7 @@ namespace ClausaComm.Forms
 
             SaveButton.Paint += (object _, PaintEventArgs _) => OnSaveButtonPaint();
             SaveButton.MouseDown += (object _, MouseEventArgs _) => OnSaveButtonClick();
-            SaveButton.LineColorOnHover = UIConstants.ElementOnHover.Color;
+            SaveButton.LineColorOnHover = Constants.UIConstants.ElementOnHover.Color;
         }
 
 

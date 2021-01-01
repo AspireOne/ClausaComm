@@ -1,5 +1,5 @@
 ﻿
-namespace ClausaComm.Components
+namespace ClausaComm.Components.ContactData
 {
     partial class ContactProfilePicture
     {

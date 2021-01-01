@@ -1,0 +1,3 @@
+- Correct all namespaces
+- Rmake the infrastructure from LAN to public P2P
+	- assign each user a long random id so that they can indentify even when they have a different public IP.

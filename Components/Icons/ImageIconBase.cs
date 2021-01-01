@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ClausaComm.Utils;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -20,8 +21,8 @@ namespace ClausaComm.Components.Icons
 
         #region backing fields
         private Color _iconColor = DefaultIconColor;
-        private Color _hoverIconColor = UIConstants.ElementOnHover.Color;
-        private Color _clickIconColor = UIConstants.ElementOnClick.Color;
+        private Color _hoverIconColor = Constants.UIConstants.ElementOnHover.Color;
+        private Color _clickIconColor = Constants.UIConstants.ElementOnClick.Color;
         #endregion
 
         #region properties
@@ -30,7 +31,7 @@ namespace ClausaComm.Components.Icons
             get => _iconColor;
             set
             {
-                _iconColor = UIConstants.ReturnNewOrDefaultColor(DefaultIconColor, value);
+                _iconColor = Constants.UIConstants.ReturnNewOrDefaultColor(DefaultIconColor, value);
                 Invalidate();
             }
         }
@@ -40,7 +41,7 @@ namespace ClausaComm.Components.Icons
             get => _hoverIconColor;
             set
             {
-                _hoverIconColor = UIConstants.ReturnNewOrDefaultColor(UIConstants.ElementOnHover.Color, value);
+                _hoverIconColor = Constants.UIConstants.ReturnNewOrDefaultColor(Constants.UIConstants.ElementOnHover.Color, value);
                 Invalidate();
             }
         }
@@ -50,7 +51,7 @@ namespace ClausaComm.Components.Icons
             set
             {
                 Invalidate();
-                _clickIconColor = UIConstants.ReturnNewOrDefaultColor(UIConstants.ElementOnClick.Color, value);
+                _clickIconColor = Constants.UIConstants.ReturnNewOrDefaultColor(Constants.UIConstants.ElementOnClick.Color, value);
             }
         }
 
@@ -68,17 +69,12 @@ namespace ClausaComm.Components.Icons
 
 
         #region constructors
-        public ImageIconBase() : base() { }
-        public ImageIconBase(Image image) : base()
+        protected ImageIconBase() : base() { }
+        protected ImageIconBase(Image image) : base()
         {
             SetInitialImage(image);
         }
-        public ImageIconBase(IContainer container) : base(container) { }
-
-        public ImageIconBase(IContainer container, Image image) : base(container)
-        {
-            SetInitialImage(image);
-        }
+        protected ImageIconBase(IContainer container) : base(container) { }
 
         private void SetInitialImage(Image image) => Image = ImageUtils.AlterColor(image, IconColor);
         #endregion

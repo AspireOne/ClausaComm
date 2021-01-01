@@ -9,7 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace ClausaComm.Components
+namespace ClausaComm.Components.Icons
 {
     public partial class IconBase : PictureBox
     {
@@ -28,14 +28,14 @@ namespace ClausaComm.Components
         }
 
 
-        public IconBase()
+        protected IconBase()
         {
             InitializeComponent();
             SizeMode = PictureBoxSizeMode.StretchImage;
             Cursor = Cursors.Hand;
         }
 
-        public IconBase(IContainer container) : this() => container.Add(this);
+        protected IconBase(IContainer container) : this() => container.Add(this);
 
         protected override void OnPaint(PaintEventArgs pe)
         {

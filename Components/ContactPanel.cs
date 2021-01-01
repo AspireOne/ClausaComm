@@ -1,5 +1,6 @@
 ﻿using ClausaComm.Components;
 using ClausaComm.Components.ContactData;
+using ClausaComm.Utils;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -11,13 +12,13 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace ClausaComm
+namespace ClausaComm.Components
 {
     public partial class ContactPanel : Panel
     {
         #region selected panel
-        private readonly Pen ContactSelectedLinePenAppearance = new(UIConstants.SecondaryColor, 2);
-        private readonly Color SelectedPanelBackgroundColor = Color.FromArgb(10, 255, 255, 255); /*UIConstants.SecondaryColor.R, UIConstants.SecondaryColor.G, UIConstants.SecondaryColor.B*/
+        private readonly Pen ContactSelectedLinePenAppearance = new(Constants.UIConstants.SecondaryColor, 2);
+        private readonly Color SelectedPanelBackgroundColor = Color.FromArgb(10, 255, 255, 255); /*Constants.UIConstants.SecondaryColor.R, Constants.UIConstants.SecondaryColor.G, Constants.UIConstants.SecondaryColor.B*/
         private static event EventHandler SelectedPanelChange;
 
         private static ContactPanel _currentlySelectedPanel;
@@ -44,7 +45,7 @@ namespace ClausaComm
         private readonly FlashTimer Flasher;
         private bool Selected;
 
-        private static readonly Color FlashPeakColor = Color.FromArgb(80, UIConstants.SecondaryColor.R, UIConstants.SecondaryColor.G, UIConstants.SecondaryColor.B);
+        private static readonly Color FlashPeakColor = Color.FromArgb(80, Constants.UIConstants.SecondaryColor.R, Constants.UIConstants.SecondaryColor.G, Constants.UIConstants.SecondaryColor.B);
 
         public readonly Contact Contact;
         /*make public ?*/
@@ -66,7 +67,7 @@ namespace ClausaComm
             Dock = Contact.IsUser ? DockStyle.Fill : DockStyle.Top;
             Height = 57;
             Parent = parentContainer;
-            Name = Contact.Ip;
+            Name = Contact.Id;
             Padding = Padding.Empty;
             Cursor = Cursors.Hand;
             #endregion

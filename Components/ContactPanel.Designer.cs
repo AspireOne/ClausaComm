@@ -1,5 +1,5 @@
 ﻿
-namespace ClausaComm
+namespace ClausaComm.Components
 {
     partial class ContactPanel
     {

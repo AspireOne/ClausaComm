@@ -6,6 +6,7 @@ using System.Linq;
 using System.IO;
 using System.Text;
 using System.Xml.Linq;
+using ClausaComm.Utils;
 
 namespace ClausaComm
 {
@@ -24,19 +25,26 @@ namespace ClausaComm
         public bool IsUser => _isUser;
         public string ProfilePicPath => Path.Combine(ProgramDirectory.ProfilePicsDirPath, $"{Ip}.png");
         private bool HasDefaultProfilePic => _hasDefaultProfilePic;
-        private enum SavedInfo { Name, Ip, ProfilePic }
+        private enum SavedInfo { Id, Name, Ip, ProfilePic }
 
         #region backing fields
         private Status _status = Status.Offline;
         private Image _profileImage = Resources.default_pfp;
         private string _name = "Unknown";
         private readonly string _ip;
-        private bool _isUser;
-        private bool _save;
+        private bool _isUser = false;
+        private bool _save = false;
         private bool _hasDefaultProfilePic = true;
+        private string _Id;
         #endregion
 
         #region Properties
+        public string Id
+        {
+            get => _Id;
+            private init => _Id = value;
+        }
+
         public Status CurrentStatus
         {
             get => _status;
@@ -54,11 +62,15 @@ namespace ClausaComm
             get => _ip;
             private init
             {
-                if (!Network.IpUtils.IsIpCorrect(value))
-                    throw new ArgumentException("The supplied IP is not correct.");
-
-                _ip = value;
-                _isUser = Network.IpUtils.LocalIp == value;
+                if (value is null)
+                    throw new ArgumentNullException(nameof(value), "The supplied IP was null.");
+                else if (!IpUtils.IsIpCorrect(value))
+                    throw new InvalidIpException($"The supplied IP ({value}) was incorrect.");
+                else
+                {
+                    _ip = value;
+                    _isUser = IpUtils.LocalIp == value;
+                }
             }
         }
 
@@ -99,8 +111,8 @@ namespace ClausaComm
 
                 _name = value.Length is <= MaxNameLength and >= MinNameLength
                     ? value
-                    : throw new ArgumentException("The supplied name's length is not right." +
-                        $"Should be <= {MaxNameLength} and >= {MinNameLength}, but was {value.Length})", nameof(value));
+                    : throw new ArgumentException($@"The supplied name's length is not right.
+                       Should be <= {MaxNameLength} and >= {MinNameLength}, but was {value.Length})", nameof(value));
 
                 NameChange?.Invoke(this, value);
 
@@ -140,16 +152,14 @@ namespace ClausaComm
         {
             Ip = ip;
             Config = new XmlFile(this);
+            Id = IdGenerator.GenerateId();
         }
 
-        public override bool Equals(object obj) => obj is Contact contact && contact.Ip == Ip;
+        public override bool Equals(object obj) => obj is Contact contact && contact.Id == Id;
 
-        public override string ToString() => $"IP: {Ip}\nName: {Name}\nCurrentStatus: {CurrentStatus}";
+        public override string ToString() => $"IP: {Ip}\nName: {Name}\nCurrentStatus: {CurrentStatus}\nID: {Id}";
 
         public override int GetHashCode() => int.Parse(Ip.Replace(".", ""));
-
-
-
 
         // Creating a private interface so that those methods cannot be accessed publicly.
         private interface IXmlFile
@@ -165,6 +175,7 @@ namespace ClausaComm
             {
                 {SavedInfo.Name, "name"},
                 {SavedInfo.Ip, "ip"},
+                {SavedInfo.Id, "id" }
             };
             private const string ContactNodeName = "contact";
             private readonly Contact Contact;
@@ -176,17 +187,17 @@ namespace ClausaComm
             {
                 var doc = XDocument.Load(Path);
 
-                if (doc.ToString().Contains(Contact.Ip))
+                if (doc.ToString().Contains(Contact.Id))
                     return false;
 
                 doc.Root.Add(
                     new XElement(ContactNodeName,
                         new XElement(InfoFileRepresentationDict[SavedInfo.Name], Contact.Name),
-                        new XElement(InfoFileRepresentationDict[SavedInfo.Ip], Contact.Ip)
+                        new XElement(InfoFileRepresentationDict[SavedInfo.Ip], Contact.Ip),
+                        new XElement(InfoFileRepresentationDict[SavedInfo.Id], Contact.Id)
                     )
                 );
                 doc.Save(Path);
-
 
                 return true;
             }
@@ -211,6 +222,7 @@ namespace ClausaComm
                     throw new Exception("Contact was not found in the config file.");
 
                 XElement element = contactNode.Element(InfoFileRepresentationDict[attributeToChange]);
+
                 if (element is null)
                     throw new ArgumentException("The passed attribute to be changed was not found", nameof(attributeToChange));
 
@@ -220,7 +232,6 @@ namespace ClausaComm
             }
 
 #nullable enable
-#pragma warning disable
             private static IEnumerable<XElement> GetContactNodes(XDocument? doc = null)
             {
                 var document = doc ?? XDocument.Load(Path);
@@ -229,19 +240,21 @@ namespace ClausaComm
 
             private XElement GetNode(XDocument? doc = null)
             {
-                return GetContactNodes(doc).FirstOrDefault(node => node.Element(InfoFileRepresentationDict[SavedInfo.Ip]).Value == Contact.Ip);
+#pragma warning disable CS8603,CS8602 // Possible null reference return.
+                return GetContactNodes(doc).FirstOrDefault(node => node.Element(InfoFileRepresentationDict[SavedInfo.Id]).Value == Contact.Id);
+#pragma warning restore CS8603,CS8602 // Possible null reference return.
             }
-#pragma warning restore
 #nullable restore
 
             public static IEnumerable<Contact> GetContacts()
             {
-                foreach (var contactInfo in GetContactNodes())
+                foreach (var contactNode in GetContactNodes())
                 {
-                    string ip = contactInfo.Element(InfoFileRepresentationDict[SavedInfo.Ip]).Value;
-                    string name = contactInfo.Element(InfoFileRepresentationDict[SavedInfo.Name]).Value;
+                    string ip = contactNode.Element(InfoFileRepresentationDict[SavedInfo.Ip]).Value;
+                    string id = contactNode.Element(InfoFileRepresentationDict[SavedInfo.Id]).Value;
+                    string name = contactNode.Element(InfoFileRepresentationDict[SavedInfo.Name]).Value;
 
-                    var contact = new Contact(ip) { _name = name, _save = false };
+                    var contact = new Contact(ip) { _name = name, _save = false, _Id = id };
 
                     bool _ = TryGetProfilePicture(contact.ProfilePicPath, out Image profileImage);
 
@@ -261,10 +274,9 @@ namespace ClausaComm
             {
                 using Stream imgStream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Delete);
                 using Image fromFile = Image.FromStream(imgStream);
+                // Cloning because otherwise the program doesn't let of the image's handle for some reason.
                 image = (Image)fromFile.Clone();
 
-                imgStream.Dispose();
-                fromFile.Dispose();
                 return true;
             }
             catch (Exception e) when (e is FileNotFoundException || e is ArgumentException)
@@ -281,7 +293,6 @@ namespace ClausaComm
                 System.Diagnostics.Debug.WriteLine("Has default profile pic, not saving.");
                 return;
             }
-
 
             using Stream stream = new FileStream(ProfilePicPath, FileMode.Create, FileAccess.Write);
             ProfilePic.Save(stream, System.Drawing.Imaging.ImageFormat.Png);

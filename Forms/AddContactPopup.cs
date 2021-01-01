@@ -1,4 +1,4 @@
-﻿using ClausaComm.Network;
+﻿using ClausaComm.Utils;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;

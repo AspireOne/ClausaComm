@@ -21,7 +21,7 @@ namespace ClausaComm.Components.Icons
             get => CircleBrush.Color;
             set
             {
-                CircleBrush.Color = UIConstants.ReturnNewOrDefaultColor(DefaultIconColor, value);
+                CircleBrush.Color = Constants.UIConstants.ReturnNewOrDefaultColor(DefaultIconColor, value);
                 Invalidate();
             }
         }
@@ -31,7 +31,7 @@ namespace ClausaComm.Components.Icons
             get => HoverCircleBrush.Color;
             set
             {
-                HoverCircleBrush.Color = UIConstants.ReturnNewOrDefaultColor(UIConstants.ElementOnHover.Color, value);
+                HoverCircleBrush.Color = Constants.UIConstants.ReturnNewOrDefaultColor(Constants.UIConstants.ElementOnHover.Color, value);
                 Invalidate();
             }
         }
@@ -41,13 +41,13 @@ namespace ClausaComm.Components.Icons
             get => ClickCircleBrush.Color;
             set
             {
-                ClickCircleBrush.Color = UIConstants.ReturnNewOrDefaultColor(UIConstants.ElementOnClick.Color, value);
+                ClickCircleBrush.Color = Constants.UIConstants.ReturnNewOrDefaultColor(Constants.UIConstants.ElementOnClick.Color, value);
                 Invalidate();
             }
         }
 
-        protected SolidBrush HoverCircleBrush = new(UIConstants.ElementOnHover.Color);
-        protected SolidBrush ClickCircleBrush = new(UIConstants.ElementOnClick.Color);
+        protected SolidBrush HoverCircleBrush = new(Constants.UIConstants.ElementOnHover.Color);
+        protected SolidBrush ClickCircleBrush = new(Constants.UIConstants.ElementOnClick.Color);
         protected SolidBrush CircleBrush = new(DefaultIconColor);
 
         protected SolidBrush CurrentCircleBrush
@@ -85,7 +85,7 @@ namespace ClausaComm.Components.Icons
             get => LineAppearance.Color;
             set
             {
-                LineAppearance.Color = UIConstants.ReturnNewOrDefaultColor(DefaultLineColor, value);
+                LineAppearance.Color = Constants.UIConstants.ReturnNewOrDefaultColor(DefaultLineColor, value);
                 Invalidate();
             }
         }
@@ -95,7 +95,7 @@ namespace ClausaComm.Components.Icons
             get => HoverLineAppearance.Color;
             set
             {
-                HoverLineAppearance.Color = UIConstants.ReturnNewOrDefaultColor(DefaultLineHoverColor, value);
+                HoverLineAppearance.Color = Constants.UIConstants.ReturnNewOrDefaultColor(DefaultLineHoverColor, value);
                 Invalidate();
             }
         }
@@ -105,7 +105,7 @@ namespace ClausaComm.Components.Icons
             get => ClickLineAppearance.Color;
             set
             {
-                ClickLineAppearance.Color = UIConstants.ReturnNewOrDefaultColor(UIConstants.ElementOnClick.Color, value);
+                ClickLineAppearance.Color = Constants.UIConstants.ReturnNewOrDefaultColor(Constants.UIConstants.ElementOnClick.Color, value);
                 Invalidate();
             }
         }
@@ -115,7 +115,7 @@ namespace ClausaComm.Components.Icons
 
         protected Pen LineAppearance { get; set; } = new(Color.Gray, DefaultLineWidth);
         protected Pen HoverLineAppearance { get; set; } = new(Color.Gray, DefaultLineWidth);
-        protected Pen ClickLineAppearance { get; set; } = new(UIConstants.ElementOnClick.Color, DefaultLineWidth);
+        protected Pen ClickLineAppearance { get; set; } = new(Constants.UIConstants.ElementOnClick.Color, DefaultLineWidth);
 
         /// <summary> Will return pen according to current circumstances. If hovering - hovering pen. If not - normal pen. if clicking - click pen. </summary>
 
@@ -139,8 +139,8 @@ namespace ClausaComm.Components.Icons
         #endregion
 
 
-        public LineIconBase() : base() { }
-        public LineIconBase(IContainer container) : base(container) { }
+        protected LineIconBase() : base() { }
+        protected LineIconBase(IContainer container) : base(container) { }
 
         protected override void OnPaint(PaintEventArgs pe)
         {

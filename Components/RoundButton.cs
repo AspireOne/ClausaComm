@@ -9,8 +9,8 @@ namespace ClausaComm.Components
         public Color BorderColor { get; set; } = Color.Transparent;
         public Color OnHoverBorderColor { get; set; } = Color.Transparent;
         public Color ButtonColor { get; set; } = Color.Gray;
-        public Color OnHoverButtonColor { get; set; } = UIConstants.ElementOnHover.Color;
-        public Color OnClickColor { get; set; } = UIConstants.ElementOnClick.Color;
+        public Color OnHoverButtonColor { get; set; } = Constants.UIConstants.ElementOnHover.Color;
+        public Color OnClickColor { get; set; } = Constants.UIConstants.ElementOnClick.Color;
         public Color TextColor { get; set; } = Color.Black;
         public int BorderThickness
         {

@@ -1,5 +1,5 @@
 ﻿
-namespace ClausaComm.Components
+namespace ClausaComm.Components.Icons
 {
     partial class IconBase
     {

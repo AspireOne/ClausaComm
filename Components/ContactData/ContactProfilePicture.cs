@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ClausaComm.Utils;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -8,7 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace ClausaComm.Components
+namespace ClausaComm.Components.ContactData
 {
     public partial class ContactProfilePicture : PictureBox, IContactUsable
     {

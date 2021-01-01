@@ -13,7 +13,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace ClausaComm
+namespace ClausaComm.Utils
 {
     internal static class ImageUtils
     {

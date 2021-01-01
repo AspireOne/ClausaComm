@@ -58,7 +58,11 @@ namespace ClausaComm.Components
             set
             {
                 if (value is null)
+                {
                     ChangeContactSpecificElementsVisibility(false);
+                    NoContactLabel.Visible = true;
+                }
+
                 else
                 {
                     NoContactLabel.Visible = false;

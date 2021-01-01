@@ -26,7 +26,7 @@ namespace ClausaComm.Components
             get => _onFocusBorderColor;
             set
             {
-                _onFocusBorderColor = UIConstants.ReturnNewOrDefaultColor(UIConstants.ElementOnHover.Color, value);
+                _onFocusBorderColor = Constants.UIConstants.ReturnNewOrDefaultColor(Constants.UIConstants.ElementOnHover.Color, value);
                 Invalidate();
             }
         }
@@ -71,7 +71,7 @@ namespace ClausaComm.Components
         private GraphicsPath InnerRect;
         private Color br;
         private Color _borderColor = Color.Transparent;
-        private Color _onFocusBorderColor = UIConstants.ElementOnHover.Color;
+        private Color _onFocusBorderColor = Constants.UIConstants.ElementOnHover.Color;
         private int _borderSize = 10;
 
 

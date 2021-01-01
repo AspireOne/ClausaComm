@@ -1,5 +1,5 @@
 ﻿
-namespace ClausaComm
+namespace ClausaComm.Forms
 {
     partial class MainForm
     {
@@ -47,8 +47,8 @@ namespace ClausaComm
             this.NameLbl = new ClausaComm.Components.ContactData.ContactName(this.components);
             this.RemoveContactIcon = new ClausaComm.Components.Icons.CloseIcon(this.components);
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.CallContactIcon = new ClausaComm.Components.PhoneIcon(this.components);
-            this.ProfilePicture = new ClausaComm.Components.ContactProfilePicture(this.components);
+            this.CallContactIcon = new ClausaComm.Components.Icons.PhoneIcon(this.components);
+            this.ProfilePicture = new ClausaComm.Components.ContactData.ContactProfilePicture(this.components);
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.LeftPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.AddContactIcon)).BeginInit();
@@ -156,9 +156,9 @@ namespace ClausaComm
             this.ActionPanel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.ActionPanel1.Location = new System.Drawing.Point(0, 0);
             this.ActionPanel1.Name = "ActionPanel1";
+            this.ActionPanel1.RemoveContactAction = null;
             this.ActionPanel1.Size = new System.Drawing.Size(884, 66);
             this.ActionPanel1.TabIndex = 9;
-            //this.ActionPanel1.Visible = true;
             // 
             // panel1
             // 
@@ -345,10 +345,10 @@ namespace ClausaComm
         private Components.RoundTextBox ContactSearchBox;
         private System.Windows.Forms.Panel OwnProfilePanel;
         private Components.ChatPanel ChatPanel1;
-        private Components.ContactProfilePicture ProfilePicture;
+        private Components.ContactData.ContactProfilePicture ProfilePicture;
         private Components.Icons.PlusIcon AddContactIcon;
         private Components.Icons.CloseIcon RemoveContactIcon;
-        private Components.PhoneIcon CallContactIcon;
+        private Components.Icons.PhoneIcon CallContactIcon;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.ToolTip toolTip1;
         private Components.ContactData.ContactName NameLbl;

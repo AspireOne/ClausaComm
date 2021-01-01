@@ -18,7 +18,7 @@ namespace ClausaComm.Components
         private static readonly int DefaultLineWidth = 3;
 
         private Pen Line { get; set; } = new(DefaultLineColor, DefaultLineWidth);
-        private Pen LineOnHover { get; set; } = new(UIConstants.ElementOnHover.Color, DefaultLineWidth);
+        private Pen LineOnHover { get; set; } = new(Constants.UIConstants.ElementOnHover.Color, DefaultLineWidth);
 
         public float LineWidth
         {
@@ -36,7 +36,7 @@ namespace ClausaComm.Components
             get => Line.Color;
             set
             {
-                Line.Color = UIConstants.ReturnNewOrDefaultColor(DefaultLineColor, value);
+                Line.Color = Constants.UIConstants.ReturnNewOrDefaultColor(DefaultLineColor, value);
                 Invalidate();
             }
         }
@@ -46,7 +46,7 @@ namespace ClausaComm.Components
             get => LineOnHover.Color;
             set
             {
-                LineOnHover.Color = UIConstants.ReturnNewOrDefaultColor(UIConstants.ElementOnHover.Color, value);
+                LineOnHover.Color = Constants.UIConstants.ReturnNewOrDefaultColor(Constants.UIConstants.ElementOnHover.Color, value);
                 Invalidate();
             }
         }

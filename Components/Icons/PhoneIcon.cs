@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ClausaComm.Components
+namespace ClausaComm.Components.Icons
 {
     public partial class PhoneIcon : ImageIconBase
     {

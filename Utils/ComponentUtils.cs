@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using static System.Windows.Forms.Control;
 
-namespace ClausaComm.Components
+namespace ClausaComm.Utils
 {
     public static class ComponentUtils
     {
