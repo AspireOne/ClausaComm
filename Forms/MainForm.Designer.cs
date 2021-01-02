@@ -45,7 +45,6 @@ namespace ClausaComm.Forms
             this.IpLbl = new System.Windows.Forms.Label();
             this.Status = new ClausaComm.Components.ContactData.ContactStatus(this.components);
             this.NameLbl = new ClausaComm.Components.ContactData.ContactName(this.components);
-            this.RemoveContactIcon = new ClausaComm.Components.Icons.CloseIcon(this.components);
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.CallContactIcon = new ClausaComm.Components.Icons.PhoneIcon(this.components);
             this.ProfilePicture = new ClausaComm.Components.ContactData.ContactProfilePicture(this.components);
@@ -56,7 +55,6 @@ namespace ClausaComm.Forms
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.SendIcon1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.Status)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.RemoveContactIcon)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.CallContactIcon)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ProfilePicture)).BeginInit();
             this.SuspendLayout();
@@ -86,6 +84,7 @@ namespace ClausaComm.Forms
             this.AddContactIcon.Cursor = System.Windows.Forms.Cursors.Hand;
             this.AddContactIcon.HoverCircleColor = System.Drawing.Color.FromArgb(((int)(((byte)(253)))), ((int)(((byte)(182)))), ((int)(((byte)(62)))));
             this.AddContactIcon.HoverLineColor = System.Drawing.Color.Gray;
+            this.AddContactIcon.IconPaddingFactor = 3.4F;
             this.AddContactIcon.LineColor = System.Drawing.Color.Gray;
             this.AddContactIcon.LineWidth = 2F;
             this.AddContactIcon.Location = new System.Drawing.Point(144, 76);
@@ -250,31 +249,6 @@ namespace ClausaComm.Forms
             this.NameLbl.Text = "Samalama dumaluma gertruda";
             this.NameLbl.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // RemoveContactIcon
-            // 
-            this.RemoveContactIcon.CircleColor = System.Drawing.Color.White;
-            this.RemoveContactIcon.ClickCircleColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(79)))), ((int)(((byte)(25)))));
-            this.RemoveContactIcon.ClickLineColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(79)))), ((int)(((byte)(25)))));
-            this.RemoveContactIcon.ColorCircleOnClick = false;
-            this.RemoveContactIcon.ColorCircleOnHover = false;
-            this.RemoveContactIcon.ColorLinesOnClick = true;
-            this.RemoveContactIcon.ColorLinesOnHover = false;
-            this.RemoveContactIcon.ContextMenuStrip = this.contextMenuStrip1;
-            this.RemoveContactIcon.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.RemoveContactIcon.HoverCircleColor = System.Drawing.Color.White;
-            this.RemoveContactIcon.HoverLineColor = System.Drawing.Color.FromArgb(((int)(((byte)(44)))), ((int)(((byte)(117)))), ((int)(((byte)(252)))));
-            this.RemoveContactIcon.LineColor = System.Drawing.Color.FromArgb(((int)(((byte)(250)))), ((int)(((byte)(250)))), ((int)(((byte)(250)))));
-            this.RemoveContactIcon.LineWidth = 2F;
-            this.RemoveContactIcon.Location = new System.Drawing.Point(6, 12);
-            this.RemoveContactIcon.Name = "RemoveContactIcon";
-            this.RemoveContactIcon.ShowCircle = false;
-            this.RemoveContactIcon.Size = new System.Drawing.Size(43, 43);
-            this.RemoveContactIcon.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.RemoveContactIcon.TabIndex = 5;
-            this.RemoveContactIcon.TabStop = false;
-            this.toolTip1.SetToolTip(this.RemoveContactIcon, "Remove Contact");
-            this.RemoveContactIcon.UnderlineOnHover = true;
-            // 
             // contextMenuStrip1
             // 
             this.contextMenuStrip1.Name = "contextMenuStrip1";
@@ -332,7 +306,6 @@ namespace ClausaComm.Forms
             this.panel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.SendIcon1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.Status)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.RemoveContactIcon)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.CallContactIcon)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.ProfilePicture)).EndInit();
             this.ResumeLayout(false);
@@ -347,7 +320,6 @@ namespace ClausaComm.Forms
         private Components.ChatPanel ChatPanel1;
         private Components.ContactData.ContactProfilePicture ProfilePicture;
         private Components.Icons.PlusIcon AddContactIcon;
-        private Components.Icons.CloseIcon RemoveContactIcon;
         private Components.Icons.PhoneIcon CallContactIcon;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.ToolTip toolTip1;

@@ -32,19 +32,13 @@ namespace ClausaComm.Components
             UnderlineOnHover = true,
         };
 
-        private readonly CloseIcon RemoveContactIcon = new()
+        private readonly SaveIcon SaveUnsaveContactIcon = new()
         {
-            ColorCircleOnHover = false,
-            ColorLinesOnHover = false,
-            ColorCircleOnClick = false,
-            ColorLinesOnClick = true,
-            ShowCircle = false,
-            LineColor = IconBase.DefaultIconColor,
-            LineWidth = 2f,
             Location = new System.Drawing.Point(6, 12),
             Name = "RemoveContactIcon",
             Size = new System.Drawing.Size(43, 43),
-            //p(this.RemoveContactIcon, "Remove Contact"),
+            Padding = new Padding(5, 5, 5, 5),
+            ColorIconOnClick = true,
             UnderlineOnHover = true,
         };
         #endregion
@@ -102,7 +96,6 @@ namespace ClausaComm.Components
         };
         #endregion
 
-
         public Contact Contact
         {
             get => _contact;
@@ -127,33 +120,48 @@ namespace ClausaComm.Components
                 {
                     IpLbl.Text = value.Ip;
                     ChangeContactSpecificElementsVisibility(true);
+                    ChangeSaveIconStateAccordingly();
                 }
 
             }
         }
 
-
         public ActionPanel()
         {
             InitializeComponent();
+            CompleteComponentInitialization();
+
+            ChildControls = new Control[] { Status, NameLbl, SaveUnsaveContactIcon, CallContactIcon, ProfilePicture, IpLbl };
+            ChangeContactSpecificElementsVisibility(false);
+            Array.ForEach(ChildControls, control => Controls.Add(control));
+
+            SaveUnsaveContactIcon.Click += (object _, EventArgs _) =>
+            {
+                Contact.Save = !Contact.Save;
+                ChangeSaveIconStateAccordingly();
+            };
+        }
+
+        private void CompleteComponentInitialization()
+        {
             BackColor = System.Drawing.Color.FromArgb(29, 29, 31);
             Dock = DockStyle.Top;
             Location = new System.Drawing.Point(0, 0);
             Name = "ActionPanel";
             Size = new System.Drawing.Size(884, 67);
-
-            ChildControls = new Control[] { Status, NameLbl, RemoveContactIcon, CallContactIcon, ProfilePicture, IpLbl };
-            ChangeContactSpecificElementsVisibility(false);
-            Array.ForEach(ChildControls, control => Controls.Add(control));
-            RemoveContactIcon.Click += (object _, EventArgs _) => RemoveContactAction(Contact);
-        }
-
-        private void ChangeContactSpecificElementsVisibility(bool visible)
-        {
-            //Visible = visible;
-            Array.ForEach(ChildControls, control => control.Visible = visible);
         }
 
         public ActionPanel(IContainer container) : this() => container.Add(this);
+
+        private void ChangeContactSpecificElementsVisibility(bool visible)
+        {
+            Array.ForEach(ChildControls, control => control.Visible = visible);
+        }
+
+        // Returns if was changed.
+        private void ChangeSaveIconStateAccordingly()
+        {
+            SaveUnsaveContactIcon.CurrState = Contact.Save ? SaveIcon.State.Save : SaveIcon.State.Unsave;
+        }
     }
 }

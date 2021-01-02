@@ -13,7 +13,8 @@ namespace ClausaComm.Components.Icons
 {
     public partial class LineIconBase : IconBase
     {
-        protected int IconPadding => (int)(Size.Width / 3.4f);
+        public float IconPaddingFactor { get; set; } = 3.4f;
+        protected int IconPadding => (int)(Size.Width / IconPaddingFactor);
 
         #region Circle
         public Color CircleColor
@@ -148,6 +149,12 @@ namespace ClausaComm.Components.Icons
 
             if (ShowCircle)
                 DrawEllipse(pe.Graphics);
+        }
+
+        protected override void OnResize(EventArgs e)
+        {
+            base.OnResize(e);
+            Invalidate();
         }
 
         protected void DrawEllipse(Graphics g)

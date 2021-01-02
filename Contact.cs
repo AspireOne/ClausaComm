@@ -23,7 +23,7 @@ namespace ClausaComm
         //public readonly HashSet<Contact> UnreadMessages = new HashSet<Contact>();
 
         public bool IsUser => _isUser;
-        public string ProfilePicPath => Path.Combine(ProgramDirectory.ProfilePicsDirPath, $"{Ip}.png");
+        public string ProfilePicPath => Path.Combine(ProgramDirectory.ProfilePicsDirPath, $"{Id}.png");
         private bool HasDefaultProfilePic => _hasDefaultProfilePic;
         private enum SavedInfo { Id, Name, Ip, ProfilePic }
 

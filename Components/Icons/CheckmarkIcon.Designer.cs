@@ -1,7 +1,7 @@
 ﻿
 namespace ClausaComm.Components.Icons
 {
-    partial class CloseIcon
+    partial class CheckmarkIcon
     {
         /// <summary>
         /// Required designer variable.

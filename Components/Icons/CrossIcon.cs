@@ -10,11 +10,11 @@ using System.Windows.Forms;
 
 namespace ClausaComm.Components.Icons
 {
-    public partial class CloseIcon : LineIconBase
+    public partial class CrossIcon : LineIconBase
     {
 
-        public CloseIcon() : base() { }
-        public CloseIcon(IContainer container) : base(container) { }
+        public CrossIcon() : base() { }
+        public CrossIcon(IContainer container) : base(container) { }
 
         protected override void OnPaint(PaintEventArgs pe)
         {
