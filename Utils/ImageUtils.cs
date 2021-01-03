@@ -22,6 +22,7 @@ namespace ClausaComm.Utils
         {
             if (img is null)
                 return img;
+
             int x = img.Width / 2;
             int y = img.Height / 2;
             int radius = Math.Min(x, y);

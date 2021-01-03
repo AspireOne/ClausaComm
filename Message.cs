@@ -11,8 +11,8 @@ namespace ClausaComm
     public class Message
     {
         public enum Ways { In, Out }
-        public static readonly int MaxCharacters = 20_000;
-        public static readonly int MaxFileSizeBytes = 1_047_527_424; //999 mb
+        public const int MaxCharacters = 20_000;
+        public const int MaxFileSizeBytes = 1_047_527_424; //999 mb
         private readonly XmlFile Config;
         public readonly string Text;
         public readonly string SenderIp;

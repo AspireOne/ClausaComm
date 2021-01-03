@@ -7,6 +7,7 @@ using System.IO;
 using System.Text;
 using System.Xml.Linq;
 using ClausaComm.Utils;
+using System.ComponentModel;
 
 namespace ClausaComm
 {
@@ -25,7 +26,9 @@ namespace ClausaComm
         public bool IsUser => _isUser;
         public string ProfilePicPath => Path.Combine(ProgramDirectory.ProfilePicsDirPath, $"{Id}.png");
         private bool HasDefaultProfilePic => _hasDefaultProfilePic;
-        private enum SavedInfo { Id, Name, Ip, ProfilePic }
+
+        // TODO: Move this enum (SavedInfo) to a more appropriate place.
+        private enum SavedInfo { Id, Name, Ip, IsUser, ProfilePic }
 
         #region backing fields
         private Status _status = Status.Offline;
@@ -173,9 +176,10 @@ namespace ClausaComm
         {
             private static readonly Dictionary<SavedInfo, string> InfoFileRepresentationDict = new Dictionary<SavedInfo, string>()
             {
-                {SavedInfo.Name, "name"},
-                {SavedInfo.Ip, "ip"},
-                {SavedInfo.Id, "id" }
+                { SavedInfo.Name, "name" },
+                { SavedInfo.Ip, "ip" },
+                { SavedInfo.Id, "id" } ,
+                { SavedInfo.IsUser, "isUser" }
             };
             private const string ContactNodeName = "contact";
             private readonly Contact Contact;
@@ -193,8 +197,9 @@ namespace ClausaComm
                 doc.Root.Add(
                     new XElement(ContactNodeName,
                         new XElement(InfoFileRepresentationDict[SavedInfo.Name], Contact.Name),
-                        new XElement(InfoFileRepresentationDict[SavedInfo.Ip], Contact.Ip),
-                        new XElement(InfoFileRepresentationDict[SavedInfo.Id], Contact.Id)
+                        Contact.IsUser ? null : new XElement(InfoFileRepresentationDict[SavedInfo.Ip], Contact.Ip),
+                        new XElement(InfoFileRepresentationDict[SavedInfo.Id], Contact.Id),
+                        new XElement(InfoFileRepresentationDict[SavedInfo.IsUser], Contact.IsUser)
                     )
                 );
                 doc.Save(Path);
@@ -248,15 +253,18 @@ namespace ClausaComm
 
             public static IEnumerable<Contact> GetContacts()
             {
+                IpUtils.RefreshLocalIp();
+
                 foreach (var contactNode in GetContactNodes())
                 {
-                    string ip = contactNode.Element(InfoFileRepresentationDict[SavedInfo.Ip]).Value;
+                    bool isUser = bool.Parse(contactNode.Element(InfoFileRepresentationDict[SavedInfo.IsUser]).Value);
+                    string ip = contactNode.Element(InfoFileRepresentationDict[SavedInfo.Ip])?.Value;
                     string id = contactNode.Element(InfoFileRepresentationDict[SavedInfo.Id]).Value;
                     string name = contactNode.Element(InfoFileRepresentationDict[SavedInfo.Name]).Value;
 
-                    var contact = new Contact(ip) { _name = name, _save = false, _Id = id };
+                    var contact = new Contact(isUser ? IpUtils.LocalIp : ip) { _name = name, _save = false, _Id = id };
 
-                    bool _ = TryGetProfilePicture(contact.ProfilePicPath, out Image profileImage);
+                    TryGetProfilePicture(contact.ProfilePicPath, out Image profileImage);
 
                     contact.ProfilePic = profileImage;
                     contact._save = true;
@@ -289,10 +297,7 @@ namespace ClausaComm
         private void SaveProfilePicture()
         {
             if (HasDefaultProfilePic)
-            {
-                System.Diagnostics.Debug.WriteLine("Has default profile pic, not saving.");
                 return;
-            }
 
             using Stream stream = new FileStream(ProfilePicPath, FileMode.Create, FileAccess.Write);
             ProfilePic.Save(stream, System.Drawing.Imaging.ImageFormat.Png);

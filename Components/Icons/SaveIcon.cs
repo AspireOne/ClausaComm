@@ -7,12 +7,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Threading;
 
 namespace ClausaComm.Components.Icons
 {
     public partial class SaveIcon : ImageIconBase
     {
-        public Pen CrossLineAppearance { get; set; } = new Pen(Color.White, 2);
+        public Pen CrossLineAppearance { get; set; } = new Pen(Color.FromArgb(170, Color.WhiteSmoke), 2);
         public Padding CrossPadding { get; set; } = new Padding(3, 3, 3, 3);
 
         public enum State { Save, Unsave }
@@ -32,7 +33,14 @@ namespace ClausaComm.Components.Icons
         public SaveIcon() : base(Properties.Resources.save_icon)
         {
             CrossLineAppearance.Color = Color.FromArgb(170, IconColor);
+            /*
+             * This is a workaround for the Image bizzarely not displaying correctly until it's clicked on or hovered over.
+             * Executing this code on the current thread does not solve it.
+             */
+            // TODO: Fix this (Save Image not displaying correctly until clicked on or hovered over - replace the current workaround).
+            new Thread(() => { Thread.Sleep(50); Image = new Bitmap(Image); }).Start();
         }
+
         public SaveIcon(IContainer container) : base(container) { }
 
         protected override void OnPaint(PaintEventArgs pe)

@@ -15,7 +15,7 @@ namespace ClausaComm.Components
         private bool IsHovering;
         private static readonly Color DefaultLineColor = Color.White;
         public bool ColorLineOnHover { get; set; } = true;
-        private static readonly int DefaultLineWidth = 3;
+        private const int DefaultLineWidth = 3;
 
         private Pen Line { get; set; } = new(DefaultLineColor, DefaultLineWidth);
         private Pen LineOnHover { get; set; } = new(Constants.UIConstants.ElementOnHover.Color, DefaultLineWidth);

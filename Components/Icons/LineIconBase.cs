@@ -136,7 +136,7 @@ namespace ClausaComm.Components.Icons
 
         protected static readonly Color DefaultLineColor = Color.Gray;
         protected static readonly Color DefaultLineHoverColor = DefaultLineColor;
-        protected static readonly int DefaultLineWidth = 2;
+        protected const int DefaultLineWidth = 2;
         #endregion
 
 

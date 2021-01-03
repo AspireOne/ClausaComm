@@ -69,7 +69,6 @@ namespace ClausaComm.Components.Icons
 
 
         #region constructors
-        protected ImageIconBase() : base() { }
         protected ImageIconBase(Image image) : base()
         {
             SetInitialImage(image);

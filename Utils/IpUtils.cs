@@ -27,7 +27,10 @@ namespace ClausaComm.Utils
 
         }
 
-        public static void RefreshLocalIp()
+        /// <summary>
+        /// Refreshes the local IP (if it's null will be null), assign it to the LocalIp property, and return it.
+        /// </summary>
+        public static string RefreshLocalIp()
         {
             try
             {
@@ -40,6 +43,8 @@ namespace ClausaComm.Utils
             {
                 LocalIp = null;
             }
+
+            return LocalIp;
         }
 
         public static bool IsIpCorrect(string ip) => ip is not null && IpRegex.IsMatch(ip);
