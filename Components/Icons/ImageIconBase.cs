@@ -17,6 +17,7 @@ namespace ClausaComm.Components.Icons
         public bool ColorIconOnClick { get; set; } = false;
 
         private Image ImageBeforeHover;
+        private Image OriginalImage;
         private bool ImageBeforeHoverAssigned = false;
 
         #region backing fields
@@ -32,6 +33,7 @@ namespace ClausaComm.Components.Icons
             set
             {
                 _iconColor = Constants.UIConstants.ReturnNewOrDefaultColor(DefaultIconColor, value);
+                Image = ImageUtils.AlterColor(Image, value);
                 Invalidate();
             }
         }
@@ -61,6 +63,7 @@ namespace ClausaComm.Components.Icons
             set
             {
                 // Resizing the image manually before assigning it to PictureBox, because it will have higher quality.
+                OriginalImage = value;
                 Image resized = ImageUtils.HQResize(value, Width - (Padding.Left + Padding.Right), Height - (Padding.Top + Padding.Bottom));
                 base.Image = resized;
             }
@@ -77,6 +80,14 @@ namespace ClausaComm.Components.Icons
 
         private void SetInitialImage(Image image) => Image = ImageUtils.AlterColor(image, IconColor);
         #endregion
+
+        protected override void OnResize(EventArgs e)
+        {
+            base.OnResize(e);
+            // The default Image resizing has a shit quality, so we're doing it ourselves.
+            Image resized = ImageUtils.HQResize(OriginalImage, Width - (Padding.Left + Padding.Right), Height - (Padding.Top + Padding.Bottom));
+            base.Image = resized;
+        }
 
         protected override void OnMouseEnter(EventArgs e)
         {

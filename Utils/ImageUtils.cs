@@ -55,6 +55,9 @@ namespace ClausaComm.Utils
 
         public static Image ForEveryPixel(this Image img, Func<Color, Color> func)
         {
+            if (img is null)
+                return img;
+
             Bitmap originalImage = new Bitmap(img);
             Bitmap alteredImage = new Bitmap(img.Width, img.Height);
 

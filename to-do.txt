@@ -1,3 +1,7 @@
-- Correct all namespaces
-- Rmake the infrastructure from LAN to public P2P
-	- assign each user a long random id so that they can indentify even when they have a different public IP.
+- Correct all namespaces [done]
+- Rmake the infrastructure from LAN to public P2P (I'd first need to figure out NAT hole punching, which I wasn't able to do even after a month so)
+- assign each user a random id so that they can indentify even when they have a different IP [done]
+- add a small (i) (info) icon to icons like call, remove contact etc.
+- add custom top bar
+- add a self-updater
+- add an installer

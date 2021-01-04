@@ -38,17 +38,17 @@ namespace ClausaComm.Forms
             this.IpBox = new ClausaComm.Components.RoundTextBox();
             this.ProfilePictureBox = new ClausaComm.Components.ContactData.ContactProfilePicture(this.components);
             this.SaveButton = new ClausaComm.Components.SimpleLineButton(this.components);
+            this.TitleBar = new ClausaComm.Components.TitleBar(this.components) { Form = this };
             ((System.ComponentModel.ISupportInitialize)(this.ProfilePictureBox)).BeginInit();
             this.SuspendLayout();
             // 
             // HeaderLabel
             // 
-            this.HeaderLabel.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.HeaderLabel.Font = new System.Drawing.Font("Segoe UI", 26.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.HeaderLabel.ForeColor = System.Drawing.Color.WhiteSmoke;
-            this.HeaderLabel.Location = new System.Drawing.Point(21, 9);
+            this.HeaderLabel.Location = new System.Drawing.Point(0, 28);
             this.HeaderLabel.Name = "HeaderLabel";
-            this.HeaderLabel.Size = new System.Drawing.Size(446, 41);
+            this.HeaderLabel.Size = new System.Drawing.Size(471, 41);
             this.HeaderLabel.TabIndex = 2;
             this.HeaderLabel.Text = "Info";
             this.HeaderLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -59,7 +59,7 @@ namespace ClausaComm.Forms
             this.NameLbl.AutoSize = true;
             this.NameLbl.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.NameLbl.ForeColor = System.Drawing.SystemColors.ButtonFace;
-            this.NameLbl.Location = new System.Drawing.Point(21, 188);
+            this.NameLbl.Location = new System.Drawing.Point(24, 209);
             this.NameLbl.Name = "NameLbl";
             this.NameLbl.Size = new System.Drawing.Size(83, 32);
             this.NameLbl.TabIndex = 4;
@@ -72,7 +72,7 @@ namespace ClausaComm.Forms
             this.NameBox.ColorBorderOnFocus = true;
             this.NameBox.Font = new System.Drawing.Font("Century Gothic", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.NameBox.ForeColor = System.Drawing.Color.Black;
-            this.NameBox.Location = new System.Drawing.Point(110, 187);
+            this.NameBox.Location = new System.Drawing.Point(113, 208);
             this.NameBox.MaxCharacters = 32767;
             this.NameBox.Multiline = false;
             this.NameBox.Name = "NameBox";
@@ -88,7 +88,7 @@ namespace ClausaComm.Forms
             this.ProfilePictureLbl.AutoSize = true;
             this.ProfilePictureLbl.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.ProfilePictureLbl.ForeColor = System.Drawing.SystemColors.ButtonFace;
-            this.ProfilePictureLbl.Location = new System.Drawing.Point(21, 257);
+            this.ProfilePictureLbl.Location = new System.Drawing.Point(24, 278);
             this.ProfilePictureLbl.Name = "ProfilePictureLbl";
             this.ProfilePictureLbl.Size = new System.Drawing.Size(167, 32);
             this.ProfilePictureLbl.TabIndex = 6;
@@ -99,7 +99,7 @@ namespace ClausaComm.Forms
             this.IpLbl.AutoSize = true;
             this.IpLbl.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.IpLbl.ForeColor = System.Drawing.SystemColors.ButtonFace;
-            this.IpLbl.Location = new System.Drawing.Point(21, 112);
+            this.IpLbl.Location = new System.Drawing.Point(24, 133);
             this.IpLbl.Name = "IpLbl";
             this.IpLbl.Size = new System.Drawing.Size(38, 32);
             this.IpLbl.TabIndex = 7;
@@ -112,7 +112,7 @@ namespace ClausaComm.Forms
             this.IpBox.ColorBorderOnFocus = true;
             this.IpBox.Font = new System.Drawing.Font("Century Gothic", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.IpBox.ForeColor = System.Drawing.Color.Black;
-            this.IpBox.Location = new System.Drawing.Point(65, 112);
+            this.IpBox.Location = new System.Drawing.Point(68, 133);
             this.IpBox.MaxCharacters = 32767;
             this.IpBox.Multiline = false;
             this.IpBox.Name = "IpBox";
@@ -127,7 +127,7 @@ namespace ClausaComm.Forms
             // 
             this.ProfilePictureBox.Contact = null;
             this.ProfilePictureBox.Image = null;
-            this.ProfilePictureBox.Location = new System.Drawing.Point(194, 244);
+            this.ProfilePictureBox.Location = new System.Drawing.Point(197, 265);
             this.ProfilePictureBox.Name = "ProfilePictureBox";
             this.ProfilePictureBox.Padding = new System.Windows.Forms.Padding(2);
             this.ProfilePictureBox.Size = new System.Drawing.Size(70, 70);
@@ -153,12 +153,26 @@ namespace ClausaComm.Forms
             this.SaveButton.Text = "Save it!";
             this.SaveButton.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
+            // titleBar1
+            // 
+            this.TitleBar.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(28)))), ((int)(((byte)(28)))), ((int)(((byte)(28)))));
+            this.TitleBar.Dock = System.Windows.Forms.DockStyle.Top;
+            this.TitleBar.Location = new System.Drawing.Point(0, 0);
+            this.TitleBar.MaximumSize = new System.Drawing.Size(0, 25);
+            this.TitleBar.MinimumSize = new System.Drawing.Size(200, 25);
+            this.TitleBar.Name = "titleBar1";
+            this.TitleBar.ShowResizeElements = false;
+            this.TitleBar.Size = new System.Drawing.Size(471, 25);
+            this.TitleBar.TabIndex = 13;
+            this.TitleBar.Title = "ClausaComm";
+            // 
             // EditInfoPopup
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(40)))), ((int)(((byte)(40)))), ((int)(((byte)(40)))));
-            this.ClientSize = new System.Drawing.Size(488, 508);
+            this.ClientSize = new System.Drawing.Size(471, 508);
+            this.Controls.Add(this.TitleBar);
             this.Controls.Add(this.SaveButton);
             this.Controls.Add(this.ProfilePictureBox);
             this.Controls.Add(this.IpBox);
@@ -168,7 +182,7 @@ namespace ClausaComm.Forms
             this.Controls.Add(this.NameLbl);
             this.Controls.Add(this.HeaderLabel);
             this.DoubleBuffered = true;
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Name = "EditInfoPopup";
             this.Text = "Change your info";
             ((System.ComponentModel.ISupportInitialize)(this.ProfilePictureBox)).EndInit();
@@ -187,5 +201,6 @@ namespace ClausaComm.Forms
         private Components.RoundTextBox IpBox;
         private Components.ContactData.ContactProfilePicture ProfilePictureBox;
         private Components.SimpleLineButton SaveButton;
+        private Components.TitleBar TitleBar;
     }
 }

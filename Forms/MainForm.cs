@@ -21,6 +21,7 @@ namespace ClausaComm.Forms
 {
     public partial class MainForm : Form
     {
+
         public MainForm()
         {
             InitializeComponent();
@@ -30,6 +31,7 @@ namespace ClausaComm.Forms
 
         private void InitializeComponentFurther()
         {
+            SetStyle(ControlStyles.ResizeRedraw, true);
             ChatPanel1.ActionPanel = ActionPanel1;
             ChatPanel1.SendIcon = SendIcon1;
             ChatPanel1.Textbox = chatTextBox1;
@@ -50,6 +52,14 @@ namespace ClausaComm.Forms
                 AddContact(new Contact(IpUtils.LocalIp) { Save = true });
 
             PanelOfContactPanels.SimulateClickOnFirstPanel();
+        }
+
+        protected override void WndProc(ref System.Windows.Forms.Message m)
+        {
+            bool handled = FormUtils.HandleResizing(Size, PointToClient, ref m);
+
+            if (!handled)
+                base.WndProc(ref m);
         }
 
         public void AddContact(Contact contact)

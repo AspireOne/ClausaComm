@@ -24,6 +24,7 @@ namespace ClausaComm.Components.Icons
 
         private void DrawCross(Graphics g)
         {
+            g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
             Point aStart = new(IconPadding, IconPadding);
             Point aEnd = new(Width - IconPadding, Height - IconPadding);
 
