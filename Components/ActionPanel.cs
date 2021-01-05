@@ -14,7 +14,7 @@ namespace ClausaComm.Components
 {
     public partial class ActionPanel : Panel, IContactUsable
     {
-        public Action<Contact> RemoveContactAction { get; set; }
+        //public Action<Contact> RemoveContactAction { get; set; }
         private Contact _contact;
         private readonly Control[] ChildControls;
 

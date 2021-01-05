@@ -17,15 +17,21 @@ namespace ClausaComm.Components.Icons
         public bool UnderlineOnHover { get; set; } = false;
         public Pen UnderlineAppearance { get; set; } = new(Brushes.White, 3);
 
-        protected bool IsHovering = false;
-        protected bool IsClicking = false;
+        protected bool IsHovering { get; private set; } = false;
+        protected bool IsMouseDown { get; private set; } = false;
 
-        // Hide the base class's Image property and change accessor to protected, so that it's not changeable.
-        new protected Image Image
+        // Hide the base class's Image property and change accessor to protected, so that it's not changeable from the outside.
+        new public Image Image
         {
             get => base.Image;
-            set => base.Image = value;
+            protected set => base.Image = value;
         }
+
+        public bool ColorIconOnHover { get; set; } = false;
+        public bool ColorIconOnClick { get; set; } = false;
+
+        public SolidBrush BoxOnHoverBrush { get; set; } = new SolidBrush(Color.Transparent);
+        public bool ColorBoxOnHover { get; set; } = false;
 
 
         protected IconBase()
@@ -40,18 +46,26 @@ namespace ClausaComm.Components.Icons
         protected override void OnPaint(PaintEventArgs pe)
         {
             base.OnPaint(pe);
-            if (IsHovering && UnderlineOnHover)
+            if (IsHovering)
             {
-                Point horizontalLineStart = new(0, Height);
-                Point horizontalLineStop = new(Width, Height);
-                pe.Graphics.DrawLine(UnderlineAppearance, horizontalLineStart, horizontalLineStop);
+                if (UnderlineOnHover)
+                {
+                    Point horizontalLineStart = new(0, Height);
+                    Point horizontalLineStop = new(Width, Height);
+                    pe.Graphics.DrawLine(UnderlineAppearance, horizontalLineStart, horizontalLineStop);
+                }
+
+                if (ColorBoxOnHover)
+                {
+                    Rectangle rect = new Rectangle(0, 0, Width, Height);
+                    pe.Graphics.FillRectangle(BoxOnHoverBrush, ClientRectangle);
+                }
             }
         }
 
         protected override void OnMouseEnter(EventArgs e)
         {
             base.OnMouseEnter(e);
-            //Cursor = Cursors.Hand;
             IsHovering = true;
             Invalidate();
         }
@@ -59,20 +73,19 @@ namespace ClausaComm.Components.Icons
         protected override void OnMouseDown(MouseEventArgs e)
         {
             base.OnMouseDown(e);
-            IsClicking = true;
+            IsMouseDown = true;
             Invalidate();
         }
 
         protected override void OnMouseUp(MouseEventArgs e)
         {
             base.OnMouseUp(e);
-            IsClicking = false;
+            IsMouseDown = false;
             Invalidate();
         }
         protected override void OnMouseLeave(EventArgs e)
         {
             base.OnMouseLeave(e);
-            //Cursor = Cursors.Default;
             IsHovering = false;
             Invalidate();
         }

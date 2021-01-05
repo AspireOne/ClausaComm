@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ClausaComm.Components;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -6,16 +7,32 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace ClausaComm.Utils
+namespace ClausaComm.Forms
 {
-    public static class FormUtils
+    public /*abstract*/ partial class FormBase : Form
     {
-        public static bool HandleResizing(Size formSize, Func<Point, Point> pointToClient, ref System.Windows.Forms.Message m)
+        protected static readonly Padding DraggableWindowBorderSize = new(1, 1, 1, 1);
+        protected static readonly Padding NonDraggableWindowBorderSize = new(0, 0, 0, 0);
+        public event EventHandler<bool> ResizableChanged;
+        private bool _resizable = false;
+        public bool Resizable
+        {
+            get => _resizable;
+            protected set
+            {
+                _resizable = value;
+                Padding = Resizable ? DraggableWindowBorderSize : NonDraggableWindowBorderSize;
+                ResizableChanged?.Invoke(this, value);
+            }
+        }
+
+        protected override void WndProc(ref System.Windows.Forms.Message m)
         {
             /*
-             * Modified from https://stackoverflow.com/questions/17748446/custom-resize-handle-in-border-less-form-c-sharp
-             * changed Dictionary to pair array & created variables for repeating math operations.
-             */
+            * Modified from https://stackoverflow.com/questions/17748446/custom-resize-handle-in-border-less-form-c-sharp
+            * changed Dictionary to pair array & created variables for repeating math operations.
+            */
+
             const uint WmNchitTest = 0x0084;
             const uint WmMouseMove = 0x0200;
 
@@ -33,14 +50,14 @@ namespace ClausaComm.Utils
 
             bool handled = false;
 
-            if (m.Msg == WmNchitTest || m.Msg == WmMouseMove)
+            if (Resizable && (m.Msg == WmNchitTest || m.Msg == WmMouseMove))
             {
                 Point screenPoint = new Point(m.LParam.ToInt32());
-                Point clientPoint = pointToClient(screenPoint);
-                int heightMinusResizeHandle = formSize.Height - ResizeHandleSize;
-                int widthMinusResizeHandle = formSize.Width - ResizeHandleSize;
-                int widthMinusResizeHandleDoubled = formSize.Width - ResizeHandleDoubled;
-                int heightMinusResizeHandleDoubled = formSize.Height - ResizeHandleDoubled;
+                Point clientPoint = PointToClient(screenPoint);
+                int heightMinusResizeHandle = Size.Height - ResizeHandleSize;
+                int widthMinusResizeHandle = Size.Width - ResizeHandleSize;
+                int widthMinusResizeHandleDoubled = Size.Width - ResizeHandleDoubled;
+                int heightMinusResizeHandleDoubled = Size.Height - ResizeHandleDoubled;
 
                 var boxes = new (uint pos, Rectangle rect)[]
                 {
@@ -65,7 +82,8 @@ namespace ClausaComm.Utils
                 }
             }
 
-            return handled;
+            if (!handled)
+                base.WndProc(ref m);
         }
     }
 }

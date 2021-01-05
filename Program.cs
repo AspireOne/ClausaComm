@@ -23,6 +23,11 @@ namespace ClausaComm
             Application.Run(new Forms.MainForm());
         }
 
+        public static void Terminate()
+        {
+            Application.Exit();
+        }
+
         // Supposes that the name of the executable is the same during the start of each instance.
         private static bool IsAnotherInstanceRunning()
             => System.Diagnostics.Process.GetProcessesByName(System.IO.Path.GetFileNameWithoutExtension(System.Reflection.Assembly.GetEntryAssembly().Location)).Length > 1;

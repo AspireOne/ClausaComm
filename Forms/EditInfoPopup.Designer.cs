@@ -38,7 +38,7 @@ namespace ClausaComm.Forms
             this.IpBox = new ClausaComm.Components.RoundTextBox();
             this.ProfilePictureBox = new ClausaComm.Components.ContactData.ContactProfilePicture(this.components);
             this.SaveButton = new ClausaComm.Components.SimpleLineButton(this.components);
-            this.TitleBar = new ClausaComm.Components.TitleBar(this.components) { Form = this };
+            this.TitleBar = new ClausaComm.Components.TitleBar(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.ProfilePictureBox)).BeginInit();
             this.SuspendLayout();
             // 
@@ -46,7 +46,7 @@ namespace ClausaComm.Forms
             // 
             this.HeaderLabel.Font = new System.Drawing.Font("Segoe UI", 26.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.HeaderLabel.ForeColor = System.Drawing.Color.WhiteSmoke;
-            this.HeaderLabel.Location = new System.Drawing.Point(0, 28);
+            this.HeaderLabel.Location = new System.Drawing.Point(0, 37);
             this.HeaderLabel.Name = "HeaderLabel";
             this.HeaderLabel.Size = new System.Drawing.Size(471, 41);
             this.HeaderLabel.TabIndex = 2;
@@ -153,17 +153,17 @@ namespace ClausaComm.Forms
             this.SaveButton.Text = "Save it!";
             this.SaveButton.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
-            // titleBar1
+            // TitleBar
             // 
             this.TitleBar.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(28)))), ((int)(((byte)(28)))), ((int)(((byte)(28)))));
             this.TitleBar.Dock = System.Windows.Forms.DockStyle.Top;
+            this.TitleBar.Form = null;
             this.TitleBar.Location = new System.Drawing.Point(0, 0);
-            this.TitleBar.MaximumSize = new System.Drawing.Size(0, 25);
-            this.TitleBar.MinimumSize = new System.Drawing.Size(200, 25);
-            this.TitleBar.Name = "titleBar1";
-            this.TitleBar.ShowResizeElements = false;
-            this.TitleBar.Size = new System.Drawing.Size(471, 25);
-            this.TitleBar.TabIndex = 13;
+            this.TitleBar.MaximumSize = new System.Drawing.Size(-2147483648, 25);
+            this.TitleBar.MinimumSize = new System.Drawing.Size(0, 25);
+            this.TitleBar.Name = "TitleBar";
+            this.TitleBar.Size = new System.Drawing.Size(0, 25);
+            this.TitleBar.TabIndex = 1;
             this.TitleBar.Title = "ClausaComm";
             // 
             // EditInfoPopup

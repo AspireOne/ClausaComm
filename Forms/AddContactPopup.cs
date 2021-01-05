@@ -14,7 +14,7 @@ using System.Windows.Forms;
 
 namespace ClausaComm.Forms
 {
-    public partial class AddContactPopup : Form
+    public partial class AddContactPopup : FormBase
     {
         private struct IpBoxProps
         {
@@ -32,10 +32,16 @@ namespace ClausaComm.Forms
         private int CaretPositionBefore;
         private readonly Action<Contact> Callback;
 
-
-        public AddContactPopup(Action<Contact> callback)
+        public AddContactPopup()
         {
             InitializeComponent();
+            InitializeComponentFurther();
+        }
+
+        public AddContactPopup(Action<Contact> callback) : this() => Callback = callback;
+
+        private void InitializeComponentFurther()
+        {
             Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right | AnchorStyles.Left;
             Icon = Icon.FromHandle(Properties.Resources.default_pfp.GetHicon());
 
@@ -43,7 +49,9 @@ namespace ClausaComm.Forms
             AddButton.Cursor = Cursors.No;
 
             IpBox.textbox.TextChanged += (object _, EventArgs _) => OnIpTextChange();
-            Callback = callback;
+
+            TitleBar.Form = this;
+            TitleBar.Title = "Add a Contact";
         }
 
         private void OnAddButtonClicked()
@@ -66,26 +74,31 @@ namespace ClausaComm.Forms
             string ip = IpBox.textbox.Text;
 
             int amountOfPeriods = ip.Count(x => x == '.');
+
+            if (ip.Split('.').Any(x => x.Length > 3) || amountOfPeriods > 3 || ip.Contains(".."))
+                revertTextBox();
+
             foreach (var character in ip)
             {
-                if ((character != '.' && !char.IsDigit(character))
-                    || ip.Split('.').Any(x => x.Length > 3)
-                    || amountOfPeriods > 3
-                    || (ip == "." && character == '.'))
+                if (character != '.' && !char.IsDigit(character))
                 {
-                    IpBox.textbox.Text = IpTextBefore;
-                    IpBox.textbox.SelectionStart = CaretPositionBefore;
-                    IpBox.textbox.SelectionLength = 0;
+                    revertTextBox();
                     return;
                 }
+            }
+
+            void revertTextBox()
+            {
+                IpBox.textbox.Text = IpTextBefore;
+                IpBox.textbox.SelectionStart = CaretPositionBefore;
+                IpBox.textbox.SelectionLength = 0;
             }
 
             IpTextBefore = ip;
             GetCaretPos(out Point p);
             // Returns +9 for each number and +4 for a period. We're finding the amount of periods and adding 6 for each of them, so
-            // that they act like a number, in order to be able to count caret position properly. Yeah, ugly af.
+            // that they act like a number, in order to be able to count caret position properly. Yeah, ugly.
             CaretPositionBefore = (p.X + (amountOfPeriods * 6)) / 9;
-            System.Diagnostics.Debug.WriteLine("caret pos: " + CaretPositionBefore);
 
             bool ipCorrect = IpUtils.IsIpCorrect(ip);
             AddButton.Cursor = ipCorrect ? AddButtonProps.AllowCursor : AddButtonProps.DisallowCursor;

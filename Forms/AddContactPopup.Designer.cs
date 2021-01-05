@@ -35,17 +35,18 @@ namespace ClausaComm.Forms
             this.IpBox = new ClausaComm.Components.RoundTextBox();
             this.NoteLabel = new System.Windows.Forms.Label();
             this.AddButton = new ClausaComm.Components.SimpleLineButton(this.components);
+            this.TitleBar = new ClausaComm.Components.TitleBar(this.components);
             this.SuspendLayout();
             // 
             // HeaderLabel
             // 
-            this.HeaderLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.HeaderLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.HeaderLabel.Font = new System.Drawing.Font("Segoe UI", 26.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.HeaderLabel.ForeColor = System.Drawing.Color.WhiteSmoke;
-            this.HeaderLabel.Location = new System.Drawing.Point(12, 12);
+            this.HeaderLabel.Location = new System.Drawing.Point(12, 37);
             this.HeaderLabel.Name = "HeaderLabel";
-            this.HeaderLabel.Size = new System.Drawing.Size(496, 41);
+            this.HeaderLabel.Size = new System.Drawing.Size(493, 41);
             this.HeaderLabel.TabIndex = 1;
             this.HeaderLabel.Text = "Add a Contact";
             this.HeaderLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -56,7 +57,7 @@ namespace ClausaComm.Forms
             this.IpLabel.AutoSize = true;
             this.IpLabel.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.IpLabel.ForeColor = System.Drawing.SystemColors.ButtonFace;
-            this.IpLabel.Location = new System.Drawing.Point(152, 101);
+            this.IpLabel.Location = new System.Drawing.Point(150, 126);
             this.IpLabel.Name = "IpLabel";
             this.IpLabel.Size = new System.Drawing.Size(38, 32);
             this.IpLabel.TabIndex = 3;
@@ -70,7 +71,7 @@ namespace ClausaComm.Forms
             this.IpBox.ColorBorderOnFocus = true;
             this.IpBox.Font = new System.Drawing.Font("Century Gothic", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.IpBox.ForeColor = System.Drawing.Color.Black;
-            this.IpBox.Location = new System.Drawing.Point(198, 102);
+            this.IpBox.Location = new System.Drawing.Point(194, 127);
             this.IpBox.MaxCharacters = 32767;
             this.IpBox.Multiline = false;
             this.IpBox.Name = "IpBox";
@@ -86,7 +87,7 @@ namespace ClausaComm.Forms
             this.NoteLabel.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.NoteLabel.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point);
             this.NoteLabel.ForeColor = System.Drawing.SystemColors.Control;
-            this.NoteLabel.Location = new System.Drawing.Point(77, 317);
+            this.NoteLabel.Location = new System.Drawing.Point(75, 345);
             this.NoteLabel.MinimumSize = new System.Drawing.Size(371, 72);
             this.NoteLabel.Name = "NoteLabel";
             this.NoteLabel.Size = new System.Drawing.Size(371, 72);
@@ -105,12 +106,25 @@ namespace ClausaComm.Forms
             this.AddButton.LineColor = System.Drawing.Color.White;
             this.AddButton.LineColorOnHover = System.Drawing.Color.FromArgb(((int)(((byte)(252)))), ((int)(((byte)(196)))), ((int)(((byte)(11)))));
             this.AddButton.LineWidth = 3F;
-            this.AddButton.Location = new System.Drawing.Point(216, 198);
+            this.AddButton.Location = new System.Drawing.Point(215, 213);
             this.AddButton.Name = "AddButton";
             this.AddButton.Size = new System.Drawing.Size(70, 40);
             this.AddButton.TabIndex = 8;
             this.AddButton.Text = "Add";
             this.AddButton.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            // 
+            // TitleBar
+            // 
+            this.TitleBar.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(28)))), ((int)(((byte)(28)))), ((int)(((byte)(28)))));
+            this.TitleBar.Dock = System.Windows.Forms.DockStyle.Top;
+            this.TitleBar.Form = null;
+            this.TitleBar.Location = new System.Drawing.Point(0, 0);
+            this.TitleBar.MaximumSize = new System.Drawing.Size(0, 25);
+            this.TitleBar.MinimumSize = new System.Drawing.Size(0, 25);
+            this.TitleBar.Name = "TitleBar";
+            this.TitleBar.Size = new System.Drawing.Size(517, 25);
+            this.TitleBar.TabIndex = 1;
+            this.TitleBar.Title = "ClausaComm";
             // 
             // AddContactPopup
             // 
@@ -119,7 +133,8 @@ namespace ClausaComm.Forms
             this.AutoScroll = true;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(40)))), ((int)(((byte)(40)))), ((int)(((byte)(40)))));
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.ClientSize = new System.Drawing.Size(520, 398);
+            this.ClientSize = new System.Drawing.Size(517, 426);
+            this.Controls.Add(this.TitleBar);
             this.Controls.Add(this.AddButton);
             this.Controls.Add(this.NoteLabel);
             this.Controls.Add(this.IpBox);
@@ -127,7 +142,7 @@ namespace ClausaComm.Forms
             this.Controls.Add(this.HeaderLabel);
             this.DoubleBuffered = true;
             this.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(28)))), ((int)(((byte)(28)))), ((int)(((byte)(28)))));
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.MinimumSize = new System.Drawing.Size(383, 426);
             this.Name = "AddContactPopup";
             this.Text = "Add Contact";
@@ -144,5 +159,6 @@ namespace ClausaComm.Forms
         private System.Windows.Forms.Label NoteLabel;
         private Components.RoundTextBox IpBox;
         private Components.SimpleLineButton AddButton;
+        private Components.TitleBar TitleBar;
     }
 }

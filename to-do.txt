@@ -5,3 +5,5 @@
 - add custom top bar
 - add a self-updater
 - add an installer
+- simulate a in-window window with shadows by creating a normal, separate window, copying another black windows behind it each with gradually
+	less opacity, making the window as big as the main window is, and centering the window to the center of the main window.

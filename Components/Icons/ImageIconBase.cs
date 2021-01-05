@@ -13,9 +13,6 @@ namespace ClausaComm.Components.Icons
 {
     public partial class ImageIconBase : IconBase
     {
-        public bool ColorIconOnHover { get; set; } = false;
-        public bool ColorIconOnClick { get; set; } = false;
-
         private Image ImageBeforeHover;
         private Image OriginalImage;
         private bool ImageBeforeHoverAssigned = false;
@@ -26,7 +23,7 @@ namespace ClausaComm.Components.Icons
         private Color _clickIconColor = Constants.UIConstants.ElementOnClick.Color;
         #endregion
 
-        #region properties
+        #region accesors
         public Color IconColor
         {
             get => _iconColor;
@@ -71,13 +68,9 @@ namespace ClausaComm.Components.Icons
         #endregion
 
 
-        #region constructors
-        protected ImageIconBase(Image image) : base()
-        {
-            SetInitialImage(image);
-        }
+        #region constructors and initialization
+        protected ImageIconBase(Image image) : base() => SetInitialImage(image);
         protected ImageIconBase(IContainer container) : base(container) { }
-
         private void SetInitialImage(Image image) => Image = ImageUtils.AlterColor(image, IconColor);
         #endregion
 

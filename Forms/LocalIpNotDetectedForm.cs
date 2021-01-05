@@ -10,7 +10,7 @@ using System.Windows.Forms;
 
 namespace ClausaComm.Forms
 {
-    public partial class LocalIpNotDetectedForm : Form
+    public partial class LocalIpNotDetectedForm : FormBase
     {
         public LocalIpNotDetectedForm()
         {

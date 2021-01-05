@@ -10,7 +10,7 @@ using System.Windows.Forms;
 
 namespace ClausaComm.Forms
 {
-    public partial class EditInfoPopup : Form
+    public partial class EditInfoPopup : FormBase
     {
         private readonly Contact User;
         private static readonly OpenFileDialog SelectImageDialog = new()
@@ -26,9 +26,14 @@ namespace ClausaComm.Forms
 
         public EditInfoPopup(Contact user)
         {
-            InitializeComponent();
             User = user;
 
+            InitializeComponent();
+            InitializeComponentFurther();
+        }
+
+        private void InitializeComponentFurther()
+        {
             NameBox.textbox.Text = User.Name;
             NameBox.textbox.MaxLength = Contact.MaxNameLength;
             NameBox.textbox.TextChanged += (object _, EventArgs _) => OnNameBoxTextChange();
@@ -42,6 +47,9 @@ namespace ClausaComm.Forms
             SaveButton.Paint += (object _, PaintEventArgs _) => OnSaveButtonPaint();
             SaveButton.MouseDown += (object _, MouseEventArgs _) => OnSaveButtonClick();
             SaveButton.LineColorOnHover = Constants.UIConstants.ElementOnHover.Color;
+
+            TitleBar.Form = this;
+            TitleBar.Title = "Edit your info";
         }
 
 
