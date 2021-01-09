@@ -1,10 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Drawing;
 using ClausaComm.Components.Icons;
@@ -25,9 +20,11 @@ namespace ClausaComm.Components
         private const byte ElementSize = 24;
         private const byte ElementWidth = 1;
         private const byte BoxColorOpacity = 60;
-        private static readonly Color ElementColor = Color.FromArgb(200, 200, 200);
+        private static readonly Color ElementColor = Color.FromArgb(182, 182, 182);
+        private static readonly Color CloseButtonColor = Color.FromArgb(210, 210, 200);
+        private static readonly Color ElementColorOnHover = Color.FromArgb(255, 255, 255);
         private static readonly SolidBrush ElementBackgroundBrush = new(Color.FromArgb(BoxColorOpacity, Color.FromArgb(225, 165, 46)));
-        private static readonly SolidBrush CloseButtonBackgroundBrush = new(Color.FromArgb(BoxColorOpacity, Color.Red));
+        private static readonly SolidBrush CloseButtonBackgroundBrush = new(Color.FromArgb(240, 255, 51, 58));
         // The "Location" property indicates in what order the elements should be. 0 = first.
         private readonly Label TitleText = new()
         {
@@ -46,12 +43,15 @@ namespace ClausaComm.Components
             IconColor = ElementColor,
             Location = new Point(0, 0),
             Name = "Pin",
-            Size = new Size(22, ElementSize),
+            // The ImageIcon is for some reason smaller than LineIcon even when they're at the same width, so we are adding an offset of 2.
+            Size = new Size(ElementSize + 2, ElementSize),
             Dock = DockStyle.Right,
             Margin = new Padding(0, 0, 2, 0),
-            Padding = new Padding(3, 3, 3, 3),
+            Padding = new Padding(6, 4, 6, 4),
             ColorBoxOnHover = true,
-            BoxOnHoverBrush = ElementBackgroundBrush
+            BoxOnHoverBrush = ElementBackgroundBrush,
+            ColorIconOnHover = true,
+            HoverIconColor = ElementColorOnHover
         };
 
         private readonly PictureBox ProgramIconBox = new()
@@ -72,7 +72,9 @@ namespace ClausaComm.Components
             LineColor = ElementColor,
             LineWidth = ElementWidth,
             ColorBoxOnHover = true,
-            BoxOnHoverBrush = ElementBackgroundBrush
+            BoxOnHoverBrush = ElementBackgroundBrush,
+            ColorIconOnHover = true,
+            HoverLineColor = ElementColorOnHover
         };
 
         private readonly MaximizeIcon MaximizeButton = new()
@@ -85,7 +87,9 @@ namespace ClausaComm.Components
             LineColor = ElementColor,
             LineWidth = ElementWidth,
             ColorBoxOnHover = true,
-            BoxOnHoverBrush = ElementBackgroundBrush
+            BoxOnHoverBrush = ElementBackgroundBrush,
+            ColorIconOnHover = true,
+            HoverLineColor = ElementColorOnHover
         };
 
         private readonly CrossIcon CloseButton = new()
@@ -95,10 +99,12 @@ namespace ClausaComm.Components
             Location = new Point(3, 0),
             Name = "CloseButton",
             Size = new Size(ElementSize, ElementSize),
-            LineColor = ElementColor,
+            LineColor = CloseButtonColor,
             LineWidth = ElementWidth,
             ColorBoxOnHover = true,
-            BoxOnHoverBrush = CloseButtonBackgroundBrush
+            BoxOnHoverBrush = CloseButtonBackgroundBrush,
+            ColorIconOnHover = true,
+            HoverLineColor = ElementColorOnHover
         };
         #endregion
 
@@ -117,8 +123,8 @@ namespace ClausaComm.Components
             }
         }
         private FormBase _form;
-        private bool mouseDown;
-        private Point lastLocation;
+        private bool MouseIsDown;
+        private Point LastFormLocation;
 
 
         #region constructors & initialization
@@ -154,10 +160,10 @@ namespace ClausaComm.Components
 
         private void InitForm()
         {
-            Form.ResizableChanged += (object _, bool resizable) => ChangeSizingElementsVisibility(resizable);
-            CloseButton.Click += (object _, EventArgs _) => Form.Close();
-            MinimizeButton.Click += (object _, EventArgs _) => Form.WindowState = FormWindowState.Minimized;
-            MaximizeButton.Click += (object _, EventArgs _) => Form.WindowState =
+            Form.ResizableChanged += (_, resizable) => ChangeSizingElementsVisibility(resizable);
+            CloseButton.Click += (_, _) => Form.Close();
+            MinimizeButton.Click += (_, _) => Form.WindowState = FormWindowState.Minimized;
+            MaximizeButton.Click += (_, _) => Form.WindowState =
             Form.WindowState == FormWindowState.Maximized
             ? FormWindowState.Normal
             : FormWindowState.Maximized;
@@ -172,7 +178,7 @@ namespace ClausaComm.Components
 
         #region Importing DLLs to enable dragging
         [System.Runtime.InteropServices.DllImport("user32.dll")]
-        private static extern int SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
+        private static extern int SendMessage(IntPtr hWnd, int msg, int wParam, int lParam);
         [System.Runtime.InteropServices.DllImport("user32.dll")]
         private static extern bool ReleaseCapture();
         #endregion
@@ -182,28 +188,28 @@ namespace ClausaComm.Components
             if (Form is null)
                 return;
 
-            const int WM_NCLBUTTONDOWN = 0xA1;
-            const int HT_CAPTION = 0x2;
+            const int wmNclbuttondown = 0xA1;
+            const int htCaption = 0x2;
 
             if (e.Button == MouseButtons.Left)
             {
                 ReleaseCapture();
-                _ = SendMessage(Form.Handle, WM_NCLBUTTONDOWN, HT_CAPTION, 0);
+                _ = SendMessage(Form.Handle, wmNclbuttondown, htCaption, 0);
             }
         }
 
         protected override void OnMouseDown(MouseEventArgs e)
         {
             base.OnMouseDown(e);
-            mouseDown = true;
-            lastLocation = e.Location;
+            MouseIsDown = true;
+            LastFormLocation = e.Location;
         }
         protected override void OnMouseMove(MouseEventArgs e)
         {
             base.OnMouseMove(e);
-            if (mouseDown)
+            if (MouseIsDown)
             {
-                Location = new(Location.X - lastLocation.X + e.X, Location.Y - lastLocation.Y + e.Y);
+                Location = new Point(Location.X - LastFormLocation.X + e.X, Location.Y - LastFormLocation.Y + e.Y);
                 Update();
             }
         }
@@ -211,7 +217,7 @@ namespace ClausaComm.Components
         protected override void OnMouseUp(MouseEventArgs e)
         {
             base.OnMouseUp(e);
-            mouseDown = false;
+            MouseIsDown = false;
         }
     }
 }

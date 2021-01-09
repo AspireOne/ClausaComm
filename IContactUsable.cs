@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ClausaComm
+﻿namespace ClausaComm
 {
-    interface IContactUsable
+    internal interface IContactUsable
     {
         public Contact Contact { get; set; }
     }

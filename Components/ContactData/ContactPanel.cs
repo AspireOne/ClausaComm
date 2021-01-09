@@ -1,20 +1,12 @@
-﻿using ClausaComm.Components;
-using ClausaComm.Components.ContactData;
-using ClausaComm.Utils;
+﻿using ClausaComm.Utils;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Diagnostics;
 using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace ClausaComm.Components
+namespace ClausaComm.Components.ContactData
 {
-    public partial class ContactPanel : Panel
+    public sealed partial class ContactPanel : Panel
     {
         #region selected panel
         private readonly Pen ContactSelectedLinePenAppearance = new(Constants.UIConstants.SecondaryColor, 2);
@@ -33,7 +25,7 @@ namespace ClausaComm.Components
         }
         #endregion
 
-        private readonly static Dictionary<ComponentUtils.MouseEvent, Color> MouseEventBackColor = new()
+        private static readonly Dictionary<ComponentUtils.MouseEvent, Color> MouseEventBackColor = new()
         {
             { ComponentUtils.MouseEvent.Enter, Color.FromArgb(15, 255, 255, 255) },
             { ComponentUtils.MouseEvent.Leave, Color.Transparent },
@@ -49,15 +41,14 @@ namespace ClausaComm.Components
 
         public readonly Contact Contact;
         /*make public ?*/
-        private readonly ContactProfilePicture ProfilePictureBox;
         private readonly ContactStatus StatusBox;
         private readonly ContactName NameLabel;
 
         public ContactPanel(Contact contact, Panel parentContainer)
         {
-            Flasher = new(this);
+            Flasher = new FlashTimer(this);
             Contact = contact;
-            SelectedPanelChange += (object _, EventArgs _) => Invalidate();
+            SelectedPanelChange += (_, _) => Invalidate();
 
             #region Panel initialization
             InitializeComponent();
@@ -74,7 +65,7 @@ namespace ClausaComm.Components
 
             #region child controls initialization
 
-            ProfilePictureBox = new(Contact)
+            ContactProfilePicture profilePictureBox = new(Contact)
             {
                 Dock = DockStyle.Left,
                 Parent = this,
@@ -82,30 +73,30 @@ namespace ClausaComm.Components
             };
 
             const int nameOffset = 2;
-            NameLabel = new(Contact)
+            NameLabel = new ContactName(Contact)
             {
-                Location = new Point(ProfilePictureBox.Width + nameOffset, 0),
-                Size = new Size(Width - ProfilePictureBox.Width - nameOffset, Height),
+                Location = new Point(profilePictureBox.Width + nameOffset, 0),
+                Size = new Size(Width - profilePictureBox.Width - nameOffset, Height),
                 Font = new Font(Contact.IsUser ? "Sans UI" : "Segoe UI", 13, FontStyle.Regular),
                 Parent = this
             };
 
             const int statusIconSize = 13;
-            StatusBox = contact.IsUser ? null : new(Contact)
+            StatusBox = contact.IsUser ? null : new ContactStatus(Contact)
             {
                 Size = new Size(statusIconSize, statusIconSize),
-                Location = new Point(ProfilePictureBox.Width - statusIconSize, ProfilePictureBox.Height - statusIconSize),
-                Parent = ProfilePictureBox
+                Location = new Point(profilePictureBox.Width - statusIconSize, profilePictureBox.Height - statusIconSize),
+                Parent = profilePictureBox
             };
             #endregion
 
             foreach (Control control in Controls)
             {
-                control.MouseDown += (object _, MouseEventArgs e) => OnMouseDown(e);
-                control.MouseUp += (object _, MouseEventArgs e) => OnMouseUp(e);
-                control.MouseEnter += (object _, EventArgs e) => OnMouseEnter(e);
-                control.MouseLeave += (object _, EventArgs e) => OnMouseLeave(e);
-                control.Click += (object _, EventArgs e) => OnClick(e);
+                control.MouseDown += (_, e) => OnMouseDown(e);
+                control.MouseUp += (_, e) => OnMouseUp(e);
+                control.MouseEnter += (_, e) => OnMouseEnter(e);
+                control.MouseLeave += (_, e) => OnMouseLeave(e);
+                control.Click += (_, e) => OnClick(e);
             }
 
             ComponentUtils.AddBackColorFilterOnMouseEvent(this, MouseEventBackColor);
@@ -174,7 +165,7 @@ namespace ClausaComm.Components
 
             private void OnFlashTimerTick(object _, EventArgs e)
             {
-                Color modifiedColor = Color.FromArgb(LastFlashAlpha += IncreaseFlash ? FlashSpeed : -FlashSpeed, FlashPeakColor.R, FlashPeakColor.G, FlashPeakColor.B);
+                var modifiedColor = Color.FromArgb(LastFlashAlpha += IncreaseFlash ? FlashSpeed : -FlashSpeed, FlashPeakColor.R, FlashPeakColor.G, FlashPeakColor.B);
 
                 Panel.ChangeBackgroundColor(modifiedColor);
 

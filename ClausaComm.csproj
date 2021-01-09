@@ -3,6 +3,8 @@
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net5.0-windows</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <PublishReadyToRun>false</PublishReadyToRun>
     <UseWindowsForms>true</UseWindowsForms>
     <Authors>Matěj Pešl &lt;matejpesl1@gmail.com&gt;</Authors>
     <Version>0.0.1</Version>
@@ -10,6 +12,8 @@
     <Copyright>Copyright © 2021 Matěj Pešl, Some Rights Reserved.</Copyright>
     <Nullable>disable</Nullable>
     <StartupObject>ClausaComm.Program</StartupObject>
+    <Platforms>AnyCPU</Platforms>
+    <ApplicationIcon>program_icon.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>

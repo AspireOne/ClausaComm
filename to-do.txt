@@ -1,9 +1,13 @@
 - Correct all namespaces [done]
-- Rmake the infrastructure from LAN to public P2P (I'd first need to figure out NAT hole punching, which I wasn't able to do even after a month so)
 - assign each user a random id so that they can indentify even when they have a different IP [done]
-- add a small (i) (info) icon to icons like call, remove contact etc.
-- add custom top bar
+- add custom title bar [done]
+- Rmake the infrastructure from LAN to public P2P (I'd first need to figure out NAT hole punching, which I wasn't able to do even after a month so,
+but it seems like it's not possible without a stun server or just some middle-man server) [impossible]
+- add a small (i) (info) icon to icons like call, remove contact etc. [would overlap with the main icon. Abandoned.]
+
+
 - add a self-updater
 - add an installer
+- add networking
 - simulate a in-window window with shadows by creating a normal, separate window, copying another black windows behind it each with gradually
 	less opacity, making the window as big as the main window is, and centering the window to the center of the main window.

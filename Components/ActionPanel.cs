@@ -2,12 +2,7 @@
 using ClausaComm.Components.Icons;
 using ClausaComm.Properties;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace ClausaComm.Components
@@ -101,7 +96,7 @@ namespace ClausaComm.Components
             get => _contact;
             set
             {
-                if (value == _contact)
+                if (ReferenceEquals(value, _contact))
                     return;
 
                 _contact = value;
@@ -135,7 +130,7 @@ namespace ClausaComm.Components
             ChangeContactSpecificElementsVisibility(false);
             Array.ForEach(ChildControls, control => Controls.Add(control));
 
-            SaveUnsaveContactIcon.Click += (object _, EventArgs _) =>
+            SaveUnsaveContactIcon.Click += (_, _) =>
             {
                 Contact.Save = !Contact.Save;
                 ChangeSaveIconStateAccordingly();

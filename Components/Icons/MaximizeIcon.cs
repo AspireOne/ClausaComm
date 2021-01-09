@@ -1,35 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Diagnostics;
+﻿using System.ComponentModel;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace ClausaComm.Components.Icons
 {
     public partial class MaximizeIcon : LineIconBase
     {
-
-        public enum FormState
-        {
-            Normal,
-            Maximized
-        }
-
-        FormState _formState;
-        public FormState State
-        {
-            get => _formState;
-            set
-            {
-                _formState = value;
-                Invalidate();
-            }
-        }
-
         public MaximizeIcon() : base() { }
 
         public MaximizeIcon(IContainer container) : base(container) { }
@@ -62,7 +38,7 @@ namespace ClausaComm.Components.Icons
             Point bottomLineStart = new(leftX, bottomY);
             Point bottomLineEnd = new(rightX, bottomY);
 
-            var lines = new (Point, Point)[]
+            (Point, Point)[] lines =
             {
                 (leftLineStart, leftLineEnd),
                 (rightLineStart, rightLineEnd),
@@ -70,9 +46,9 @@ namespace ClausaComm.Components.Icons
                 (bottomLineStart, bottomLineEnd)
             };
 
-            foreach (var pair in lines)
+            foreach (var (start, end) in lines)
             {
-                pe.Graphics.DrawLine(CurrentLineAppearance, pair.Item1, pair.Item2);
+                pe.Graphics.DrawLine(CurrentLineAppearance, start, end);
             }
         }
     }

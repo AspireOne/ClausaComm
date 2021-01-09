@@ -1,16 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Diagnostics;
+﻿using System.ComponentModel;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace ClausaComm.Components.ContactData
 {
-    public partial class ContactName : Label, IContactUsable
+    public sealed partial class ContactName : Label, IContactUsable
     {
         private Contact _contact;
         public Contact Contact

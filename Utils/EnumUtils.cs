@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ClausaComm.Utils
 {
@@ -14,9 +12,7 @@ namespace ClausaComm.Utils
         {
             FieldInfo fieldInfo = enumValue.GetType().GetField(enumValue.ToString());
 
-            DescriptionAttribute[] attributes = fieldInfo.GetCustomAttributes(typeof(DescriptionAttribute), false) as DescriptionAttribute[];
-
-            if (attributes is not null && attributes.Any())
+            if (fieldInfo.GetCustomAttributes(typeof(DescriptionAttribute), false) is DescriptionAttribute[] attributes && attributes.Any())
                 return attributes.First().Description;
 
             return enumValue.ToString();

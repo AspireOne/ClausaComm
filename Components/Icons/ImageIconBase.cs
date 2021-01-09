@@ -1,12 +1,7 @@
 ﻿using ClausaComm.Utils;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace ClausaComm.Components.Icons
@@ -19,8 +14,8 @@ namespace ClausaComm.Components.Icons
 
         #region backing fields
         private Color _iconColor = DefaultIconColor;
-        private Color _hoverIconColor = Constants.UIConstants.ElementOnHover.Color;
-        private Color _clickIconColor = Constants.UIConstants.ElementOnClick.Color;
+        private Color _hoverIconColor = Constants.UIConstants.ElementOnHoverColor;
+        private Color _clickIconColor = Constants.UIConstants.ElementOnClickColor;
         #endregion
 
         #region accesors
@@ -40,7 +35,7 @@ namespace ClausaComm.Components.Icons
             get => _hoverIconColor;
             set
             {
-                _hoverIconColor = Constants.UIConstants.ReturnNewOrDefaultColor(Constants.UIConstants.ElementOnHover.Color, value);
+                _hoverIconColor = Constants.UIConstants.ReturnNewOrDefaultColor(Constants.UIConstants.ElementOnHoverColor, value);
                 Invalidate();
             }
         }
@@ -50,11 +45,11 @@ namespace ClausaComm.Components.Icons
             set
             {
                 Invalidate();
-                _clickIconColor = Constants.UIConstants.ReturnNewOrDefaultColor(Constants.UIConstants.ElementOnClick.Color, value);
+                _clickIconColor = Constants.UIConstants.ReturnNewOrDefaultColor(Constants.UIConstants.ElementOnClickColor, value);
             }
         }
 
-        new protected Image Image
+        protected new Image Image
         {
             get => base.Image;
             set
@@ -108,10 +103,7 @@ namespace ClausaComm.Components.Icons
         {
             base.OnMouseUp(e);
             if (IsHovering)
-                if (ColorIconOnHover)
-                    Image = ImageUtils.AlterColor(Image, HoverIconColor);
-                else
-                    Image = ImageBeforeHover;
+                Image = ColorIconOnHover ? ImageUtils.AlterColor(Image, HoverIconColor) : ImageBeforeHover;
         }
 
         protected override void OnMouseLeave(EventArgs e)

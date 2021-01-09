@@ -1,11 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace ClausaComm.Forms
@@ -34,19 +28,19 @@ namespace ClausaComm.Forms
 
         private void InitializeComponentFurther()
         {
-            NameBox.textbox.Text = User.Name;
-            NameBox.textbox.MaxLength = Contact.MaxNameLength;
-            NameBox.textbox.TextChanged += (object _, EventArgs _) => OnNameBoxTextChange();
+            NameBox.Textbox.Text = User.Name;
+            NameBox.Textbox.MaxLength = Contact.MaxNameLength;
+            NameBox.Textbox.TextChanged += (_, _) => OnNameBoxTextChange();
 
-            IpBox.textbox.Text = User.Ip;
-            IpBox.textbox.ReadOnly = true;
+            IpBox.Textbox.Text = User.Ip;
+            IpBox.Textbox.ReadOnly = true;
 
             ProfilePictureBox.Image = User.ProfilePic;
             ProfilePictureBox.Cursor = Cursors.Hand;
 
-            SaveButton.Paint += (object _, PaintEventArgs _) => OnSaveButtonPaint();
-            SaveButton.MouseDown += (object _, MouseEventArgs _) => OnSaveButtonClick();
-            SaveButton.LineColorOnHover = Constants.UIConstants.ElementOnHover.Color;
+            SaveButton.Paint += (_, _) => OnSaveButtonPaint();
+            SaveButton.MouseDown += (_, _) => OnSaveButtonClick();
+            SaveButton.LineColorOnHover = Constants.UIConstants.ElementOnHoverColor;
 
             TitleBar.Form = this;
             TitleBar.Title = "Edit your info";
@@ -60,28 +54,22 @@ namespace ClausaComm.Forms
 
         private void OnNameBoxTextChange()
         {
-            if (NameBox.textbox.Text.Length is < Contact.MinNameLength or > Contact.MaxNameLength)
-                NameBox.BorderColor = Color.Red;
-            else
-                NameBox.BorderColor = Color.Transparent;
+            NameBox.BorderColor = NameBox.Textbox.Text.Length is < Contact.MinNameLength or > Contact.MaxNameLength ? Color.Red : Color.Transparent;
             SaveButton.Invalidate();
         }
 
         private void OnSaveButtonPaint()
         {
-            if (NameBox.BorderColor == Color.Red)
-                SaveButton.Cursor = Cursors.No;
-            else
-                SaveButton.Cursor = Cursors.Hand;
+            SaveButton.Cursor = NameBox.BorderColor == Color.Red ? Cursors.No : Cursors.Hand;
         }
 
         private void OnSaveButtonClick()
         {
             if (SaveButton.Cursor == Cursors.Hand)
             {
-                User.Name = NameBox.textbox.Text;
+                User.Name = NameBox.Textbox.Text;
                 User.ProfilePic = ProfilePictureBox.Image;
-                this.Close();
+                Close();
             }
         }
 

@@ -1,15 +1,8 @@
 ﻿using ClausaComm.Utils;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace ClausaComm.Forms
@@ -45,10 +38,10 @@ namespace ClausaComm.Forms
             Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right | AnchorStyles.Left;
             Icon = Icon.FromHandle(Properties.Resources.default_pfp.GetHicon());
 
-            AddButton.MouseDown += (object _, MouseEventArgs _) => OnAddButtonClicked();
+            AddButton.MouseDown += (_, _) => OnAddButtonClicked();
             AddButton.Cursor = Cursors.No;
 
-            IpBox.textbox.TextChanged += (object _, EventArgs _) => OnIpTextChange();
+            IpBox.Textbox.TextChanged += (_, _) => OnIpTextChange();
 
             TitleBar.Form = this;
             TitleBar.Title = "Add a Contact";
@@ -58,9 +51,9 @@ namespace ClausaComm.Forms
         {
             if (AddButton.Cursor == AddButtonProps.AllowCursor)
             {
-                if (!Contact.XmlFile.GetContacts().Any(x => x.Ip == IpBox.textbox.Text))
+                if (!Contact.XmlFile.GetContacts().Any(x => x.Ip == IpBox.Textbox.Text))
                 {
-                    var contact = new Contact(IpBox.textbox.Text) { Save = true };
+                    var contact = new Contact(IpBox.Textbox.Text) { Save = true };
                     Callback(contact);
                 }
                 Close();
@@ -71,27 +64,25 @@ namespace ClausaComm.Forms
         private static extern bool GetCaretPos(out Point lpPoint);
         private void OnIpTextChange()
         {
-            string ip = IpBox.textbox.Text;
+            string ip = IpBox.Textbox.Text;
 
             int amountOfPeriods = ip.Count(x => x == '.');
 
             if (ip.Split('.').Any(x => x.Length > 3) || amountOfPeriods > 3 || ip.Contains(".."))
-                revertTextBox();
+                RevertTextBox();
 
-            foreach (var character in ip)
+
+            if (ip.Any(ch => ch != '.' && !char.IsDigit(ch)))
             {
-                if (character != '.' && !char.IsDigit(character))
-                {
-                    revertTextBox();
-                    return;
-                }
+                RevertTextBox();
+                return;
             }
 
-            void revertTextBox()
+            void RevertTextBox()
             {
-                IpBox.textbox.Text = IpTextBefore;
-                IpBox.textbox.SelectionStart = CaretPositionBefore;
-                IpBox.textbox.SelectionLength = 0;
+                IpBox.Textbox.Text = IpTextBefore;
+                IpBox.Textbox.SelectionStart = CaretPositionBefore;
+                IpBox.Textbox.SelectionLength = 0;
             }
 
             IpTextBefore = ip;

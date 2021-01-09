@@ -1,15 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace ClausaComm.Components
 {
-    public partial class ChatTextBox : TextBox
+    public sealed partial class ChatTextBox : TextBox
     {
         #region backing properties
         private int _nLeftRect = 2;
@@ -62,7 +56,7 @@ namespace ClausaComm.Components
 
         public ChatTextBox()
         {
-            this.MaxLength = Message.MaxCharacters;
+            MaxLength = Message.MaxCharacters;
         }
 
         [System.Runtime.InteropServices.DllImport("gdi32.dll", EntryPoint = "CreateRoundRectRgn")]

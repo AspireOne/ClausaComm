@@ -1,22 +1,12 @@
-﻿using ClausaComm.Forms;
-using ClausaComm.Properties;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Diagnostics;
+﻿using System;
 using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.Linq;
-using System.Resources;
-using System.Security.Policy;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using ClausaComm.Extensions;
+using ClausaComm.Components.ContactData;
 using ClausaComm.Components;
 using ClausaComm.Utils;
-using System.Threading;
 
 namespace ClausaComm.Forms
 {
@@ -50,7 +40,7 @@ namespace ClausaComm.Forms
 
         private void InitializeProgram()
         {
-            bool userExists = false;
+            var userExists = false;
             foreach (Contact contact in Contact.XmlFile.GetContacts())
             {
                 AddContact(contact);
@@ -64,20 +54,18 @@ namespace ClausaComm.Forms
             PanelOfContactPanels.SimulateClickOnFirstPanel();
         }
 
-        public void AddContact(Contact contact)
+        public void AddContact(Contact contactToAdd)
         {
-            if (contact is null)
-                throw new ArgumentNullException(nameof(contact));
+            if (contactToAdd is null)
+                throw new ArgumentNullException(nameof(contactToAdd));
 
-            void clickActionIfUser() => ShowPopup(new EditInfoPopup(contact));
-            void clickActionIfContact(Contact contact) => ChangeChatContact(contact);
+            void ClickActionIfUser() => ShowPopup(new EditInfoPopup(contactToAdd));
+            void ClickActionIfContact(Contact contact) => ChangeChatContact(contact);
 
-            ContactPanel panel;
-
-            if (contact.IsUser)
-                panel = new ContactPanel(contact, OwnProfilePanel) { OnClickAction = clickActionIfUser };
+            if (contactToAdd.IsUser)
+                _ = new ContactPanel(contactToAdd, OwnProfilePanel) { OnClickAction = ClickActionIfUser };
             else
-                panel = new ContactPanel(contact, PanelOfContactPanels) { OnClickActionContact = clickActionIfContact };
+                _ = new ContactPanel(contactToAdd, PanelOfContactPanels) { OnClickActionContact = ClickActionIfContact };
 
             PanelOfContactPanels.SimulateClickOnFirstPanel();
         }
@@ -104,6 +92,7 @@ namespace ClausaComm.Forms
                 PanelOfContactPanels.Panels.ElementAt(0).Contact.ProfilePic = Image.FromFile(@"C:\Users\matej\Desktop\d.png");
                 PanelOfContactPanels.Panels.ElementAt(0).Contact.CurrentStatus = Contact.Status.Online;
                 PanelOfContactPanels.Panels.ElementAt(0).Contact.Name = "Ej ej ejj";
+                PanelOfContactPanels.Panels.ElementAt(0).FlashPanel();
             }
 
             ShowPopup(new AddContactPopup(AddContact));
@@ -121,7 +110,7 @@ namespace ClausaComm.Forms
         private async void ShowPopup(Form popup)
         {
             ChangeControlsEnabled(false);
-            await Task.Run(() => popup.ShowDialog());
+            await Task.Run(popup.ShowDialog);
             ChangeControlsEnabled(true);
         }
 

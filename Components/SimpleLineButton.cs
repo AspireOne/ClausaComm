@@ -1,11 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace ClausaComm.Components
@@ -18,7 +13,7 @@ namespace ClausaComm.Components
         private const int DefaultLineWidth = 3;
 
         private Pen Line { get; set; } = new(DefaultLineColor, DefaultLineWidth);
-        private Pen LineOnHover { get; set; } = new(Constants.UIConstants.ElementOnHover.Color, DefaultLineWidth);
+        private Pen LineOnHover { get; set; } = new(Constants.UIConstants.ElementOnHoverColor, DefaultLineWidth);
 
         public float LineWidth
         {
@@ -46,7 +41,7 @@ namespace ClausaComm.Components
             get => LineOnHover.Color;
             set
             {
-                LineOnHover.Color = Constants.UIConstants.ReturnNewOrDefaultColor(Constants.UIConstants.ElementOnHover.Color, value);
+                LineOnHover.Color = Constants.UIConstants.ReturnNewOrDefaultColor(Constants.UIConstants.ElementOnHoverColor, value);
                 Invalidate();
             }
         }

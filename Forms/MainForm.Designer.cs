@@ -33,6 +33,7 @@ namespace ClausaComm.Forms
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.IpLbl = new System.Windows.Forms.Label();
             this.Status = new ClausaComm.Components.ContactData.ContactStatus(this.components);
+            this.Name = Program.ProgramName;
             this.NameLbl = new ClausaComm.Components.ContactData.ContactName(this.components);
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.CallContactIcon = new ClausaComm.Components.Icons.PhoneIcon(this.components);
@@ -101,11 +102,10 @@ namespace ClausaComm.Forms
             // 
             // CallContactIcon
             // 
-            this.CallContactIcon.ClickIconColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(79)))), ((int)(((byte)(25)))));
+            this.CallContactIcon.ColorBoxOnHover = false;
             this.CallContactIcon.ColorIconOnClick = true;
             this.CallContactIcon.ColorIconOnHover = false;
             this.CallContactIcon.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.CallContactIcon.HoverIconColor = System.Drawing.Color.FromArgb(((int)(((byte)(44)))), ((int)(((byte)(117)))), ((int)(((byte)(252)))));
             this.CallContactIcon.IconColor = System.Drawing.Color.FromArgb(((int)(((byte)(1)))), ((int)(((byte)(250)))), ((int)(((byte)(250)))), ((int)(((byte)(250)))));
             this.CallContactIcon.Location = new System.Drawing.Point(65, 12);
             this.CallContactIcon.Name = "CallContactIcon";
@@ -197,12 +197,11 @@ namespace ClausaComm.Forms
             // 
             // SendIcon1
             // 
-            this.SendIcon1.ClickIconColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(79)))), ((int)(((byte)(25)))));
+            this.SendIcon1.ColorBoxOnHover = false;
             this.SendIcon1.ColorIconOnClick = true;
             this.SendIcon1.ColorIconOnHover = true;
             this.SendIcon1.Cursor = System.Windows.Forms.Cursors.Hand;
             this.SendIcon1.Dock = System.Windows.Forms.DockStyle.Right;
-            this.SendIcon1.HoverIconColor = System.Drawing.Color.FromArgb(((int)(((byte)(253)))), ((int)(((byte)(182)))), ((int)(((byte)(62)))));
             this.SendIcon1.IconColor = System.Drawing.Color.FromArgb(((int)(((byte)(1)))), ((int)(((byte)(250)))), ((int)(((byte)(250)))), ((int)(((byte)(250)))));
             this.SendIcon1.Location = new System.Drawing.Point(821, 0);
             this.SendIcon1.Name = "SendIcon1";
@@ -239,14 +238,13 @@ namespace ClausaComm.Forms
             // AddContactIcon
             // 
             this.AddContactIcon.CircleColor = System.Drawing.Color.White;
-            this.AddContactIcon.ClickCircleColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(79)))), ((int)(((byte)(25)))));
             this.AddContactIcon.ClickLineColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.AddContactIcon.ColorBoxOnHover = false;
             this.AddContactIcon.ColorCircleOnClick = true;
             this.AddContactIcon.ColorCircleOnHover = true;
             this.AddContactIcon.ColorIconOnClick = false;
             this.AddContactIcon.ColorIconOnHover = false;
             this.AddContactIcon.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.AddContactIcon.HoverCircleColor = System.Drawing.Color.FromArgb(((int)(((byte)(253)))), ((int)(((byte)(182)))), ((int)(((byte)(62)))));
             this.AddContactIcon.HoverLineColor = System.Drawing.Color.Gray;
             this.AddContactIcon.IconPaddingFactor = 3.4F;
             this.AddContactIcon.LineColor = System.Drawing.Color.Gray;
@@ -265,9 +263,9 @@ namespace ClausaComm.Forms
             this.PanelOfContactPanels.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
             | System.Windows.Forms.AnchorStyles.Left)));
             this.PanelOfContactPanels.AutoScroll = true;
-            this.PanelOfContactPanels.Location = new System.Drawing.Point(0, 126);
+            this.PanelOfContactPanels.Location = new System.Drawing.Point(0, 125);
             this.PanelOfContactPanels.Name = "PanelOfContactPanels";
-            this.PanelOfContactPanels.Size = new System.Drawing.Size(182, 1156);
+            this.PanelOfContactPanels.Size = new System.Drawing.Size(183, 555);
             this.PanelOfContactPanels.TabIndex = 7;
             // 
             // ContactSearchBox

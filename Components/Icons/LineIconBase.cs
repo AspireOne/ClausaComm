@@ -1,12 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace ClausaComm.Components.Icons
@@ -32,7 +27,7 @@ namespace ClausaComm.Components.Icons
             get => HoverCircleBrush.Color;
             set
             {
-                HoverCircleBrush.Color = Constants.UIConstants.ReturnNewOrDefaultColor(Constants.UIConstants.ElementOnHover.Color, value);
+                HoverCircleBrush.Color = Constants.UIConstants.ReturnNewOrDefaultColor(Constants.UIConstants.ElementOnHoverColor, value);
                 Invalidate();
             }
         }
@@ -42,13 +37,13 @@ namespace ClausaComm.Components.Icons
             get => ClickCircleBrush.Color;
             set
             {
-                ClickCircleBrush.Color = Constants.UIConstants.ReturnNewOrDefaultColor(Constants.UIConstants.ElementOnClick.Color, value);
+                ClickCircleBrush.Color = Constants.UIConstants.ReturnNewOrDefaultColor(Constants.UIConstants.ElementOnClickColor, value);
                 Invalidate();
             }
         }
 
-        protected SolidBrush HoverCircleBrush = new(Constants.UIConstants.ElementOnHover.Color);
-        protected SolidBrush ClickCircleBrush = new(Constants.UIConstants.ElementOnClick.Color);
+        protected SolidBrush HoverCircleBrush = new(Constants.UIConstants.ElementOnHoverColor);
+        protected SolidBrush ClickCircleBrush = new(Constants.UIConstants.ElementOnClickColor);
         protected SolidBrush CircleBrush = new(IconBase.DefaultIconColor);
 
         protected SolidBrush CurrentCircleBrush
@@ -73,47 +68,49 @@ namespace ClausaComm.Components.Icons
         // Making two separate accessors so that we can set in the designer.
         public float LineWidth
         {
-            get => LineAppearance.Width;
+            get => IconAppearance.Width;
             set
             {
-                LineAppearance.Width = value;
+                IconAppearance.Width = value;
+                HoverIconAppearance.Width = value;
+                ClickIconAppearance.Width = value;
                 Invalidate();
             }
         }
 
         public Color LineColor
         {
-            get => LineAppearance.Color;
+            get => IconAppearance.Color;
             set
             {
-                LineAppearance.Color = Constants.UIConstants.ReturnNewOrDefaultColor(DefaultIconColor, value);
+                IconAppearance.Color = Constants.UIConstants.ReturnNewOrDefaultColor(DefaultIconColor, value);
                 Invalidate();
             }
         }
 
         public Color HoverLineColor
         {
-            get => HoverLineAppearance.Color;
+            get => HoverIconAppearance.Color;
             set
             {
-                HoverLineAppearance.Color = Constants.UIConstants.ReturnNewOrDefaultColor(DefaultIconHoverColor, value);
+                HoverIconAppearance.Color = Constants.UIConstants.ReturnNewOrDefaultColor(DefaultIconHoverColor, value);
                 Invalidate();
             }
         }
 
         public Color ClickLineColor
         {
-            get => ClickLineAppearance.Color;
+            get => ClickIconAppearance.Color;
             set
             {
-                ClickLineAppearance.Color = Constants.UIConstants.ReturnNewOrDefaultColor(Constants.UIConstants.ElementOnClick.Color, value);
+                ClickIconAppearance.Color = Constants.UIConstants.ReturnNewOrDefaultColor(Constants.UIConstants.ElementOnClickColor, value);
                 Invalidate();
             }
         }
 
-        protected Pen LineAppearance { get; set; } = new(Color.Gray, DefaultLineWidth);
-        protected Pen HoverLineAppearance { get; set; } = new(Color.Gray, DefaultLineWidth);
-        protected Pen ClickLineAppearance { get; set; } = new(Constants.UIConstants.ElementOnClick.Color, DefaultLineWidth);
+        protected Pen IconAppearance { get; set; } = new(Color.Gray, DefaultLineWidth);
+        protected Pen HoverIconAppearance { get; set; } = new(Color.Gray, DefaultLineWidth);
+        protected Pen ClickIconAppearance { get; set; } = new(Constants.UIConstants.ElementOnClickColor, DefaultLineWidth);
 
         /// <summary> Will return pen according to current circumstances. If hovering - hovering pen. If not - normal pen. if clicking - click pen. </summary>
 
@@ -122,16 +119,16 @@ namespace ClausaComm.Components.Icons
             get
             {
                 if (ColorIconOnClick && IsMouseDown)
-                    return ClickLineAppearance;
+                    return ClickIconAppearance;
 
                 if (ColorIconOnHover && IsHovering)
-                    return HoverLineAppearance;
+                    return HoverIconAppearance;
 
-                return LineAppearance;
+                return IconAppearance;
             }
         }
 
-        protected static readonly new Color DefaultIconColor = Color.Gray;
+        protected new static readonly Color DefaultIconColor = Color.Gray;
         protected static readonly Color DefaultIconHoverColor = DefaultIconColor;
         protected const int DefaultLineWidth = 2;
         #endregion

@@ -1,38 +1,39 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace ClausaComm.Components.Icons
 {
     public partial class IconBase : PictureBox
     {
-        public static readonly Color DefaultIconColor = Color.White;
+        // Hide the base class's Image property and change accessor to protected, so that it's not changeable from the outside.
+        public new Image Image
+        {
+            get => base.Image;
+            protected set => base.Image = value;
+        }
         public bool UnderlineOnHover { get; set; } = false;
         public Pen UnderlineAppearance { get; set; } = new(Brushes.White, 3);
 
         protected bool IsHovering { get; private set; } = false;
         protected bool IsMouseDown { get; private set; } = false;
 
-        // Hide the base class's Image property and change accessor to protected, so that it's not changeable from the outside.
-        new public Image Image
-        {
-            get => base.Image;
-            protected set => base.Image = value;
-        }
-
         public bool ColorIconOnHover { get; set; } = false;
         public bool ColorIconOnClick { get; set; } = false;
 
-        public SolidBrush BoxOnHoverBrush { get; set; } = new SolidBrush(Color.Transparent);
         public bool ColorBoxOnHover { get; set; } = false;
+        public SolidBrush BoxOnHoverBrush { get; set; } = new(Color.Transparent);
 
+        public static readonly Color DefaultIconColor = Color.White;
+        /*
+        public string Info { get; set; } = "debug, delete this TODO";
+        private static readonly Icon InfoIcon = Properties.Resources.info_icon1;
+        private const byte InfoIconSize = 12;
+        private const byte InfoIconY = 0;
+        private int InfoIconX => Width - InfoIconSize;
+        private bool IsMouseOverInfoIcon;
+        */
 
         protected IconBase()
         {
@@ -57,11 +58,29 @@ namespace ClausaComm.Components.Icons
 
                 if (ColorBoxOnHover)
                 {
-                    Rectangle rect = new Rectangle(0, 0, Width, Height);
                     pe.Graphics.FillRectangle(BoxOnHoverBrush, ClientRectangle);
                 }
+                /*
+                if (!string.IsNullOrEmpty(Info))
+                {
+                    var rect = new Rectangle(InfoIconX - 2, InfoIconY, InfoIconSize - 2, InfoIconSize);
+                    Pen p = new(new SolidBrush(Color.White), 1);
+                    pe.Graphics.DrawEllipse(p, rect);
+                    // pe.Graphics.DrawIcon(InfoIcon, new Rectangle(InfoIconX, InfoIconY, InfoIconSize, InfoIconSize));
+                    pe.Graphics.DrawImage(InfoIcon, new Rectangle(InfoIconX, InfoIconY, InfoIconSize, InfoIconSize));
+                }
+                */
             }
         }
+        /*
+        protected override void OnMouseMove(MouseEventArgs e)
+        {
+            base.OnMouseMove(e);
+            IsMouseOverInfoIcon = e.X >= InfoIconX && e.X <= InfoIconX + InfoIconSize && e.Y >= InfoIconY && e.Y <= InfoIconY + InfoIconSize;
+            //OnPaint(new PaintEventArgs(this.CreateGraphics(), this.ClientRectangle()));
+            Invalidate();
+        }
+        */
 
         protected override void OnMouseEnter(EventArgs e)
         {

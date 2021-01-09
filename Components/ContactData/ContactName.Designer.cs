@@ -1,7 +1,7 @@
 ﻿
 namespace ClausaComm.Components.ContactData
 {
-    partial class ContactName
+    sealed partial class ContactName
     {
         /// <summary>
         /// Required designer variable.

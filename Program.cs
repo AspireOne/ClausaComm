@@ -1,13 +1,12 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace ClausaComm
 {
-    internal static class Program
+    public static class Program
     {
+        public const string ProgramName = "ClausaComm";
+        public const string Version = "0.0.1";
         /// <summary>
         ///  The main entry point for the application.
         /// </summary>

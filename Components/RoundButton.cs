@@ -4,13 +4,13 @@ using System.Windows.Forms;
 
 namespace ClausaComm.Components
 {
-    public class RoundButton : Button
+    public sealed class RoundButton : Button
     {
         public Color BorderColor { get; set; } = Color.Transparent;
         public Color OnHoverBorderColor { get; set; } = Color.Transparent;
         public Color ButtonColor { get; set; } = Color.Gray;
-        public Color OnHoverButtonColor { get; set; } = Constants.UIConstants.ElementOnHover.Color;
-        public Color OnClickColor { get; set; } = Constants.UIConstants.ElementOnClick.Color;
+        public Color OnHoverButtonColor { get; set; } = Constants.UIConstants.ElementOnHoverColor;
+        public Color OnClickColor { get; set; } = Constants.UIConstants.ElementOnClickColor;
         public Color TextColor { get; set; } = Color.Black;
         public int BorderThickness
         {
@@ -53,7 +53,7 @@ namespace ClausaComm.Components
         protected override void OnMouseDown(MouseEventArgs e)
         {
             // Not calling base so that the Button doesn't highlight the background.
-            OnDown.Invoke(this, EventArgs.Empty);
+            OnDown?.Invoke(this, EventArgs.Empty);
             IsClicking = true;
             Invalidate();
         }
@@ -80,10 +80,10 @@ namespace ClausaComm.Components
             brush.Dispose();
             brush = new SolidBrush(IsClicking ? OnClickColor : IsHovering ? OnHoverButtonColor : ButtonColor);
 
-            int HeightMinusBorder = Height - BorderThickness;
-            g.FillEllipse(brush, BorderThicknessDividedByTwo, BorderThicknessDividedByTwo, HeightMinusBorder, HeightMinusBorder);
-            g.FillEllipse(brush, Width - Height + BorderThicknessDividedByTwo, BorderThicknessDividedByTwo, HeightMinusBorder, HeightMinusBorder);
-            g.FillRectangle(brush, (Height / 2) + BorderThicknessDividedByTwo, BorderThicknessDividedByTwo, Width - HeightMinusBorder, HeightMinusBorder);
+            int heightMinusBorder = Height - BorderThickness;
+            g.FillEllipse(brush, BorderThicknessDividedByTwo, BorderThicknessDividedByTwo, heightMinusBorder, heightMinusBorder);
+            g.FillEllipse(brush, Width - Height + BorderThicknessDividedByTwo, BorderThicknessDividedByTwo, heightMinusBorder, heightMinusBorder);
+            g.FillRectangle(brush, (Height / 2) + BorderThicknessDividedByTwo, BorderThicknessDividedByTwo, Width - heightMinusBorder, heightMinusBorder);
 
             brush.Dispose();
             brush = new SolidBrush(TextColor);

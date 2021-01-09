@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text;
 
 namespace ClausaComm
 {
@@ -22,7 +18,7 @@ namespace ClausaComm
             for (var i = 0; i < Length; ++i)
                 IdBuilder.Append(AllowedChars[Constants.Random.Next(0, AllowedChars.Length)]);
 
-            string id = IdBuilder.ToString();
+            var id = IdBuilder.ToString();
             IdBuilder.Clear();
             return id;
         }

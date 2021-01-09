@@ -1,7 +1,7 @@
 ﻿
 namespace ClausaComm.Components
 {
-    partial class ChatTextBox
+    sealed partial class ChatTextBox
     {
         /// <summary>
         /// Required designer variable.

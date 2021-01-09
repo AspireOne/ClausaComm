@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Diagnostics;
+﻿using System.ComponentModel;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace ClausaComm.Components.Icons
@@ -23,14 +17,14 @@ namespace ClausaComm.Components.Icons
 
         private void DrawPlus(Graphics g)
         {
-            int HalfHeight = Height / 2;
-            int HalfWidth = Width / 2;
+            int halfHeight = Height / 2;
+            int halfWidth = Width / 2;
 
-            Point horizontalLineStart = new(IconPadding, HalfHeight);
-            Point horizontalLineStop = new(Width - IconPadding, HalfHeight);
+            Point horizontalLineStart = new(IconPadding, halfHeight);
+            Point horizontalLineStop = new(Width - IconPadding, halfHeight);
 
-            Point verticalLineStart = new(HalfWidth, IconPadding);
-            Point verticalLineStop = new(HalfWidth, Height - IconPadding);
+            Point verticalLineStart = new(halfWidth, IconPadding);
+            Point verticalLineStop = new(halfWidth, Height - IconPadding);
 
             g.DrawLine(CurrentLineAppearance, horizontalLineStart, horizontalLineStop);
             g.DrawLine(CurrentLineAppearance, verticalLineStart, verticalLineStop);

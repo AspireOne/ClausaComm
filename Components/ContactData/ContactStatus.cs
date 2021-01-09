@@ -1,21 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace ClausaComm.Components.ContactData
 {
-    public partial class ContactStatus : PictureBox, IContactUsable
+    public sealed partial class ContactStatus : PictureBox, IContactUsable
     {
         private Contact _contact;
         public const byte DefaultIconSize = 13;
-        private readonly static Dictionary<Contact.Status, Brush> StatusColors = new()
+        private static readonly Dictionary<Contact.Status, Brush> StatusColors = new()
         {
             { Contact.Status.Online, Brushes.Green },
             { Contact.Status.Offline, Brushes.Gray },

@@ -4,10 +4,8 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.IO;
-using System.Text;
 using System.Xml.Linq;
 using ClausaComm.Utils;
-using System.ComponentModel;
 
 namespace ClausaComm
 {
@@ -23,9 +21,9 @@ namespace ClausaComm
         //public XmlFile Xml => Config as XmlFile;
         //public readonly HashSet<Contact> UnreadMessages = new HashSet<Contact>();
 
-        public bool IsUser => _isUser;
+        public bool IsUser { get; private init; } = false;
         public string ProfilePicPath => Path.Combine(ProgramDirectory.ProfilePicsDirPath, $"{Id}.png");
-        private bool HasDefaultProfilePic => _hasDefaultProfilePic;
+        private bool HasDefaultProfilePic { get; set; } = true;
 
         // TODO: Move this enum (SavedInfo) to a more appropriate place.
         private enum SavedInfo { Id, Name, Ip, IsUser, ProfilePic }
@@ -35,17 +33,15 @@ namespace ClausaComm
         private Image _profileImage = Resources.default_pfp;
         private string _name = "Unknown";
         private readonly string _ip;
-        private bool _isUser = false;
         private bool _save = false;
-        private bool _hasDefaultProfilePic = true;
-        private string _Id;
+        private string _id;
         #endregion
 
         #region Properties
         public string Id
         {
-            get => _Id;
-            private init => _Id = value;
+            get => _id;
+            private init => _id = value;
         }
 
         public Status CurrentStatus
@@ -72,7 +68,7 @@ namespace ClausaComm
                 else
                 {
                     _ip = value;
-                    _isUser = IpUtils.LocalIp == value;
+                    IsUser = IpUtils.LocalIp == value;
                 }
             }
         }
@@ -88,14 +84,14 @@ namespace ClausaComm
                 if (value is null || value.Equals(Resources.default_pfp))
                 {
                     _profileImage = Resources.default_pfp;
-                    _hasDefaultProfilePic = true;
+                    HasDefaultProfilePic = true;
                     if (Save)
                         DeleteProfilePicture();
                 }
                 else
                 {
                     _profileImage = value;
-                    _hasDefaultProfilePic = false;
+                    HasDefaultProfilePic = false;
                     if (Save)
                         SaveProfilePicture();
                 }
@@ -174,11 +170,11 @@ namespace ClausaComm
 
         public class XmlFile : IXmlFile
         {
-            private static readonly Dictionary<SavedInfo, string> InfoFileRepresentationDict = new Dictionary<SavedInfo, string>()
+            private static readonly Dictionary<SavedInfo, string> InfoFileRepresentationDict = new()
             {
                 { SavedInfo.Name, "name" },
                 { SavedInfo.Ip, "ip" },
-                { SavedInfo.Id, "id" } ,
+                { SavedInfo.Id, "id" },
                 { SavedInfo.IsUser, "isUser" }
             };
             private const string ContactNodeName = "contact";
@@ -262,7 +258,7 @@ namespace ClausaComm
                     string id = contactNode.Element(InfoFileRepresentationDict[SavedInfo.Id]).Value;
                     string name = contactNode.Element(InfoFileRepresentationDict[SavedInfo.Name]).Value;
 
-                    var contact = new Contact(isUser ? IpUtils.LocalIp : ip) { _name = name, _save = false, _Id = id };
+                    var contact = new Contact(isUser ? IpUtils.LocalIp : ip) { _name = name, _save = false, _id = id };
 
                     TryGetProfilePicture(contact.ProfilePicPath, out Image profileImage);
 
@@ -276,21 +272,18 @@ namespace ClausaComm
 
         private void DeleteProfilePicture() => File.Delete(ProfilePicPath);
 
-        private static bool TryGetProfilePicture(string path, out Image image)
+        private static void TryGetProfilePicture(string path, out Image image)
         {
             try
             {
                 using Stream imgStream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Delete);
-                using Image fromFile = Image.FromStream(imgStream);
+                using var fromFile = Image.FromStream(imgStream);
                 // Cloning because otherwise the program doesn't let of the image's handle for some reason.
                 image = (Image)fromFile.Clone();
-
-                return true;
             }
             catch (Exception e) when (e is FileNotFoundException || e is ArgumentException)
             {
                 image = null;
-                return false;
             }
         }
 

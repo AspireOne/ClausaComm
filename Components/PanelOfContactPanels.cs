@@ -1,25 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using ClausaComm.Components.ContactData;
 using System.Windows.Forms;
 
 namespace ClausaComm.Components
 {
     public partial class PanelOfContactPanels : Panel
     {
-        public IEnumerable<ContactPanel> Panels
-        {
-            get
-            {
-                foreach (ContactPanel panel in Controls)
-                    yield return panel;
-            }
-        }
+        public IEnumerable<ContactPanel> Panels => Controls.Cast<ContactPanel>();
 
         public PanelOfContactPanels()
         {
@@ -30,7 +20,7 @@ namespace ClausaComm.Components
 
         public void RemovePanel(Contact contact)
         {
-            ContactPanel panel = Panels.First(panel => panel.Contact.Id == contact.Id);
+            ContactPanel panel = Panels.First(contactPanel => contactPanel.Contact.Id == contact.Id);
             if (panel is not null)
                 Controls.Remove(panel);
         }

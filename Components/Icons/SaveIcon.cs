@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Diagnostics;
+﻿using System.ComponentModel;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Threading;
 
@@ -13,8 +7,8 @@ namespace ClausaComm.Components.Icons
 {
     public partial class SaveIcon : ImageIconBase
     {
-        public Pen CrossLineAppearance { get; set; } = new Pen(Color.FromArgb(170, Color.WhiteSmoke), 2);
-        public Padding CrossPadding { get; set; } = new Padding(3, 3, 3, 3);
+        public Pen CrossLineAppearance { get; set; } = new(Color.FromArgb(170, Color.WhiteSmoke), 2);
+        public Padding CrossPadding { get; set; } = new(3, 3, 3, 3);
 
         public enum State { Save, Unsave }
 
