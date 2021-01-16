@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Windows.Forms;
 using System.Drawing;
 using ClausaComm.Components.Icons;
@@ -13,6 +14,21 @@ namespace ClausaComm.Components
         {
             get => TitleText.Text;
             set => TitleText.Text = value;
+        }
+
+        private NotifyIcon _notifyIcon;
+
+        public NotifyIcon PinNotifyIcon
+        {
+            get => _notifyIcon;
+            set
+            {
+                if (ReferenceEquals(_notifyIcon, value))
+                    return;
+
+                _notifyIcon = value;
+                value.Click += (_, _) => UnpinForm();
+            }
         }
 
 
@@ -118,8 +134,8 @@ namespace ClausaComm.Components
                     return;
 
                 InitForm();
-
                 ChangeSizingElementsVisibility(value.Resizable);
+                Pin.Visible = value.Pinnable;
             }
         }
         private FormBase _form;
@@ -148,6 +164,7 @@ namespace ClausaComm.Components
             Name = "TitleBar";
             MinimumSize = new Size(0, 25);
             MaximumSize = new Size(int.MaxValue, 25);
+            MaximumSize = new Size(int.MaxValue, 25);
             Dock = DockStyle.Top;
             TabIndex = 1;
             BackColor = Color.FromArgb(28, 28, 28);
@@ -155,18 +172,41 @@ namespace ClausaComm.Components
             MouseDown += Drag;
             TitleText.MouseDown += Drag;
             ProgramIconBox.MouseDown += Drag;
+            Pin.Click += (_, _) =>
+            {
+                Debug.WriteLine("Pin clicked");
+                if (Form?.Pinnable == true)
+                    PinForm();
+            };
         }
         #endregion
 
         private void InitForm()
         {
             Form.ResizableChanged += (_, resizable) => ChangeSizingElementsVisibility(resizable);
+            Form.PinnableChanged += (_, pinnable) => Pin.Visible = pinnable;
             CloseButton.Click += (_, _) => Form.Close();
             MinimizeButton.Click += (_, _) => Form.WindowState = FormWindowState.Minimized;
             MaximizeButton.Click += (_, _) => Form.WindowState =
             Form.WindowState == FormWindowState.Maximized
             ? FormWindowState.Normal
             : FormWindowState.Maximized;
+        }
+
+        private void PinForm()
+        {
+            if (PinNotifyIcon is not null)
+            {
+                Form.Visible = false;
+                PinNotifyIcon.Visible = true;
+            }
+        }
+
+        private void UnpinForm()
+        {
+            Form.Visible = true;
+            if (PinNotifyIcon is not null)
+                PinNotifyIcon.Visible = false;
         }
 
         private void ChangeSizingElementsVisibility(bool visible)
@@ -185,7 +225,7 @@ namespace ClausaComm.Components
 
         private void Drag(object sender, MouseEventArgs e)
         {
-            if (Form is null)
+            if (Form is null || Form.WindowState == FormWindowState.Maximized)
                 return;
 
             const int wmNclbuttondown = 0xA1;
@@ -207,7 +247,7 @@ namespace ClausaComm.Components
         protected override void OnMouseMove(MouseEventArgs e)
         {
             base.OnMouseMove(e);
-            if (MouseIsDown)
+            if (MouseIsDown && Form.WindowState != FormWindowState.Maximized)
             {
                 Location = new Point(Location.X - LastFormLocation.X + e.X, Location.Y - LastFormLocation.Y + e.Y);
                 Update();

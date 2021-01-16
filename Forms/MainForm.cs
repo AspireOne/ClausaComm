@@ -24,18 +24,29 @@ namespace ClausaComm.Forms
         {
             SetStyle(ControlStyles.ResizeRedraw, true);
 
+            // ChatPanel
             ChatPanel1.ActionPanel = ActionPanel1;
             ChatPanel1.SendIcon = SendIcon1;
             ChatPanel1.Textbox = chatTextBox1;
 
             //ActionPanel1.RemoveContactAction = RemoveContact;
-            Resizable = true;
+            //TitleBar
             TitleBar.Form = this;
             TitleBar.BackColor = ChatPanel1.BackColor;
+            TitleBar.PinNotifyIcon = new NotifyIcon
+            {
+                Text = "Click to open ClausaComm",
+                Icon = Properties.Resources.program_icon,
+                Visible = false
+            };
 
             AddContactIcon.Click += AddContactPictureBox_Click;
             ContactSearchBox.TextChanged += ContactSearchBox_TextChanged;
-            this.BackColor = Color.FromArgb(40, 40, 40);
+
+            // This form
+            Resizable = true;
+            BackColor = Color.FromArgb(40, 40, 40);
+            Pinnable = true;
         }
 
         private void InitializeProgram()
@@ -89,7 +100,7 @@ namespace ClausaComm.Forms
 
             if (PanelOfContactPanels.Panels.Any())
             {
-                PanelOfContactPanels.Panels.ElementAt(0).Contact.ProfilePic = Image.FromFile(@"C:\Users\matej\Desktop\d.png");
+                PanelOfContactPanels.Panels.ElementAt(0).Contact.ProfilePic = Image.FromFile(@"C:\Users\matej\Desktop\profilovky a obrázky\mitu.png");
                 PanelOfContactPanels.Panels.ElementAt(0).Contact.CurrentStatus = Contact.Status.Online;
                 PanelOfContactPanels.Panels.ElementAt(0).Contact.Name = "Ej ej ejj";
                 PanelOfContactPanels.Panels.ElementAt(0).FlashPanel();

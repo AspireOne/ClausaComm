@@ -69,14 +69,14 @@ namespace ClausaComm.Forms
             // 
             this.NameBox.BorderColor = System.Drawing.Color.Transparent;
             this.NameBox.BorderSize = 2;
-            this.NameBox.ColorBorderOnFocus = true;
+            this.NameBox.ColorBorderOnHover = true;
             this.NameBox.Font = new System.Drawing.Font("Century Gothic", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.NameBox.ForeColor = System.Drawing.Color.Black;
             this.NameBox.Location = new System.Drawing.Point(113, 208);
             this.NameBox.MaxCharacters = 32767;
             this.NameBox.Multiline = false;
             this.NameBox.Name = "NameBox";
-            this.NameBox.OnFocusBorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(252)))), ((int)(((byte)(196)))), ((int)(((byte)(11)))));
+            this.NameBox.OnHoverBorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(252)))), ((int)(((byte)(196)))), ((int)(((byte)(11)))));
             this.NameBox.ReadOnly = false;
             this.NameBox.Size = new System.Drawing.Size(241, 33);
             this.NameBox.TabIndex = 5;
@@ -109,14 +109,14 @@ namespace ClausaComm.Forms
             // 
             this.IpBox.BorderColor = System.Drawing.Color.Transparent;
             this.IpBox.BorderSize = 2;
-            this.IpBox.ColorBorderOnFocus = true;
+            this.IpBox.ColorBorderOnHover = true;
             this.IpBox.Font = new System.Drawing.Font("Century Gothic", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.IpBox.ForeColor = System.Drawing.Color.Black;
             this.IpBox.Location = new System.Drawing.Point(68, 133);
             this.IpBox.MaxCharacters = 32767;
             this.IpBox.Multiline = false;
             this.IpBox.Name = "IpBox";
-            this.IpBox.OnFocusBorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(252)))), ((int)(((byte)(196)))), ((int)(((byte)(11)))));
+            this.IpBox.OnHoverBorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(252)))), ((int)(((byte)(196)))), ((int)(((byte)(11)))));
             this.IpBox.ReadOnly = false;
             this.IpBox.Size = new System.Drawing.Size(161, 33);
             this.IpBox.TabIndex = 8;

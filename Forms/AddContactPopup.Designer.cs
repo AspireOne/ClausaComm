@@ -68,14 +68,14 @@ namespace ClausaComm.Forms
             this.IpBox.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.IpBox.BorderColor = System.Drawing.Color.Transparent;
             this.IpBox.BorderSize = 2;
-            this.IpBox.ColorBorderOnFocus = true;
+            this.IpBox.ColorBorderOnHover = true;
             this.IpBox.Font = new System.Drawing.Font("Century Gothic", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.IpBox.ForeColor = System.Drawing.Color.Black;
             this.IpBox.Location = new System.Drawing.Point(194, 127);
             this.IpBox.MaxCharacters = 32767;
             this.IpBox.Multiline = false;
             this.IpBox.Name = "IpBox";
-            this.IpBox.OnFocusBorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(252)))), ((int)(((byte)(196)))), ((int)(((byte)(11)))));
+            this.IpBox.OnHoverBorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(252)))), ((int)(((byte)(196)))), ((int)(((byte)(11)))));
             this.IpBox.ReadOnly = false;
             this.IpBox.Size = new System.Drawing.Size(149, 31);
             this.IpBox.TabIndex = 4;

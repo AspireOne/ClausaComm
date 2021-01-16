@@ -33,7 +33,6 @@ namespace ClausaComm.Forms
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.IpLbl = new System.Windows.Forms.Label();
             this.Status = new ClausaComm.Components.ContactData.ContactStatus(this.components);
-            this.Name = Program.ProgramName;
             this.NameLbl = new ClausaComm.Components.ContactData.ContactName(this.components);
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.CallContactIcon = new ClausaComm.Components.Icons.PhoneIcon(this.components);
@@ -102,11 +101,14 @@ namespace ClausaComm.Forms
             // 
             // CallContactIcon
             // 
+            this.CallContactIcon.ClickIconColor = System.Drawing.Color.FromArgb(((int)(((byte)(253)))), ((int)(((byte)(152)))), ((int)(((byte)(10)))));
             this.CallContactIcon.ColorBoxOnHover = false;
             this.CallContactIcon.ColorIconOnClick = true;
             this.CallContactIcon.ColorIconOnHover = false;
             this.CallContactIcon.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.CallContactIcon.HoverIconColor = System.Drawing.Color.FromArgb(((int)(((byte)(253)))), ((int)(((byte)(172)))), ((int)(((byte)(10)))));
             this.CallContactIcon.IconColor = System.Drawing.Color.FromArgb(((int)(((byte)(1)))), ((int)(((byte)(250)))), ((int)(((byte)(250)))), ((int)(((byte)(250)))));
+            //this.CallContactIcon.Image = ((System.Drawing.Image)(resources.GetObject("CallContactIcon.Image")));
             this.CallContactIcon.Location = new System.Drawing.Point(65, 12);
             this.CallContactIcon.Name = "CallContactIcon";
             this.CallContactIcon.Padding = new System.Windows.Forms.Padding(6);
@@ -139,6 +141,7 @@ namespace ClausaComm.Forms
             this.TitleBar.MaximumSize = new System.Drawing.Size(2147483647, 25);
             this.TitleBar.MinimumSize = new System.Drawing.Size(0, 25);
             this.TitleBar.Name = "TitleBar";
+            this.TitleBar.PinNotifyIcon = null;
             this.TitleBar.Size = new System.Drawing.Size(1065, 25);
             this.TitleBar.TabIndex = 1;
             this.TitleBar.Title = "ClausaComm";
@@ -197,12 +200,15 @@ namespace ClausaComm.Forms
             // 
             // SendIcon1
             // 
+            this.SendIcon1.ClickIconColor = System.Drawing.Color.FromArgb(((int)(((byte)(253)))), ((int)(((byte)(152)))), ((int)(((byte)(10)))));
             this.SendIcon1.ColorBoxOnHover = false;
             this.SendIcon1.ColorIconOnClick = true;
             this.SendIcon1.ColorIconOnHover = true;
             this.SendIcon1.Cursor = System.Windows.Forms.Cursors.Hand;
             this.SendIcon1.Dock = System.Windows.Forms.DockStyle.Right;
+            this.SendIcon1.HoverIconColor = System.Drawing.Color.FromArgb(((int)(((byte)(253)))), ((int)(((byte)(172)))), ((int)(((byte)(10)))));
             this.SendIcon1.IconColor = System.Drawing.Color.FromArgb(((int)(((byte)(1)))), ((int)(((byte)(250)))), ((int)(((byte)(250)))), ((int)(((byte)(250)))));
+            //this.SendIcon1.Image = ((System.Drawing.Image)(resources.GetObject("SendIcon1.Image")));
             this.SendIcon1.Location = new System.Drawing.Point(821, 0);
             this.SendIcon1.Name = "SendIcon1";
             this.SendIcon1.Padding = new System.Windows.Forms.Padding(9);
@@ -238,6 +244,7 @@ namespace ClausaComm.Forms
             // AddContactIcon
             // 
             this.AddContactIcon.CircleColor = System.Drawing.Color.White;
+            this.AddContactIcon.ClickCircleColor = System.Drawing.Color.FromArgb(((int)(((byte)(253)))), ((int)(((byte)(152)))), ((int)(((byte)(10)))));
             this.AddContactIcon.ClickLineColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.AddContactIcon.ColorBoxOnHover = false;
             this.AddContactIcon.ColorCircleOnClick = true;
@@ -245,8 +252,10 @@ namespace ClausaComm.Forms
             this.AddContactIcon.ColorIconOnClick = false;
             this.AddContactIcon.ColorIconOnHover = false;
             this.AddContactIcon.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.AddContactIcon.HoverCircleColor = System.Drawing.Color.FromArgb(((int)(((byte)(253)))), ((int)(((byte)(172)))), ((int)(((byte)(10)))));
             this.AddContactIcon.HoverLineColor = System.Drawing.Color.Gray;
             this.AddContactIcon.IconPaddingFactor = 3.4F;
+            //this.AddContactIcon.Image = null;
             this.AddContactIcon.LineColor = System.Drawing.Color.Gray;
             this.AddContactIcon.LineWidth = 2F;
             this.AddContactIcon.Location = new System.Drawing.Point(144, 76);
@@ -260,7 +269,7 @@ namespace ClausaComm.Forms
             // 
             // PanelOfContactPanels
             // 
-            this.PanelOfContactPanels.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            this.PanelOfContactPanels.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
             this.PanelOfContactPanels.AutoScroll = true;
             this.PanelOfContactPanels.Location = new System.Drawing.Point(0, 125);
@@ -272,14 +281,14 @@ namespace ClausaComm.Forms
             // 
             this.ContactSearchBox.BorderColor = System.Drawing.Color.Transparent;
             this.ContactSearchBox.BorderSize = 1;
-            this.ContactSearchBox.ColorBorderOnFocus = true;
+            this.ContactSearchBox.ColorBorderOnHover = true;
             this.ContactSearchBox.Font = new System.Drawing.Font("Century Gothic", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.ContactSearchBox.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(49)))), ((int)(((byte)(49)))), ((int)(((byte)(49)))));
             this.ContactSearchBox.Location = new System.Drawing.Point(5, 76);
             this.ContactSearchBox.MaxCharacters = 32767;
             this.ContactSearchBox.Multiline = false;
             this.ContactSearchBox.Name = "ContactSearchBox";
-            this.ContactSearchBox.OnFocusBorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(252)))), ((int)(((byte)(196)))), ((int)(((byte)(11)))));
+            this.ContactSearchBox.OnHoverBorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(252)))), ((int)(((byte)(196)))), ((int)(((byte)(11)))));
             this.ContactSearchBox.ReadOnly = false;
             this.ContactSearchBox.Size = new System.Drawing.Size(133, 33);
             this.ContactSearchBox.TabIndex = 5;

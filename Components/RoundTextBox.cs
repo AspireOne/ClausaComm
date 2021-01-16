@@ -21,12 +21,12 @@ namespace ClausaComm.Components
             }
         }
 
-        public Color OnFocusBorderColor
+        public Color OnHoverBorderColor
         {
-            get => _onFocusBorderColor;
+            get => _onHoverBorderColor;
             set
             {
-                _onFocusBorderColor = Constants.UIConstants.ReturnNewOrDefaultColor(Constants.UIConstants.ElementOnHoverColor, value);
+                _onHoverBorderColor = Constants.UIConstants.ReturnNewOrDefaultColor(Constants.UIConstants.ElementOnHoverColor, value);
                 Invalidate();
             }
         }
@@ -65,13 +65,13 @@ namespace ClausaComm.Components
         }
 
         private int Radius = 15;
-        public bool ColorBorderOnFocus { get; set; } = true;
+        public bool ColorBorderOnHover { get; set; } = true;
         public TextBox Textbox = new();
         private GraphicsPath Shape;
         private GraphicsPath InnerRect;
         private readonly Color Br;
         private Color _borderColor = Color.Transparent;
-        private Color _onFocusBorderColor = Constants.UIConstants.ElementOnHoverColor;
+        private Color _onHoverBorderColor = Constants.UIConstants.ElementOnHoverColor;
         private int _borderSize = 10;
 
 
@@ -122,7 +122,7 @@ namespace ClausaComm.Components
 
         private void TextBox_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Control && (e.KeyCode == Keys.A))
+            if (e.Control && e.KeyCode == Keys.A)
             {
                 Textbox.SelectionStart = 0;
                 Textbox.SelectionLength = Text.Length;
@@ -142,6 +142,7 @@ namespace ClausaComm.Components
             Textbox.ForeColor = ForeColor;
             Invalidate();
         }
+
         protected override void OnPaint(PaintEventArgs e)
         {
             e.Graphics.SmoothingMode = SmoothingMode.HighQuality;
@@ -149,14 +150,13 @@ namespace ClausaComm.Components
             Shape = new RoundTextBoxRect(Width, Height, Radius).Path;
             InnerRect = new RoundTextBoxRect(Width - 0.5f, Height - 0.5f, Radius, 0.5f, 0.5f).Path;
 
-            if (Textbox.Height >= (Height - 4))
+            if (Textbox.Height >= Height - 4)
                 Height = Textbox.Height + 4;
 
             Textbox.Location = new Point(Radius - 5, (Height / 2) - (Textbox.Font.Height / 2));
-            Textbox.Width = Width - ((int)(Radius * 1.5));
+            Textbox.Width = Width - (int)(Radius * 1.5);
 
-            // TODO: Add border on focus
-            Pen pp = new(ColorBorderOnFocus ? OnFocusBorderColor : BorderColor, _borderSize);
+            Pen pp = new(BorderColor, BorderSize);
             e.Graphics.DrawPath(pp, Shape);
 
             using (SolidBrush brush = new(Br))

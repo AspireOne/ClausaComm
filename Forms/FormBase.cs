@@ -9,15 +9,52 @@ namespace ClausaComm.Forms
         protected static readonly Padding DraggableWindowBorderSize = new(1, 1, 1, 1);
         protected static readonly Padding NonDraggableWindowBorderSize = new(0, 0, 0, 0);
         public event EventHandler<bool> ResizableChanged;
+        public event EventHandler<bool> PinnableChanged;
         private bool _resizable = false;
+        private bool _pinnable = false;
+        private bool _draggable = false;
+
+        public new FormWindowState WindowState
+        {
+            get => base.WindowState;
+            set
+            {
+                base.WindowState = value;
+                // If the form is maximized and we allow it to be resized by dragging, unwanted behaviour happens.
+                if (value == FormWindowState.Maximized)
+                    Draggable = false;
+                else if (value == FormWindowState.Normal)
+                    Draggable = true;
+            }
+        }
+
+        public bool Draggable
+        {
+            get => _draggable;
+            protected set
+            {
+                _draggable = value;
+                Padding = _draggable ? DraggableWindowBorderSize : NonDraggableWindowBorderSize;
+            }
+        }
+
         public bool Resizable
         {
             get => _resizable;
             protected set
             {
                 _resizable = value;
-                Padding = Resizable ? DraggableWindowBorderSize : NonDraggableWindowBorderSize;
                 ResizableChanged?.Invoke(this, value);
+            }
+        }
+
+        public bool Pinnable
+        {
+            get => _pinnable;
+            protected set
+            {
+                _pinnable = value;
+                PinnableChanged?.Invoke(this, value);
             }
         }
 
