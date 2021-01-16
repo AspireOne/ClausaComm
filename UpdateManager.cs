@@ -30,12 +30,12 @@ namespace ClausaComm
 
 
 
-        public static async Task<bool> IsNewVersionAvailable()
+        public static async Task<(bool available, string? newVer)> IsNewVersionAvailable()
         {
             string[] availableVersions = await FetchAvailableVersions();
 
             Debug.WriteLine("Available versions: ");
-            availableVersions.ForEach(x => Debug.WriteLine(x));
+            Array.ForEach(availableVersions, x => Debug.WriteLine(x));
 
             string highestVer = GetHighestVersion(availableVersions);
             Debug.WriteLine("\nhighest version: " + highestVer);
@@ -43,11 +43,12 @@ namespace ClausaComm
             bool highestIsHigherThanCurr = highestVer.IsHigherThan(Program.Version);
             Debug.WriteLine("\nHighest available is higher than current: " + highestIsHigherThanCurr);
 
-            return highestIsHigherThanCurr;
+
+            return (highestIsHigherThanCurr, highestIsHigherThanCurr ? highestVer : null);
         }
 
-        public static void DownloadNewVersionBinaryAsync(DownloadProgressChangedEventHandler? progressHandler, 
-            AsyncCompletedEventHandler? completedHandler, Action? errorHandler)
+        public static void DownloadNewVersionBinaryAsync(DownloadProgressChangedEventHandler? progressHandler = null, 
+            AsyncCompletedEventHandler? completedHandler = null, Action? errorHandler = null)
         {
             using WebClient wc = new();
             wc.DownloadFileCompleted += (_, _) => UpdateDownloaded = true;

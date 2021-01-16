@@ -6,16 +6,23 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Runtime.CompilerServices;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
+using Accessibility;
+using ClausaComm.Components;
+using ClausaComm.Forms;
 
 namespace ClausaComm
 {
 
     public static class Program
     {
+
         public static readonly string ThisProgramPath = Path.Combine(Directory.GetCurrentDirectory(), Process.GetCurrentProcess().MainModule.FileName);
         public const string ProgramName = "ClausaComm";
         public const string Version = "0.0.2";
+
+
         /// <summary>
         ///  The main entry point for the application.
         /// </summary>
@@ -23,37 +30,55 @@ namespace ClausaComm
         private static void Main()
         {
             if (IsAnotherInstanceRunning())
-                Terminate();
-
-            if (UpdateManager.IsNewVersionAvailable().Result)
-                UpdateManager.DownloadNewVersionBinaryAsync(null, (_, _) => Terminate(), null);
+                Close();
 
             Application.SetHighDpiMode(HighDpiMode.SystemAware);
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Forms.MainForm());
+            MainForm mainForm = new MainForm();
 
-            Terminate();
+            new Thread(() =>
+            {
+                (bool newVersionAvailable, string? newVersion) = UpdateManager.IsNewVersionAvailable().Result;
+                if (newVersionAvailable)
+                    UpdateManager.DownloadNewVersionBinaryAsync(completedHandler: (_, _) => ShowUpdateNotification(mainForm, newVersion));
+            }).Start();
+
+            Application.Run(mainForm);
+            Close();
         }
 
-        private static void FinalizeTasksBeforeProgramExit()
+        private static void ShowUpdateNotification(MainForm mainForm, string newVersion)
+        {
+            InWindowNotification.NotificationArgs notifArgs = new()
+            {
+                DurationMillis = 15000,
+                MiddleButton = new InWindowNotification.NotificationArgs.ButtonArgs { ClickCallback = (_, _) => Close(true), Name = "Update now"},
+                Title = "New update available",
+                Text = $"Version {newVersion} is now available! Current version is {Version}."
+            };
+
+            mainForm.Invoke(new MethodInvoker(delegate {
+                mainForm.inWindowNotification1.ShowNotification(notifArgs);
+            }));
+        }
+
+        private static void FinalizeTasksBeforeProgramExit(bool restart)
         {
             if (UpdateManager.UpdateDownloaded)
             {
-                UpdateManager.PrepareUpdateAndStartTimer(false);
-                
+                UpdateManager.PrepareUpdateAndStartTimer(restart);
             }
         }
 
-        public static void Terminate()
+        public static void Close(bool restart = false)
         {
             Debug.WriteLine("closing program");
-            FinalizeTasksBeforeProgramExit();
+            FinalizeTasksBeforeProgramExit(restart);
             Application.Exit();
             Environment.Exit(0);
         }
 
-        // Supposes that the name of the executable is the same during the start of each instance.
         private static bool IsAnotherInstanceRunning()
             => Process.GetProcessesByName(Path.GetFileNameWithoutExtension(System.Reflection.Assembly.GetEntryAssembly().Location)).Length > 1;
     }

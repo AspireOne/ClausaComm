@@ -8,10 +8,11 @@ namespace ClausaComm.Components.Icons
     public partial class IconBase : PictureBox
     {
         // Hide the base class's Image property and change accessor to protected, so that it's not changeable from the outside.
+        // the solution above had to be removed because of Windows Forms' terrible designer.
         public new Image Image
         {
             get => base.Image;
-            protected set => base.Image = value;
+            set => base.Image = value;
         }
         public bool UnderlineOnHover { get; set; } = false;
         public Pen UnderlineAppearance { get; set; } = new(Brushes.White, 3);

@@ -49,7 +49,8 @@ namespace ClausaComm.Components.Icons
             }
         }
 
-        protected new Image Image
+        // should be protected, but windows forms gui designer is too fucking dumb to not initialize a default value on it and throw an error.
+        public new Image Image
         {
             get => base.Image;
             set
