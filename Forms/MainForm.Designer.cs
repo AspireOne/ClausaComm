@@ -37,10 +37,10 @@ namespace ClausaComm.Forms
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.CallContactIcon = new ClausaComm.Components.Icons.PhoneIcon(this.components);
             this.ProfilePicture = new ClausaComm.Components.ContactData.ContactProfilePicture(this.components);
-            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.ToolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.TitleBar = new ClausaComm.Components.TitleBar(this.components);
             this.ChatPanel1 = new ClausaComm.Components.ChatPanel(this.components);
-            this.inWindowNotification1 = new ClausaComm.Components.InWindowNotification(this.components);
+            this.NotificationPanel = new ClausaComm.Components.NotificationPanel(this.components);
             this.ActionPanel1 = new ClausaComm.Components.ActionPanel(this.components);
             this.panel1 = new System.Windows.Forms.Panel();
             this.chatTextBox1 = new ClausaComm.Components.ChatTextBox();
@@ -117,7 +117,6 @@ namespace ClausaComm.Forms
             this.CallContactIcon.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.CallContactIcon.TabIndex = 4;
             this.CallContactIcon.TabStop = false;
-            this.toolTip1.SetToolTip(this.CallContactIcon, "Call");
             this.CallContactIcon.UnderlineOnHover = true;
             // 
             // ProfilePicture
@@ -152,7 +151,7 @@ namespace ClausaComm.Forms
             this.ChatPanel1.ActionPanel = null;
             this.ChatPanel1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(19)))), ((int)(((byte)(19)))), ((int)(((byte)(21)))));
             this.ChatPanel1.Contact = null;
-            this.ChatPanel1.Controls.Add(this.inWindowNotification1);
+            this.ChatPanel1.Controls.Add(this.NotificationPanel);
             this.ChatPanel1.Controls.Add(this.ActionPanel1);
             this.ChatPanel1.Controls.Add(this.panel1);
             this.ChatPanel1.Controls.Add(this.panel2);
@@ -164,19 +163,19 @@ namespace ClausaComm.Forms
             this.ChatPanel1.Textbox = null;
             this.ChatPanel1.Paint += new System.Windows.Forms.PaintEventHandler(this.ChatPanel1_Paint);
             // 
-            // inWindowNotification1
+            // NotificationPanel
             // 
-            this.inWindowNotification1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.inWindowNotification1.AutoSize = true;
-            this.inWindowNotification1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(31)))), ((int)(((byte)(31)))), ((int)(((byte)(33)))));
-            this.inWindowNotification1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.inWindowNotification1.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.inWindowNotification1.Form = null;
-            this.inWindowNotification1.Location = new System.Drawing.Point(613, 587);
-            this.inWindowNotification1.Name = "inWindowNotification1";
-            this.inWindowNotification1.Size = new System.Drawing.Size(266, 90);
-            this.inWindowNotification1.TabIndex = 11;
-            this.inWindowNotification1.Visible = false;
+            this.NotificationPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.NotificationPanel.AutoSize = true;
+            this.NotificationPanel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(31)))), ((int)(((byte)(31)))), ((int)(((byte)(33)))));
+            this.NotificationPanel.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.NotificationPanel.Form = null;
+            this.NotificationPanel.Location = new System.Drawing.Point(605, 581);
+            this.NotificationPanel.Name = "NotificationPanel";
+            this.NotificationPanel.Padding = new System.Windows.Forms.Padding(2);
+            this.NotificationPanel.Size = new System.Drawing.Size(270, 90);
+            this.NotificationPanel.TabIndex = 11;
+            this.NotificationPanel.Visible = false;
             // 
             // ActionPanel1
             // 
@@ -330,6 +329,8 @@ namespace ClausaComm.Forms
             this.DoubleBuffered = true;
             this.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.Location = new System.Drawing.Point(0, 0);
             this.MinimumSize = new System.Drawing.Size(700, 500);
             this.Name = "MainForm";
             this.Padding = new System.Windows.Forms.Padding(1);
@@ -352,7 +353,7 @@ namespace ClausaComm.Forms
         private Components.ContactData.ContactProfilePicture ProfilePicture;
         private Components.Icons.PhoneIcon CallContactIcon;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
-        private System.Windows.Forms.ToolTip toolTip1;
+        public System.Windows.Forms.ToolTip ToolTip1;
         private Components.ContactData.ContactName NameLbl;
         private Components.ContactData.ContactStatus Status;
         private System.Windows.Forms.Label IpLbl;
@@ -368,7 +369,7 @@ namespace ClausaComm.Forms
         private Components.RoundTextBox ContactSearchBox;
         private System.Windows.Forms.Panel OwnProfilePanel;
         private Components.Icons.SendIcon SendIcon1;
-        public Components.InWindowNotification inWindowNotification1;
+        public Components.NotificationPanel NotificationPanel;
     }
 }
 

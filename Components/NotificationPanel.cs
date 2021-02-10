@@ -1,14 +1,19 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 using ClausaComm.Components.Icons;
 using ClausaComm.Forms;
 
 namespace ClausaComm.Components
 {
-    public sealed partial class InWindowNotification : Panel
+    public sealed partial class NotificationPanel : Panel
     {
+        private readonly Queue<NotificationArgs> NotificationQueue = new();
         private readonly Panel ContentPanel = new();
         private readonly Panel TitlePanel = new();
         private readonly Label Title = new();
@@ -20,7 +25,10 @@ namespace ClausaComm.Components
         private readonly Button LeftButt = new();
         private readonly Button RightButt = new();
 
-        private const int SwipeSpeed = 4;
+        private const int SwipeSpeed = 7;
+        private const int InitialHeight = 92;
+        private static readonly Pen BorderPen = new(Color.FromArgb(70, 70, 70), 1);
+        private static readonly Size BorderSizeOffset = new(1, 1);
 
         private readonly Timer NotificationAutoCloseTimer = new()
         {
@@ -31,7 +39,7 @@ namespace ClausaComm.Components
         private readonly Timer NotificationSwipeTimer = new()
         {
             Enabled = false,
-            Interval = 1
+            Interval = 10
         };
 
         public MainForm Form {get; set; }
@@ -46,14 +54,14 @@ namespace ClausaComm.Components
 
             public int DurationMillis;
             public string Title;
-            public string Text;
+            public string Content;
             public ButtonArgs? LeftButton;
             public ButtonArgs? MiddleButton;
             public ButtonArgs? RightButton;
         }
 
         //TODO: Add acceleration
-        public InWindowNotification()
+        public NotificationPanel()
         {
             InitializeComponent();
 
@@ -61,22 +69,23 @@ namespace ClausaComm.Components
             Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             AutoSize = true;
             BackColor = Color.FromArgb(31, 31, 33);
-            BorderStyle = BorderStyle.FixedSingle;
+            BorderStyle = BorderStyle.None;
             Controls.Add(ContentPanel);
             Controls.Add(TitlePanel);
             Controls.Add(ButtonsPanel);
             Font = new Font("Segoe UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point);
-            Location = new Point(611, 585);
+            //Location = new Point(611, 585);
             Name = "NotificationPanel";
-            Size = new Size(267, 92);
+            Size = new Size(267, InitialHeight);
             TabIndex = 11;
             Visible = false;
+            Padding = new Padding(2, 2, 2, 2);
             #endregion
 
             #region Component Initialization
 
             ContentPanel.Controls.Add(Content);
-            ContentPanel.Dock = DockStyle.Fill;
+            ContentPanel.AutoSize = true;
             ContentPanel.Location = new Point(0, 22);
             ContentPanel.Name = "ContentPanel";
             ContentPanel.Size = new Size(265, 42);
@@ -120,21 +129,21 @@ namespace ClausaComm.Components
             CloseButton.Cursor = Cursors.Hand;
             CloseButton.HoverCircleColor = Color.FromArgb(253, 172, 10);
             CloseButton.HoverLineColor = Color.White;
-            CloseButton.IconPaddingFactor = 1.2F;
+            CloseButton.IconPaddingFactor = 1.3f;
             CloseButton.Image = null;
             CloseButton.LineColor = Color.Gray;
-            CloseButton.LineWidth = 2F;
+            CloseButton.LineWidth = 1.6F;
             CloseButton.Location = new Point(242, 0);
             CloseButton.Name = "CloseButton";
             CloseButton.ShowCircle = false;
-            CloseButton.Size = new Size(22, 20);
+            CloseButton.Size = new Size(21, 20);
             CloseButton.SizeMode = PictureBoxSizeMode.StretchImage;
             CloseButton.TabIndex = 1;
             CloseButton.TabStop = false;
             CloseButton.UnderlineOnHover = false;
             CloseButton.Click += (_, _) => Hide();
 
-            Title.Font = new Font("Segoe UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point);
+            Title.Font = new Font("Segoe UI", 11.25F, FontStyle.Bold, GraphicsUnit.Point);
             Title.Location = new Point(0, 0);
             Title.ForeColor = Color.FromArgb(250, 155, 55);
             Title.Name = "Title";
@@ -142,7 +151,7 @@ namespace ClausaComm.Components
             Title.Size = new Size(218, 20);
             Title.TabIndex = 0;
             Title.Text = "A title";
-            Title.TextAlign = ContentAlignment.MiddleLeft;
+            Title.TextAlign = ContentAlignment.MiddleCenter;
 
             ButtonsPanel.Controls.Add(RightButt);
             ButtonsPanel.Controls.Add(LeftButt);
@@ -189,30 +198,40 @@ namespace ClausaComm.Components
             Array.ForEach(notificationButts, butt => butt.Click += (_, _) => Hide());
         }
 
-        //TODO: Make it automatically resize based on content. It broke.
-        public InWindowNotification(IContainer container) : this() => container.Add(this);
+        public NotificationPanel(IContainer container) : this() => container.Add(this);
 
 
         public void ShowNotification(NotificationArgs args)
         {
-            if (NotificationAutoCloseTimer.Enabled)
+            if (Visible)
             {
-                //TODO: Correct this behaviour.
+                NotificationQueue.Enqueue(args);
+                Debug.WriteLine("Returning notification");
                 return;
             }
 
             int timeLeft = args.DurationMillis;
+            Point originalLocation = Location;
 
             Title.Text = args.Title;
-            Content.Text = args.Text;
+            Content.Text = args.Content;
             CloseTimeLabel.Text = (timeLeft / 1000).ToString();
+
+            int contentPanelLowerY = ContentPanel.Location.Y + ContentPanel.Height;
+            if (contentPanelLowerY > ButtonsPanel.Location.Y)
+            {
+                int exceedsBy = contentPanelLowerY - ButtonsPanel.Location.Y;
+                Height += exceedsBy;
+                Location = new(Location.X, Location.Y - exceedsBy);
+            }
 
             RegisterNotificationButt(LeftButt, args.LeftButton);
             RegisterNotificationButt(MiddleButt, args.MiddleButton);
             RegisterNotificationButt(RightButt, args.RightButton);
             
             Show();
-            SwipeIn();
+            StartSwipeIn();
+
             NotificationAutoCloseTimer.Tick += OnCloseTimerTick;
             NotificationAutoCloseTimer.Start();
 
@@ -221,14 +240,26 @@ namespace ClausaComm.Components
                 timeLeft -= NotificationAutoCloseTimer.Interval;
                 if (timeLeft <= 0 || !Visible)
                 {
-                    if (Visible)
-                        SwipeOutAndHide();
-
                     NotificationAutoCloseTimer.Stop();
                     UnregisterNotificationButt(LeftButt, args.LeftButton);
                     UnregisterNotificationButt(MiddleButt, args.MiddleButton);
                     UnregisterNotificationButt(RightButt, args.RightButton);
                     NotificationAutoCloseTimer.Tick -= OnCloseTimerTick;
+
+                    if (Visible)
+                        StartSwipeOutAndHide(ResetAndShowNext);
+                    else
+                        ResetAndShowNext();
+
+                    void ResetAndShowNext()
+                    {
+                        Height = InitialHeight;
+                        Location = originalLocation;
+
+                        if (NotificationQueue.Any())
+                            ShowNotification(NotificationQueue.Dequeue());
+                    }
+                    return;
                 }
 
                 CloseTimeLabel.Text = (timeLeft / 1000).ToString();
@@ -251,10 +282,10 @@ namespace ClausaComm.Components
 
         }
 
-        private void SwipeIn()
+        private void StartSwipeIn()
         {
             Point targetPos = Location;
-            Location = new Point(Form.Width - Width/2, targetPos.Y);
+            Location = new Point(Form.Width - Width / 2, targetPos.Y);
 
             NotificationSwipeTimer.Tick += OnSwipeTimerTick;
             NotificationSwipeTimer.Start();
@@ -273,7 +304,7 @@ namespace ClausaComm.Components
             }
         }
 
-        private void SwipeOutAndHide()
+        private void StartSwipeOutAndHide(Action completedCallback = null)
         {
             Point targetPos = new Point(Form.Width - Width/2, Location.Y);
 
@@ -288,11 +319,19 @@ namespace ClausaComm.Components
                     NotificationSwipeTimer.Stop();
                     NotificationSwipeTimer.Tick -= OnSwipeTimerTick;
                     Hide();
+                    completedCallback?.Invoke();
                     return;
                 }
-
                 Location = new Point(Location.X + SwipeSpeed, Location.Y);
             }
+        }
+
+        protected override void OnPaint(PaintEventArgs e)
+        {
+            base.OnPaint(e);
+           
+            // Substract a pixel from the width and height, because otherwise the rectangle is one pixel larger than the panel.
+            e.Graphics.DrawRectangle(BorderPen, new Rectangle(ClientRectangle.Location, ClientRectangle.Size - BorderSizeOffset));
         }
     }
 }

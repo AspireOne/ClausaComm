@@ -15,8 +15,14 @@ namespace ClausaComm
         public event EventHandler<string> NameChange;
         public event EventHandler<Image> ProfilePicChange;
         public enum Status { Online, Idle, Offline }
-        public const int MaxNameLength = 35;
-        public const int MinNameLength = 3;
+        public Dictionary<Status, string> StatusAsString = new()
+        {
+            { Status.Online, "Online" },
+            { Status.Offline, "Offline" },
+            { Status.Idle, "Idle" }
+        };
+
+        public static readonly (int min, int max) NameLength = new(3, 25);
         private readonly IXmlFile Config;
         //public XmlFile Xml => Config as XmlFile;
         //public readonly HashSet<Contact> UnreadMessages = new HashSet<Contact>();
@@ -108,11 +114,19 @@ namespace ClausaComm
                 if (Name == value)
                     return;
 
-                _name = value.Length is <= MaxNameLength and >= MinNameLength
+                if (value.Length > NameLength.max)
+                    value = value.Substring(0, NameLength.max);
+                else if (value.Length < NameLength.min)
+                    for (int i = 0; i < NameLength.min - value.Length; ++i)
+                        value += "_";
+                _name = value;
+
+                /*
+                _name = value.Length is <= NameLength.max and >= NameLength.min
                     ? value
                     : throw new ArgumentException($@"The supplied name's length is not right.
-                       Should be <= {MaxNameLength} and >= {MinNameLength}, but was {value.Length})", nameof(value));
-
+                       Should be <= {NameLength.max} and >= {NameLength.min}, but was {value.Length})", nameof(value));
+                */
                 NameChange?.Invoke(this, value);
 
                 if (Save)

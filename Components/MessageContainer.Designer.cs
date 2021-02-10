@@ -1,7 +1,7 @@
 ﻿
 namespace ClausaComm.Components
 {
-    sealed partial class InWindowNotification
+    partial class MessageContainer
     {
         /// <summary>
         /// Required designer variable.

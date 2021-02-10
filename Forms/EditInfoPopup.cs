@@ -29,7 +29,7 @@ namespace ClausaComm.Forms
         private void InitializeComponentFurther()
         {
             NameBox.Textbox.Text = User.Name;
-            NameBox.Textbox.MaxLength = Contact.MaxNameLength;
+            NameBox.Textbox.MaxLength = Contact.NameLength.max;
             NameBox.Textbox.TextChanged += (_, _) => OnNameBoxTextChange();
 
             IpBox.Textbox.Text = User.Ip;
@@ -54,7 +54,7 @@ namespace ClausaComm.Forms
 
         private void OnNameBoxTextChange()
         {
-            NameBox.BorderColor = NameBox.Textbox.Text.Length is < Contact.MinNameLength or > Contact.MaxNameLength ? Color.Red : Color.Transparent;
+            NameBox.BorderColor = NameBox.Textbox.Text.Length < Contact.NameLength.min || NameBox.Textbox.Text.Length > Contact.NameLength.max ? Color.Red : Color.Transparent;
             SaveButton.Invalidate();
         }
 

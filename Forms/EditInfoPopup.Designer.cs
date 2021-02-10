@@ -30,6 +30,7 @@ namespace ClausaComm.Forms
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EditInfoPopup));
             this.HeaderLabel = new System.Windows.Forms.Label();
             this.NameLbl = new System.Windows.Forms.Label();
             this.NameBox = new ClausaComm.Components.RoundTextBox();
@@ -159,10 +160,11 @@ namespace ClausaComm.Forms
             this.TitleBar.Dock = System.Windows.Forms.DockStyle.Top;
             this.TitleBar.Form = null;
             this.TitleBar.Location = new System.Drawing.Point(0, 0);
-            this.TitleBar.MaximumSize = new System.Drawing.Size(-2147483648, 25);
+            this.TitleBar.MaximumSize = new System.Drawing.Size(0, 25);
             this.TitleBar.MinimumSize = new System.Drawing.Size(0, 25);
             this.TitleBar.Name = "TitleBar";
-            this.TitleBar.Size = new System.Drawing.Size(0, 25);
+            this.TitleBar.PinNotifyIcon = null;
+            this.TitleBar.Size = new System.Drawing.Size(471, 25);
             this.TitleBar.TabIndex = 1;
             this.TitleBar.Title = "ClausaComm";
             // 
@@ -183,6 +185,8 @@ namespace ClausaComm.Forms
             this.Controls.Add(this.HeaderLabel);
             this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.Location = new System.Drawing.Point(0, 0);
             this.Name = "EditInfoPopup";
             this.Text = "Change your info";
             ((System.ComponentModel.ISupportInitialize)(this.ProfilePictureBox)).EndInit();

@@ -1,5 +1,6 @@
 ﻿using ClausaComm.Components.ContactData;
 using ClausaComm.Components.Icons;
+using ClausaComm.Forms;
 using ClausaComm.Properties;
 using System;
 using System.ComponentModel;
@@ -12,6 +13,26 @@ namespace ClausaComm.Components
         //public Action<Contact> RemoveContactAction { get; set; }
         private Contact _contact;
         private readonly Control[] ChildControls;
+
+        private MainForm _mainForm;
+        public MainForm MainForm
+        {
+            get => _mainForm;
+            set
+            {
+                if (ReferenceEquals(_mainForm, value))
+                    return;
+
+                _mainForm = value;
+                if (value is not null)
+                {
+                    MainForm.ToolTip1.SetToolTip(SaveUnsaveContactIcon,
+                    "If the person's ip doesn't change, you can \n" +
+                    "keep him saved instead of re-adding him \n" +
+                    "every time you restart the program.");
+                }
+            }
+        }
 
         #region Icons
         private readonly PhoneIcon CallContactIcon = new()

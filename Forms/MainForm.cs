@@ -19,16 +19,6 @@ namespace ClausaComm.Forms
             InitializeComponent();
             InitializeComponentFurther();
             InitializeProgram();
-
-            InWindowNotification.NotificationArgs notifArgs = new()
-            {
-                DurationMillis = 15000,
-                MiddleButton = new InWindowNotification.NotificationArgs.ButtonArgs { ClickCallback = (_, _) => Debug.WriteLine("click"), Name = "Update now"},
-                Title = "New update available",
-                Text = $"Version xx is now available! Current version is xx.fdddddddddddddgdfgfdgfdgfdgdfgfdgfdgfgfdgdfgfdgfdgfdgfdgfgdgd fgfdg fdg dfg fdg fdg"
-            };
-
-            inWindowNotification1.ShowNotification(notifArgs);
         }
 
         private void InitializeComponentFurther()
@@ -36,6 +26,7 @@ namespace ClausaComm.Forms
             SetStyle(ControlStyles.ResizeRedraw, true);
 
             // ChatPanel
+            ActionPanel1.MainForm = this;
             ChatPanel1.ActionPanel = ActionPanel1;
             ChatPanel1.SendIcon = SendIcon1;
             ChatPanel1.Textbox = chatTextBox1;
@@ -52,12 +43,13 @@ namespace ClausaComm.Forms
 
             AddContactIcon.Click += AddContactPictureBox_Click;
             ContactSearchBox.TextChanged += ContactSearchBox_TextChanged;
-            inWindowNotification1.Form = this;
+            NotificationPanel.Form = this;
 
             // This form
             Resizable = true;
-            BackColor = Color.FromArgb(40, 40, 40);
+            BackColor = TitleBar.BackColor;
             Pinnable = true;
+            Padding = DraggableWindowBorderSize;
         }
 
         private void InitializeProgram()
@@ -111,7 +103,7 @@ namespace ClausaComm.Forms
 
             if (PanelOfContactPanels.Panels.Any())
             {
-                PanelOfContactPanels.Panels.ElementAt(0).Contact.ProfilePic = Image.FromFile(@"C:\Users\matej\Desktop\profilovky a obrázky\santa_mitu.png");
+                PanelOfContactPanels.Panels.ElementAt(0).Contact.ProfilePic = Image.FromFile(@"C:\Users\matej\Desktop\Desktop1\profilovky a obrázky\santa_mitu.png");
                 PanelOfContactPanels.Panels.ElementAt(0).Contact.CurrentStatus = Contact.Status.Online;
                 PanelOfContactPanels.Panels.ElementAt(0).Contact.Name = "Ej ej ejj";
                 PanelOfContactPanels.Panels.ElementAt(0).FlashPanel();
@@ -123,16 +115,14 @@ namespace ClausaComm.Forms
         private void ChangeControlsEnabled(bool enabled)
         {
             foreach (Control control in Controls)
-            {
                 if (!(control is TitleBar))
                     control.Enabled = enabled;
-            }
         }
 
-        private async void ShowPopup(Form popup)
+        private void ShowPopup(Form popup)
         {
             ChangeControlsEnabled(false);
-            await Task.Run(popup.ShowDialog);
+            popup.ShowDialog();
             ChangeControlsEnabled(true);
         }
 

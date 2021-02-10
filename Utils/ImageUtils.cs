@@ -105,5 +105,20 @@ namespace ClausaComm.Utils
 
             return destImage;
         }
+
+        public static bool IsFileImage(string path)
+        {
+            // Image.FromFile throws an OutOfMemoryException when the file is not an image.
+            // Reference: https://stackoverflow.com/questions/9354747/how-can-i-determine-if-a-file-is-an-image-file-in-net
+            try
+            {
+                Image.FromFile(path).Dispose();
+                return true;
+            }
+            catch (OutOfMemoryException)
+            {
+                return false;
+            }
+        }
     }
 }

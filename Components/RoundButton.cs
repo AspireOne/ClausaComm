@@ -88,7 +88,7 @@ namespace ClausaComm.Components
             brush.Dispose();
             brush = new SolidBrush(TextColor);
 
-            //Button Text
+            //Button Content
             SizeF stringSize = g.MeasureString(Text, Font);
             g.DrawString(Text, Font, brush, (Width - stringSize.Width) / 2, (Height - stringSize.Height) / 2);
 

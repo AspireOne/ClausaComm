@@ -19,8 +19,7 @@ namespace ClausaComm
     {
 
         public static readonly string ThisProgramPath = Path.Combine(Directory.GetCurrentDirectory(), Process.GetCurrentProcess().MainModule.FileName);
-        public const string ProgramName = "ClausaComm";
-        public const string Version = "0.0.2";
+        public const string Version = "0.0.3";
 
 
         /// <summary>
@@ -36,30 +35,36 @@ namespace ClausaComm
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             MainForm mainForm = new MainForm();
-
-            new Thread(() =>
-            {
-                (bool newVersionAvailable, string? newVersion) = UpdateManager.IsNewVersionAvailable().Result;
-                if (newVersionAvailable)
-                    UpdateManager.DownloadNewVersionBinaryAsync(completedHandler: (_, _) => ShowUpdateNotification(mainForm, newVersion));
-            }).Start();
+            #if !DEBUG
+            CheckForNewVersionAsync(mainForm);
+            #endif
 
             Application.Run(mainForm);
             Close();
         }
 
+        private static void CheckForNewVersionAsync(MainForm mainForm)
+        {
+            new Thread(() =>
+            {
+                (bool newVersionAvailable, string newVersion) = UpdateManager.IsNewVersionAvailable().Result;
+                if (newVersionAvailable)
+                    UpdateManager.DownloadNewVersionBinaryAsync(completedHandler: (_, _) => ShowUpdateNotification(mainForm, newVersion));
+            }).Start();
+        }
+
         private static void ShowUpdateNotification(MainForm mainForm, string newVersion)
         {
-            InWindowNotification.NotificationArgs notifArgs = new()
+            NotificationPanel.NotificationArgs notifArgs = new()
             {
                 DurationMillis = 15000,
-                MiddleButton = new InWindowNotification.NotificationArgs.ButtonArgs { ClickCallback = (_, _) => Close(true), Name = "Update now"},
+                MiddleButton = new NotificationPanel.NotificationArgs.ButtonArgs { ClickCallback = (_, _) => Close(true), Name = "Update now"},
                 Title = "New update available",
-                Text = $"Version {newVersion} is now available! Current version is {Version}."
+                Content = $"Version {newVersion} is now available!"
             };
 
             mainForm.Invoke(new MethodInvoker(delegate {
-                mainForm.inWindowNotification1.ShowNotification(notifArgs);
+                mainForm.NotificationPanel.ShowNotification(notifArgs);
             }));
         }
 

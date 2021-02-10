@@ -56,7 +56,8 @@ namespace ClausaComm.Components
 
         public ChatTextBox()
         {
-            MaxLength = Message.MaxCharacters;
+            // TODO: Get max text length from message.
+            //MaxLength = MessageContainer.MaxCharacters;
         }
 
         [System.Runtime.InteropServices.DllImport("gdi32.dll", EntryPoint = "CreateRoundRectRgn")]

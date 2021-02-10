@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using ClausaComm.Extensions;
 using ClausaComm.Utils;
+using Microsoft.Win32;
 
 namespace ClausaComm
 {
@@ -30,7 +31,7 @@ namespace ClausaComm
 
 
 
-        public static async Task<(bool available, string? newVer)> IsNewVersionAvailable()
+        public static async Task<(bool available, string newVer)> IsNewVersionAvailable()
         {
             string[] availableVersions = await FetchAvailableVersions();
 
@@ -47,8 +48,8 @@ namespace ClausaComm
             return (highestIsHigherThanCurr, highestIsHigherThanCurr ? highestVer : null);
         }
 
-        public static void DownloadNewVersionBinaryAsync(DownloadProgressChangedEventHandler? progressHandler = null, 
-            AsyncCompletedEventHandler? completedHandler = null, Action? errorHandler = null)
+        public static void DownloadNewVersionBinaryAsync(DownloadProgressChangedEventHandler progressHandler = null, 
+            AsyncCompletedEventHandler completedHandler = null, Action errorHandler = null)
         {
             using WebClient wc = new();
             wc.DownloadFileCompleted += (_, _) => UpdateDownloaded = true;
@@ -78,6 +79,9 @@ namespace ClausaComm
             File.Delete(BinarySavePath);
 
             var restartCommand = $" & start {Program.ThisProgramPath}";
+
+            using RegistryKey key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\ClausaComm");
+            string installPath = key?.GetValue("InstallLocation")?.ToString()?.Replace("\"", "");
 
             new Process
             {

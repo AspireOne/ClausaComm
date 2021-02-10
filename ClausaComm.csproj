@@ -32,10 +32,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Network\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="LiteNetLib" Version="0.9.4" />
   </ItemGroup>
 

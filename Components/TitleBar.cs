@@ -141,6 +141,7 @@ namespace ClausaComm.Components
         private FormBase _form;
         private bool MouseIsDown;
         private Point LastFormLocation;
+        public const byte BarHeight = 25;
 
 
         #region constructors & initialization
@@ -162,9 +163,8 @@ namespace ClausaComm.Components
             Controls.Add(CloseButton);
             Location = new Point(0, 0);
             Name = "TitleBar";
-            MinimumSize = new Size(0, 25);
-            MaximumSize = new Size(int.MaxValue, 25);
-            MaximumSize = new Size(int.MaxValue, 25);
+            MinimumSize = new Size(0, BarHeight);
+            MaximumSize = new Size(int.MaxValue, BarHeight);
             Dock = DockStyle.Top;
             TabIndex = 1;
             BackColor = Color.FromArgb(28, 28, 28);
