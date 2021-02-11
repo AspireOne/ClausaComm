@@ -8,21 +8,22 @@ using System.Drawing;
 
 namespace ClausaComm
 {
-    public class Message : ISendable
+    public readonly struct Message : ISendable
     {
         public RemoteObject.ObjectType ObjType => RemoteObject.ObjectType.Message;
         public readonly string Text;
         public readonly MessageFile File;
-        public readonly string Id = IdGenerator.GenerateId();
+        public readonly string Id;
 
-        public Message(string text)
-        {
-            Text = text /*?? ""*/;
-        }
+        public Message(string text) : this(text, null) { }
 
-        public Message(MessageFile file)
+        public Message(MessageFile file) : this(null, file) { }
+
+        private Message(string text, MessageFile file)
         {
+            Text = text;
             File = file;
+            Id = IdGenerator.GenerateId();
         }
     }
 }

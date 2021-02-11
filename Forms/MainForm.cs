@@ -9,13 +9,19 @@ using ClausaComm.Extensions;
 using ClausaComm.Components.ContactData;
 using ClausaComm.Components;
 using ClausaComm.Utils;
+using System.Collections.Generic;
 
 namespace ClausaComm.Forms
 {
     public partial class MainForm : FormBase
     {
+        // Expose an instance of MainForm as static, because there will ever be only one instance of MainForm; MainForm thus acts like a static object,
+        // and so it SHOULD be static in order for the logic (literal logic) to work properly. We cannot make it static directly, so we'll do it this way.
+        public static MainForm Form;
+        public readonly HashSet<Contact> Contacts = new();
         public MainForm()
         {
+            Form = this;
             InitializeComponent();
             InitializeComponentFurther();
             InitializeProgram();
@@ -54,22 +60,14 @@ namespace ClausaComm.Forms
 
         private void InitializeProgram()
         {
-            var userExists = false;
-            foreach (Contact contact in Contact.XmlFile.GetContacts())
-            {
-                AddContact(contact);
-                if (contact.IsUser)
-                    userExists = true;
-            }
-
-            if (!userExists)
-                AddContact(new Contact(IpUtils.LocalIp) { Save = true });
-
+            Contact.XmlFile.Contacts.ForEach(c => AddContact(c));
             PanelOfContactPanels.SimulateClickOnFirstPanel();
         }
 
         public void AddContact(Contact contactToAdd)
         {
+            Contacts.Add(contactToAdd);
+
             if (contactToAdd is null)
                 throw new ArgumentNullException(nameof(contactToAdd));
 

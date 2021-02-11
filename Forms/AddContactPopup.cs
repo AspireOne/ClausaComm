@@ -51,7 +51,7 @@ namespace ClausaComm.Forms
         {
             if (AddButton.Cursor == AddButtonProps.AllowCursor)
             {
-                if (!Contact.XmlFile.GetContacts().Any(x => x.Ip == IpBox.Textbox.Text))
+                if (!Contact.XmlFile.Contacts.Any(x => x.Ip == IpBox.Textbox.Text))
                 {
                     var contact = new Contact(IpBox.Textbox.Text) { Save = true };
                     Callback(contact);

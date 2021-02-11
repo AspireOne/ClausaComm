@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Windows.Forms;
 using System.Threading;
+using ClausaComm.Utils;
 
 namespace ClausaComm.Components.Icons
 {
@@ -32,7 +33,7 @@ namespace ClausaComm.Components.Icons
              * Executing this code on the current thread does not solve it.
              */
             // TODO: Fix this (Save Image not displaying correctly until clicked on or hovered over - replace the current workaround).
-            new Thread(() => { Thread.Sleep(50); Image = new Bitmap(Image); }).Start();
+            ThreadUtils.RunThread(() => { Thread.Sleep(50); Image = new Bitmap(Image); });
         }
 
         public SaveIcon(IContainer container) : base(container) { }

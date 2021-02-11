@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
+using System.IO;
 
 namespace ClausaComm.Utils
 {
@@ -119,6 +120,23 @@ namespace ClausaComm.Utils
             {
                 return false;
             }
+        }
+
+        public static string ImageToBase64String(Image img)
+        {
+            using (MemoryStream ms = new())
+            {
+                img.Save(ms, img.RawFormat);
+                return Convert.ToBase64String(ms.ToArray());
+            }
+        }
+
+        public static Image ImageFromBase64String(string img)
+        {
+            byte[] array = Convert.FromBase64String(img);
+
+            using (MemoryStream ms = new(array))
+                return Image.FromStream(ms);
         }
     }
 }

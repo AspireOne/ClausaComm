@@ -11,6 +11,9 @@ using System.Windows.Forms;
 using Accessibility;
 using ClausaComm.Components;
 using ClausaComm.Forms;
+using ClausaComm.Network;
+using ClausaComm.Network_Communication.Networking;
+using ClausaComm.Utils;
 
 namespace ClausaComm
 {
@@ -39,18 +42,23 @@ namespace ClausaComm
             CheckForNewVersionAsync(mainForm);
             #endif
 
+            var s = new Server();
+            var c = new Client();
+            s.RunAsync();
+            c.RunAsync();
+
             Application.Run(mainForm);
             Close();
         }
 
         private static void CheckForNewVersionAsync(MainForm mainForm)
         {
-            new Thread(() =>
+            ThreadUtils.RunThread(() =>
             {
                 (bool newVersionAvailable, string newVersion) = UpdateManager.IsNewVersionAvailable().Result;
                 if (newVersionAvailable)
                     UpdateManager.DownloadNewVersionBinaryAsync(completedHandler: (_, _) => ShowUpdateNotification(mainForm, newVersion));
-            }).Start();
+            });
         }
 
         private static void ShowUpdateNotification(MainForm mainForm, string newVersion)
