@@ -20,41 +20,13 @@ namespace ClausaComm.Network_Communication.Networking
         {
             Listener.NetworkReceiveUnconnectedEvent += (IPEndPoint remoteEndPoint, NetPacketReader reader, UnconnectedMessageType messageType) =>
             {
-                Debug.WriteLine($"Client received unconnected message from {remoteEndPoint}. Message: {reader.GetString()}");
+                throw new Exception("Sending data to client's endpoint is not allowed.");
             };
-
-            RunAsync();
-            ThreadUtils.RunThread(() =>
-            {
-                //Node.Connect("192.168.1.236", Port, "");
-                while (true)
-                {
-                    //bool sent = Node.SendUnconnectedMessage(writer, NetUtils.MakeEndPoint("192.168.1.236", Port));     
-                    //Debug.WriteLine("sent: " + sent);
-                    Thread.Sleep(600);
-                }
-            });
         }
 
         public bool Send(string ip, RemoteObject obj)
         {
             return Node.SendUnconnectedMessage(obj.SerializeToUtf8Bytes(), NetUtils.MakeEndPoint(ip, Port));
-        }
-
-        public void RunAsync()
-        {
-            if (Node.IsRunning)
-                return;
-
-            Node.Start();
-            ThreadUtils.RunThread(() =>
-            {
-                while (true)
-                {
-                    Node.PollEvents();
-                    Thread.Sleep(15);
-                }
-            });
         }
     }
 }

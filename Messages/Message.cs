@@ -11,6 +11,7 @@ namespace ClausaComm
     public readonly struct Message : ISendable
     {
         public RemoteObject.ObjectType ObjType => RemoteObject.ObjectType.Message;
+        bool ISendable.Confirm => true;
         public readonly string Text;
         public readonly MessageFile File;
         public readonly string Id;

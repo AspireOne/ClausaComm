@@ -18,12 +18,6 @@ namespace ClausaComm
 
         // Status declaration.
         public enum Status { Online, Idle, Offline }
-        public static readonly Dictionary<Status, string> StatusAsString = new()
-        {
-            { Status.Online, "Online" },
-            { Status.Offline, "Offline" },
-            { Status.Idle, "Idle" }
-        };
 
         public static readonly (int min, int max) NameLength = new(3, 25);
 

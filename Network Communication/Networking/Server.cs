@@ -15,6 +15,7 @@ using LiteNetLib.Utils;
 namespace ClausaComm.Network
 {
     // TODO: Maybe make static?
+    // TODO: Remove LiteNetLib and implement it yourself.
     // The SERVER takes care ONLY of RECEIVING.
     class Server : InterCommunication
     {
@@ -22,38 +23,18 @@ namespace ClausaComm.Network
 
         public Server()
         {
-            Listener.ConnectionRequestEvent += request =>
-            {
-                throw new Exception("The data should be sent without being connected.");
-                //request.Accept();
-                //request.Data
-            };
-
             Listener.NetworkReceiveUnconnectedEvent += (IPEndPoint remoteEndPoint, NetPacketReader reader, UnconnectedMessageType messageType) =>
             {
                 reader.GetBytes(Buffer, reader.AvailableBytes);
-                string msg = Encoding.UTF8.GetString(Buffer);
-                Debug.WriteLine($"Server received unconnected message from {remoteEndPoint.Address}. Message: " + msg);
-                NetDataWriter writer = new NetDataWriter();
-                writer.Put("Hello client!");
-                Node.SendUnconnectedMessage(writer, remoteEndPoint);
-            };
-        }
-
-        //public void NetworkReceive
-
-        public void RunAsync()
-        {
-            Node.Start(Port);
-
-            ThreadUtils.RunThread(() =>
-            {
-                while (true)
+                RemoteObject obj = RemoteObject.Deserialize(Buffer);
+                // If the IP is Ipv6, try to use remoteEndPoint.Address.MapToIpv4();
+                if (remoteEndPoint.Address.AddressFamily == AddressFamily.InterNetworkV6)
                 {
-                    Node.PollEvents();
-                    Thread.Sleep(15);
+                    throw new Exception("The received address is IPv6. The code to handle this was not written yet, because" +
+                        " you thought, that it won't be in IPv6. So better fix it.");
                 }
-            });
+                NetworkBridge.HandleIncomingData(obj, remoteEndPoint.Address.ToString());
+            };
         }
     }
 }

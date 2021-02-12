@@ -12,7 +12,7 @@ namespace ClausaComm
     [Serializable]
     public readonly struct RemoteObject
     {
-        public enum ObjectType { Message, ContactData, StatusUpdate }
+        public enum ObjectType { Message, ContactData, StatusUpdate, Ping, FullContactDataRequest, DataReceiveConfirmation }
 
         private static readonly JsonSerializerOptions SerializerOptions = new()
         {
@@ -23,15 +23,18 @@ namespace ClausaComm
 
         public readonly ISendable Data;
         public readonly string ContactId;
-        
+        public readonly string ObjectId;
+
 
         public RemoteObject(ISendable data)
         {
             Data = data;
             ContactId = Contact.UserContact.Id;
+            // We don't need the ID to be too long - the id will be needed usually just for a few seconds.
+            ObjectId = IdGenerator.GenerateId(4);
         }
 
-        public string Serialize() => JsonSerializer.Serialize<RemoteObject>(this, SerializerOptions);
+        public string Serialize() => JsonSerializer.Serialize(this, SerializerOptions);
 
         public byte[] SerializeToUtf8Bytes() => JsonSerializer.SerializeToUtf8Bytes(this, typeof(RemoteObject), SerializerOptions);
 
