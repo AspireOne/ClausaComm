@@ -14,6 +14,7 @@ namespace ClausaComm.Network_Communication
     public readonly struct RemoteContactData : ISendable
     {
         RemoteObject.ObjectType ISendable.ObjType => RemoteObject.ObjectType.ContactData;
+        // Convert it so that it¨s serializable.
         public readonly string Base64ProfilePicture;
         public readonly string Name;
         //public readonly string Id;

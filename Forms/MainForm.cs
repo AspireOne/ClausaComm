@@ -10,6 +10,7 @@ using ClausaComm.Components.ContactData;
 using ClausaComm.Components;
 using ClausaComm.Utils;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace ClausaComm.Forms
 {

@@ -27,10 +27,10 @@ namespace ClausaComm.Network_Communication.Networking
             ThreadUtils.RunThread(() =>
             {
                 //Node.Connect("192.168.1.236", Port, "");
-                while(true)
+                while (true)
                 {
                     //bool sent = Node.SendUnconnectedMessage(writer, NetUtils.MakeEndPoint("192.168.1.236", Port));     
-                    Debug.WriteLine("sent: " + sent);
+                    //Debug.WriteLine("sent: " + sent);
                     Thread.Sleep(600);
                 }
             });

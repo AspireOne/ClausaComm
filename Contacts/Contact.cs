@@ -11,7 +11,6 @@ namespace ClausaComm
 {
     public partial class Contact
     {
-        public static readonly Contact UserContact;
         // Event handlers.
         public event EventHandler<Status> StatusChange;
         public event EventHandler<string> NameChange;
@@ -31,7 +30,7 @@ namespace ClausaComm
         //public readonly HashSet<Contact> UnreadMessages = new HashSet<Contact>();
 
         // TODO: Move this enum (SavedInfo) to a more appropriate place.
-        
+
         private enum SavedInfo { Id, Name, Ip, IsUser, ProfilePic }
 
         #region backing fields
@@ -42,10 +41,12 @@ namespace ClausaComm
         private bool _save = false;
         private string _id;
         private string _profilePicPath;
+        private static Contact _userContact;
         #endregion
 
         #region Properties
 
+        public static Contact UserContact => _userContact ??= XmlFile.Contacts.FirstOrDefault(contact => contact.IsUser) ?? new Contact(IpUtils.LocalIp) { Save = true };
         public bool IsUser { get; private init; } = false;
         public string ProfilePicPath => _profilePicPath ??= Path.Combine(ProgramDirectory.ProfilePicsDirPath, $"{Id}.png");
         private bool HasDefaultProfilePic { get; set; } = true;
@@ -168,11 +169,6 @@ namespace ClausaComm
         }
         #endregion
 
-        static Contact()
-        {
-            UserContact = XmlFile.Contacts.FirstOrDefault(contact => contact.IsUser) ?? new Contact(IpUtils.LocalIp) {Save = true};
-        }
-
         public Contact(string ip, string id = null)
         {
             if (ip is null)
@@ -184,6 +180,7 @@ namespace ClausaComm
         }
 
         public override bool Equals(object obj) => obj is Contact contact && contact.Id == Id;
+        public override string ToString() => $"Name: {Name} | ID: {Id} | IsUser: {IsUser} | Save: {Save} | IP: {Ip}";
 
         public override int GetHashCode() => int.Parse(Ip.Replace(".", ""));
 

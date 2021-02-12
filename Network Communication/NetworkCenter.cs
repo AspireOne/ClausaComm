@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 
 namespace ClausaComm
 {
+    // TODO: Rename to NetworkBridge?
     public static class NetworkCenter
     {
         public static bool Running { get; private set; } = false;

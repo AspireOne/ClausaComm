@@ -6,6 +6,8 @@ using System.Linq;
 using System.IO;
 using System.Xml.Linq;
 using ClausaComm.Utils;
+using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 namespace ClausaComm
 {
@@ -15,7 +17,7 @@ namespace ClausaComm
 
         private readonly IXmlFile Xml;
         public XmlFile ContactXml => Xml as XmlFile;
-        
+
         // Creating a private interface so that those methods cannot be accessed publicly, but others can.
         private interface IXmlFile
         {
@@ -33,17 +35,16 @@ namespace ClausaComm
                 { SavedInfo.Id, "id" },
                 { SavedInfo.IsUser, "isUser" }
             };
-            
+
             private const string ContactNodeName = "contact";
             private readonly Contact Contact;
             public static readonly HashSet<Contact> Contacts = GetContacts().ToHashSet();
-            private static readonly string Path = ProgramDirectory.ContactsPath;
 
             public XmlFile(Contact contact) => Contact = contact;
 
             bool IXmlFile.Save()
             {
-                var doc = XDocument.Load(Path);
+                var doc = XDocument.Load(ProgramDirectory.ContactsPath);
 
                 if (doc.ToString().Contains(Contact.Id))
                     return false;
@@ -58,7 +59,7 @@ namespace ClausaComm
                         new XElement(InfoFileRepresentationDict[SavedInfo.IsUser], Contact.IsUser)
                     )
                 );
-                doc.Save(Path);
+                doc.Save(ProgramDirectory.ContactsPath);
 
                 return true;
             }
@@ -67,19 +68,19 @@ namespace ClausaComm
             {
                 Contacts.Remove(Contact);
 
-                var doc = XDocument.Load(Path);
+                var doc = XDocument.Load(ProgramDirectory.ContactsPath);
                 XElement contactNode = GetNode(doc);
-                
+
                 if (contactNode is not null)
                 {
                     contactNode.Remove();
-                    doc.Save(Path);
+                    doc.Save(ProgramDirectory.ContactsPath);
                 }
             }
 
             void IXmlFile.Edit(SavedInfo attributeToChange, string newValue)
             {
-                var doc = XDocument.Load(Path);
+                var doc = XDocument.Load(ProgramDirectory.ContactsPath);
                 XElement contactNode = GetNode(doc);
 
                 if (contactNode is null)
@@ -91,13 +92,13 @@ namespace ClausaComm
                     throw new ArgumentException("The passed attribute to be changed was not found", nameof(attributeToChange));
 
                 element.Value = newValue;
-                doc.Save(Path);
+                doc.Save(ProgramDirectory.ContactsPath);
             }
 
 
             private static IEnumerable<XElement> GetContactNodes(XDocument doc = null)
             {
-                var document = doc ?? XDocument.Load(Path);
+                var document = doc ?? XDocument.Load(ProgramDirectory.ContactsPath);
                 return document.Root?.Elements() ?? Enumerable.Empty<XElement>();
             }
 
@@ -116,13 +117,14 @@ namespace ClausaComm
                     string name = contactNode.Element(InfoFileRepresentationDict[SavedInfo.Name]).Value;
 
                     var contact = new Contact(isUser ? localIp : ip) { _name = name, _save = false, _id = id };
-
                     TryGetProfilePicture(contact.ProfilePicPath, out Image profileImage);
 
                     contact.ProfilePic = profileImage;
                     contact._save = true;
 
+                    Debug.WriteLine("Found contact from xml. Data: " + contact);
                     yield return contact;
+
                 }
             }
         }

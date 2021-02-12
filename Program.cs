@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Net;
 using System.Net.Http;
@@ -38,15 +39,16 @@ namespace ClausaComm
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             MainForm mainForm = new MainForm();
-            #if !DEBUG
+#if !DEBUG
             CheckForNewVersionAsync(mainForm);
-            #endif
-
-            var s = new Server();
-            var c = new Client();
-            s.RunAsync();
-            c.RunAsync();
-
+#endif
+            /*
+            Image img = Image.FromFile(@"C:\Users\matej\Desktop\Desktop1\profilovky a obrázky\mitu.png");
+            string inn = ImageUtils.ImageToBase64String(img);
+            Image outt = ImageUtils.ImageFromBase64String(inn);
+            outt.Save(@"C:\Users\matej\Desktop\pngd.png");
+            return;
+            */
             Application.Run(mainForm);
             Close();
         }
@@ -66,12 +68,13 @@ namespace ClausaComm
             NotificationPanel.NotificationArgs notifArgs = new()
             {
                 DurationMillis = 15000,
-                MiddleButton = new NotificationPanel.NotificationArgs.ButtonArgs { ClickCallback = (_, _) => Close(true), Name = "Update now"},
+                MiddleButton = new NotificationPanel.NotificationArgs.ButtonArgs { ClickCallback = (_, _) => Close(true), Name = "Update now" },
                 Title = "New update available",
                 Content = $"Version {newVersion} is now available!"
             };
 
-            mainForm.Invoke(new MethodInvoker(delegate {
+            mainForm.Invoke(new MethodInvoker(delegate
+            {
                 mainForm.NotificationPanel.ShowNotification(notifArgs);
             }));
         }
