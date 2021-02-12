@@ -42,13 +42,6 @@ namespace ClausaComm
 #if !DEBUG
             CheckForNewVersionAsync(mainForm);
 #endif
-            /*
-            Image img = Image.FromFile(@"C:\Users\matej\Desktop\Desktop1\profilovky a obrázky\mitu.png");
-            string inn = ImageUtils.ImageToBase64String(img);
-            Image outt = ImageUtils.ImageFromBase64String(inn);
-            outt.Save(@"C:\Users\matej\Desktop\pngd.png");
-            return;
-            */
             Application.Run(mainForm);
             Close();
         }
