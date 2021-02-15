@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
 using ClausaComm.Extensions;
+using ClausaComm.Exceptions;
 
 namespace ClausaComm.Network_Communication
 {
@@ -20,12 +21,10 @@ namespace ClausaComm.Network_Communication
         private readonly Action<string, RemoteObject> SendMethod;
         private readonly HashSet<Contact> AllContacts;
 
-
-
         public PingSender(Action<string, RemoteObject> sendMethod, HashSet<Contact> allContacts)
         {
             if (Created)
-                throw new Exception($"An attempt was made to create a second instance of {nameof(PingSender)}. There can only be one instance.");
+                throw new MultipleInstancesException(nameof(PingSender));
 
             Timer.Elapsed += OnIntervalPassed;
             AllContacts = allContacts;
@@ -43,7 +42,7 @@ namespace ClausaComm.Network_Communication
             }
         }
 
-        // Do not mark as static. 
+        // Do not mark as static.
         public void Start()
         {
             if (Running)

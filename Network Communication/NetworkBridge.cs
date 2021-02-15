@@ -1,4 +1,5 @@
 ﻿using ClausaComm.Communication;
+using ClausaComm.Exceptions;
 using ClausaComm.Forms;
 using ClausaComm.Network;
 using ClausaComm.Network_Communication;
@@ -30,7 +31,7 @@ namespace ClausaComm
         public NetworkBridge(HashSet<Contact> allContacts, Action<Contact> addContactMethod)
         {
             if (Created)
-                throw new Exception($"An attempt was made to create a second instance of {nameof(NetworkBridge)}. There can only be one instance.");
+                throw new MultipleInstancesException(nameof(NetworkBridge));
 
             AllContacts = allContacts;
             AddContactMethod = addContactMethod;

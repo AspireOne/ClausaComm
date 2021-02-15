@@ -11,6 +11,7 @@ using ClausaComm.Components;
 using ClausaComm.Utils;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using ClausaComm.Contacts;
 
 namespace ClausaComm.Forms
 {
@@ -18,12 +19,15 @@ namespace ClausaComm.Forms
     {
         public readonly HashSet<Contact> Contacts = new();
         private readonly NetworkBridge Network;
+        private readonly UserStatusWatcher UserStatusWatcher;
 
         public MainForm()
         {
             InitializeComponent();
             InitializeComponentFurther();
             InitializeProgram();
+            UserStatusWatcher = new(Contact.UserContact);
+            UserStatusWatcher.Run();
             Network = new(Contacts, AddContact);
             Network.Run();
         }
@@ -139,8 +143,8 @@ namespace ClausaComm.Forms
 
         private void ChatPanel1_Paint(object sender, PaintEventArgs e)
         {
-
         }
+
         /*
 public void RemoveContact(Contact contact)
 {
