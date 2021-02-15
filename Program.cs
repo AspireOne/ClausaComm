@@ -18,13 +18,10 @@ using ClausaComm.Utils;
 
 namespace ClausaComm
 {
-
     public static class Program
     {
-
         public static readonly string ThisProgramPath = Path.Combine(Directory.GetCurrentDirectory(), Process.GetCurrentProcess().MainModule.FileName);
         public const string Version = "0.0.3";
-
 
         /// <summary>
         ///  The main entry point for the application.
@@ -32,8 +29,10 @@ namespace ClausaComm
         [STAThread]
         private static void Main()
         {
+#if !DEBUG
             if (IsAnotherInstanceRunning())
                 Close();
+#endif
 
             Application.SetHighDpiMode(HighDpiMode.SystemAware);
             Application.EnableVisualStyles();

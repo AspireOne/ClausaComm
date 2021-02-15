@@ -7,6 +7,7 @@ using ClausaComm.Network_Communication.Objects;
 using ClausaComm.Utils;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -25,7 +26,6 @@ namespace ClausaComm
         private readonly HashSet<Contact> AllContacts;
         private readonly Action<Contact> AddContactMethod;
         private static bool Created;
-
 
         public NetworkBridge(HashSet<Contact> allContacts, Action<Contact> addContactMethod)
         {
@@ -68,6 +68,7 @@ namespace ClausaComm
 
         public void HandleIncomingData(RemoteObject obj, string ip)
         {
+            Debug.WriteLine("Received data from {ip}");
             // If the data demand to be confirmed, send back a confirmation.
             if (obj.Data.Confirm)
                 SendBackConfirmation(obj.ObjectId, ip);
@@ -111,7 +112,6 @@ namespace ClausaComm
 
         public void SendMessage()
         {
-
         }
 
         private Contact RetrieveContact(RemoteObject obj, string ip)
@@ -158,7 +158,6 @@ namespace ClausaComm
         private void HandleMessageReceived(Message message, Contact sender)
         {
             // Handle the message, convert message.MessageFile to RemoteMessageFile etc.
-
         }
 
         private void SendBackFullContactData(string ip)
@@ -181,7 +180,6 @@ namespace ClausaComm
 
             if (data.Base64ProfilePic is not null)
             {
-
                 Image img = ImageUtils.ImageFromBase64String(data.Base64ProfilePic);
                 if (contact.ProfilePic != img)
                     contact.ProfilePic = img;

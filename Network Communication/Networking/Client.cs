@@ -14,7 +14,7 @@ using LiteNetLib.Utils;
 namespace ClausaComm.Network_Communication.Networking
 {
     // The CLIENT takes care ONLY of SENDING.
-    class Client : InterCommunication
+    internal class Client : InterCommunication
     {
         public Client()
         {
