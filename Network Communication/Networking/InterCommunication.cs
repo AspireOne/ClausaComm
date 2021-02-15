@@ -26,7 +26,7 @@ namespace ClausaComm.Network_Communication.Networking
             };
 
             Listener.ConnectionRequestEvent += request
-                => throw new Exception($"Connection request gotten from {request.RemoteEndPoint.Address}. Data should be sent without being connected.");
+                => throw new Exception($"Connection request received from {request.RemoteEndPoint.Address}. Data should only be sent without being connected.");
         }
 
         public void Start()
@@ -37,6 +37,7 @@ namespace ClausaComm.Network_Communication.Networking
             Running = true;
             if (!PollTimer.Enabled)
                 PollTimer.Enabled = true;
+
             PollTimer.Elapsed += OnPollTimerTick;
         }
 

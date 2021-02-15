@@ -17,10 +17,13 @@ namespace ClausaComm.Network_Communication
         // will be marked as offline. 
         // 
         // The list is re-created every time the timer fires.
-        private HashSet<string> NoPing = new();
-        private static readonly double CheckTime = TimeSpan.FromMinutes(2).TotalMilliseconds;
+        public static readonly double CheckTime = TimeSpan.FromMinutes(2).TotalMilliseconds;
         private static readonly Timer CheckTimer = new(CheckTime);
-        public static bool Running { get; private set; } = false;
+
+        private HashSet<string> NoPing = new();
+        public bool Running { get; private set; } = false;
+        private static bool Created;
+        private readonly HashSet<Contact> AllContacts;
 
         static ContactStatusWatcher()
         {
@@ -28,9 +31,15 @@ namespace ClausaComm.Network_Communication
             if (CheckTime < PingSender.interval.TotalMilliseconds)
                 throw new Exception("The interval for checking for a ping is smaller than the interval for sending a ping");
         }
-        public ContactStatusWatcher()
+
+        public ContactStatusWatcher(HashSet<Contact> allContacts)
         {
+            if (Created)
+                throw new Exception($"An attempt was made to create a second instance of {nameof(ContactStatusWatcher)}. There can only be one instance.");
+
             CheckTimer.Elapsed += HandleTimerTick;
+            AllContacts = allContacts;
+            Created = true;
         }
 
         public void Start()
@@ -47,17 +56,20 @@ namespace ClausaComm.Network_Communication
             // For each contact that was left (didn't send a ping) make his status offline.
             foreach (string contactId in NoPing)
             {
-                Contact contact = MainForm.Form.Contacts.First(c => c.Id == contactId);
+                Contact contact = AllContacts.First(c => c.Id == contactId);
                 contact.CurrentStatus = Contact.Status.Offline;
             }
 
-            // Create a list of the ids of online contacts.
-            NoPing = MainForm.Form.Contacts.Where(c => c.CurrentStatus != Contact.Status.Offline).Select(c => c.Id).ToHashSet();
+            // Create a list of the ids of not-offline offline contacts.
+            NoPing = AllContacts.Where(c => c.CurrentStatus != Contact.Status.Offline).Select(c => c.Id).ToHashSet();
         }
 
-        public void HandlePingReceived(string contactId)
+        public void HandleActivityReceived(Contact contact)
         {
-            NoPing.Remove(contactId);
+            NoPing.Remove(contact.Id);
+
+            if (contact.CurrentStatus == Contact.Status.Offline)
+                contact.CurrentStatus = Contact.Status.Online;
         }
     }
 }

@@ -48,7 +48,7 @@ namespace ClausaComm
         public string Id
         {
             get => _id;
-            private init => _id = value;
+            init => _id = value;
         }
 
         public Status CurrentStatus
@@ -163,14 +163,13 @@ namespace ClausaComm
         }
         #endregion
 
-        public Contact(string ip, string id = null)
+        public Contact(string ip)
         {
             if (ip is null)
                 throw new ArgumentNullException(nameof(ip), "Ip of a contact must not be null");
 
             Ip = ip;
             Xml = new XmlFile(this);
-            Id = id ?? IdGenerator.GenerateId();
         }
 
         public override bool Equals(object obj) => obj is Contact contact && contact.Id == Id;

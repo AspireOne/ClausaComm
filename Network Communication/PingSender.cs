@@ -5,44 +5,52 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
+using ClausaComm.Extensions;
 
 namespace ClausaComm.Network_Communication
 {
     public class PingSender
     {
         public static readonly TimeSpan interval = TimeSpan.FromSeconds(90);
-        public static bool IsRunning { get; private set; }
-
         private static readonly Timer Timer = new(interval.TotalMilliseconds);
         private static readonly RemoteObject Ping = new(new Ping());
+        private static bool Created;
 
+        public bool Running { get; private set; }
         private readonly Action<string, RemoteObject> SendMethod;
-        public HashSet<Contact> Destinations { get; set; } = new();
+        private readonly HashSet<Contact> AllContacts;
 
 
 
-        public PingSender(Action<string, RemoteObject> sendMethod)
+        public PingSender(Action<string, RemoteObject> sendMethod, HashSet<Contact> allContacts)
         {
+            if (Created)
+                throw new Exception($"An attempt was made to create a second instance of {nameof(PingSender)}. There can only be one instance.");
+
             Timer.Elapsed += OnIntervalPassed;
+            AllContacts = allContacts;
             SendMethod = sendMethod;
+            Created = true;
         }
 
         private void OnIntervalPassed(object o, ElapsedEventArgs e)
         {
-            foreach (Contact dest in Destinations)
+            //AllContacts.Where(c => c.CurrentStatus != Contact.Status.Offline).ForEach(c => SendMethod.Invoke(c.Ip, Ping));
+            foreach (Contact contact in AllContacts)
             {
-                SendMethod.Invoke(dest.Ip, Ping);
+                if (contact.CurrentStatus != Contact.Status.Offline)
+                    SendMethod.Invoke(contact.Ip, Ping);
             }
         }
 
         // Do not mark as static. 
         public void Start()
         {
-            if (IsRunning)
-                throw new Exception($"One instance of {nameof(PingSender)} is already running.");
+            if (Running)
+                return;
 
             Timer.Start();
-            IsRunning = true;
+            Running = true;
         }
     }
 }

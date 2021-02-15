@@ -16,16 +16,16 @@ namespace ClausaComm.Forms
 {
     public partial class MainForm : FormBase
     {
-        // Expose an instance of MainForm as static, because there will ever be only one instance of MainForm; MainForm thus acts like a static object,
-        // and so it SHOULD be static in order for the logic (literal logic) to work properly. We cannot make it static directly, so we'll do it this way.
-        public static MainForm Form;
         public readonly HashSet<Contact> Contacts = new();
+        private readonly NetworkBridge Network;
+
         public MainForm()
         {
-            Form = this;
             InitializeComponent();
             InitializeComponentFurther();
             InitializeProgram();
+            Network = new(Contacts, AddContact);
+            Network.Run();
         }
 
         private void InitializeComponentFurther()

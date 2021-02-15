@@ -20,9 +20,12 @@ namespace ClausaComm.Network
     class Server : InterCommunication
     {
         private readonly byte[] Buffer = new byte[8192];
+        private Action<RemoteObject, string> OnReceiveCallback;
 
-        public Server()
+        public Server(Action<RemoteObject, string> onReceiveCallback)
         {
+            OnReceiveCallback = onReceiveCallback;
+
             Listener.NetworkReceiveUnconnectedEvent += (IPEndPoint remoteEndPoint, NetPacketReader reader, UnconnectedMessageType messageType) =>
             {
                 reader.GetBytes(Buffer, reader.AvailableBytes);
@@ -33,7 +36,7 @@ namespace ClausaComm.Network
                     throw new Exception("The received address is IPv6. The code to handle this was not written yet, because" +
                         " you thought, that it won't be in IPv6. So better fix it.");
                 }
-                NetworkBridge.HandleIncomingData(obj, remoteEndPoint.Address.ToString());
+                OnReceiveCallback(obj, remoteEndPoint.Address.ToString());
             };
         }
     }

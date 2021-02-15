@@ -48,7 +48,7 @@ namespace ClausaComm
 
         private static void CheckForNewVersionAsync(MainForm mainForm)
         {
-            ThreadUtils.RunThread(() =>
+            _ = Task.Run(() =>
             {
                 (bool newVersionAvailable, string newVersion) = UpdateManager.IsNewVersionAvailable().Result;
                 if (newVersionAvailable)
