@@ -204,7 +204,7 @@ namespace ClausaComm.Forms
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.chatTextBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(30)))), ((int)(((byte)(31)))));
-            this.chatTextBox1.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.chatTextBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.chatTextBox1.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.chatTextBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(190)))), ((int)(((byte)(190)))), ((int)(((byte)(190)))));
             this.chatTextBox1.Location = new System.Drawing.Point(14, 12);

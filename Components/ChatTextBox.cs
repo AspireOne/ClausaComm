@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
+using Message = ClausaComm.Messages.Message;
 
 namespace ClausaComm.Components
 {
@@ -58,10 +59,10 @@ namespace ClausaComm.Components
 
         #endregion properties
 
+        // TODO: Try to add border / adjust vertical alignment and/or try to change placeholder text's position
         public ChatTextBox()
         {
-            // TODO: Get max text length from message.
-            //MaxLength = MessageContainer.MaxCharacters;
+            MaxLength = Message.MaxTextLength - 2;
         }
 
         [System.Runtime.InteropServices.DllImport("gdi32.dll", EntryPoint = "CreateRoundRectRgn")]
