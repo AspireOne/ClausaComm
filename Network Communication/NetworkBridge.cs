@@ -75,7 +75,7 @@ namespace ClausaComm.Network_Communication
                 SendBackConfirmation(obj.ObjectId, ip);
 
             Contact contact = RetrieveContact(obj, ip);
-            if (contact is null || contact.Id is null)
+            if (contact?.Id is null)
             {
                 if (contact is not null)
                     contact.Id = obj.ContactId;
