@@ -23,7 +23,7 @@ namespace ClausaComm
         private readonly Client Client;
         private readonly ContactStatusWatcher StatusWatcher;
         private readonly PingSender PingSender;
-        public bool Running { get; private set; } = false;
+        public bool Running { get; private set; }
         private readonly HashSet<Contact> AllContacts;
         private readonly Action<Contact> AddContactMethod;
         private static bool Created;
