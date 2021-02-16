@@ -200,13 +200,13 @@ namespace ClausaComm.Forms
             // 
             // chatTextBox1
             // 
-            this.chatTextBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
+            this.chatTextBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.chatTextBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(30)))), ((int)(((byte)(31)))));
             this.chatTextBox1.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.chatTextBox1.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.chatTextBox1.ForeColor = System.Drawing.Color.FromArgb(190, 190, 190);
+            this.chatTextBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(190)))), ((int)(((byte)(190)))), ((int)(((byte)(190)))));
             this.chatTextBox1.Location = new System.Drawing.Point(14, 12);
             this.chatTextBox1.MaxLength = 20000;
             this.chatTextBox1.Multiline = true;
@@ -217,14 +217,13 @@ namespace ClausaComm.Forms
             this.chatTextBox1.RectTop = 3;
             this.chatTextBox1.RectWidth = 15;
             this.chatTextBox1.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.chatTextBox1.Size = new System.Drawing.Size(792, 44);
+            this.chatTextBox1.Size = new System.Drawing.Size(807, 44);
             this.chatTextBox1.TabIndex = 3;
             this.chatTextBox1.Visible = false;
             // 
             // SendIcon1
             // 
-            this.SendIcon1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.SendIcon1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.SendIcon1.ClickIconColor = System.Drawing.Color.FromArgb(((int)(((byte)(253)))), ((int)(((byte)(152)))), ((int)(((byte)(10)))));
             this.SendIcon1.ColorBoxOnHover = false;
             this.SendIcon1.ColorIconOnClick = true;
@@ -233,7 +232,7 @@ namespace ClausaComm.Forms
             this.SendIcon1.HoverIconColor = System.Drawing.Color.FromArgb(((int)(((byte)(253)))), ((int)(((byte)(172)))), ((int)(((byte)(10)))));
             this.SendIcon1.IconColor = System.Drawing.Color.FromArgb(((int)(((byte)(1)))), ((int)(((byte)(250)))), ((int)(((byte)(250)))), ((int)(((byte)(250)))));
             this.SendIcon1.Image = ((System.Drawing.Image)(resources.GetObject("SendIcon1.Image")));
-            this.SendIcon1.Location = new System.Drawing.Point(810, 19);
+            this.SendIcon1.Location = new System.Drawing.Point(825, 16);
             this.SendIcon1.Name = "SendIcon1";
             this.SendIcon1.Padding = new System.Windows.Forms.Padding(3);
             this.SendIcon1.Size = new System.Drawing.Size(41, 37);
@@ -293,7 +292,7 @@ namespace ClausaComm.Forms
             // 
             // PanelOfContactPanels
             // 
-            this.PanelOfContactPanels.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            this.PanelOfContactPanels.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
             this.PanelOfContactPanels.AutoScroll = true;
             this.PanelOfContactPanels.Location = new System.Drawing.Point(0, 125);
