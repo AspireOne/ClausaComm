@@ -111,6 +111,9 @@ namespace ClausaComm.Network_Communication
                 case RemoteObject.ObjectType.DataReceiveConfirmation:
                     UncomfirmedData.RemoveWhere(o => o.ObjectId == ((DataReceiveConfirmation)obj.Data).ConfirmedDataId);
                     break;
+
+                default:
+                    throw new NotImplementedException($"One of {nameof(RemoteObject)}'s ObjectTypes weren't processed in {nameof(NetworkBridge)}'s {nameof(HandleIncomingData)} method.");
             }
         }
 
