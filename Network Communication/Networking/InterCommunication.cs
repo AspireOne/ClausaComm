@@ -30,8 +30,6 @@ namespace ClausaComm.Network_Communication.Networking
                 AutoRecycle = true
             };
 
-            PollTimer.Elapsed += OnPollTimerTick;
-
             Listener.ConnectionRequestEvent += request
                 => throw new Exception($"Connection request received from {request.RemoteEndPoint.Address}. Data should only be sent without being connected.");
         }
@@ -42,6 +40,8 @@ namespace ClausaComm.Network_Communication.Networking
                 return;
 
             Running = true;
+            PollTimer.Elapsed += OnPollTimerTick;
+
             if (!PollTimer.Enabled)
                 PollTimer.Enabled = true;
         }

@@ -70,7 +70,7 @@ namespace ClausaComm
 
         public void HandleIncomingData(RemoteObject obj, string ip)
         {
-            Debug.WriteLine("Received data from {ip}");
+            Debug.WriteLine($"Received data from {ip}");
             // If the data demand to be confirmed, send back a confirmation.
             if (obj.Data.Confirm)
                 SendBackConfirmation(obj.ObjectId, ip);
