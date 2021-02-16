@@ -85,7 +85,8 @@ namespace ClausaComm.Components.ContactData
                 Location = new Point(profilePictureBox.Width + nameOffset, 0),
                 Size = new Size(Width - profilePictureBox.Width - nameOffset, Height),
                 Font = new Font(Contact.IsUser ? "Sans UI" : "Segoe UI", 13, FontStyle.Regular),
-                Parent = this
+                Parent = this,
+                ForeColor = Color.FromArgb(225, 225, 225)
             };
 
             const int statusIconSize = 13;
