@@ -1,40 +1,37 @@
-﻿using ClausaComm.Properties;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
-using System.IO;
 using System.Xml.Linq;
 using ClausaComm.Utils;
-using System.Diagnostics;
-using System.Runtime.CompilerServices;
 
-namespace ClausaComm
+namespace ClausaComm.Contacts
 {
     // TODO: Replace this fucker with Json... Seriously, how tf could I think that this was a good idea...
     public partial class Contact
     {
         private readonly IXmlFile Xml;
-        public XmlFile ContactXml => Xml as XmlFile;
+        // public XmlFile ContactXml => Xml as XmlFile;
 
         // Creating a private interface so that those methods cannot be accessed publicly, but others can.
         private interface IXmlFile
         {
             public void Remove();
 
-            public void Edit(SavedInfo attributeToChange, string newValue);
+            public void Edit(XmlSavedInfo attributeToChange, string newValue);
 
             public bool Save();
         }
 
         public class XmlFile : IXmlFile
         {
-            private static readonly Dictionary<SavedInfo, string> InfoFileRepresentationDict = new()
+            private static readonly Dictionary<XmlSavedInfo, string> InfoFileRepresentationDict = new()
             {
-                { SavedInfo.Name, "name" },
-                { SavedInfo.Ip, "ip" },
-                { SavedInfo.Id, "id" },
-                { SavedInfo.IsUser, "isUser" }
+                { XmlSavedInfo.Name, "name" },
+                { XmlSavedInfo.Ip, "ip" },
+                { XmlSavedInfo.Id, "id" },
+                { XmlSavedInfo.IsUser, "isUser" }
             };
 
             private const string ContactNodeName = "contact";
@@ -54,10 +51,10 @@ namespace ClausaComm
 
                 doc.Root.Add(
                     new XElement(ContactNodeName,
-                        new XElement(InfoFileRepresentationDict[SavedInfo.Name], Contact.Name),
-                        Contact.IsUser ? null : new XElement(InfoFileRepresentationDict[SavedInfo.Ip], Contact.Ip),
-                        new XElement(InfoFileRepresentationDict[SavedInfo.Id], Contact.Id),
-                        new XElement(InfoFileRepresentationDict[SavedInfo.IsUser], Contact.IsUser)
+                        new XElement(InfoFileRepresentationDict[XmlSavedInfo.Name], Contact.Name),
+                        Contact.IsUser ? null : new XElement(InfoFileRepresentationDict[XmlSavedInfo.Ip], Contact.Ip),
+                        new XElement(InfoFileRepresentationDict[XmlSavedInfo.Id], Contact.Id),
+                        new XElement(InfoFileRepresentationDict[XmlSavedInfo.IsUser], Contact.IsUser)
                     )
                 );
                 doc.Save(ProgramDirectory.ContactsPath);
@@ -79,7 +76,7 @@ namespace ClausaComm
                 }
             }
 
-            void IXmlFile.Edit(SavedInfo attributeToChange, string newValue)
+            void IXmlFile.Edit(XmlSavedInfo attributeToChange, string newValue)
             {
                 var doc = XDocument.Load(ProgramDirectory.ContactsPath);
                 XElement contactNode = GetNode(doc);
@@ -104,7 +101,7 @@ namespace ClausaComm
 
             // TODO: Check if saving a contact without an ID throws an exception.
             private XElement GetNode(XDocument doc = null)
-                => GetContactNodes(doc).FirstOrDefault(node => node.Element(InfoFileRepresentationDict[SavedInfo.Id]).Value == Contact.Id);
+                => GetContactNodes(doc).FirstOrDefault(node => node.Element(InfoFileRepresentationDict[XmlSavedInfo.Id]).Value == Contact.Id);
 
             private static IEnumerable<Contact> GetContacts()
             {
@@ -112,12 +109,12 @@ namespace ClausaComm
 
                 foreach (var contactNode in GetContactNodes())
                 {
-                    bool isUser = bool.Parse(contactNode.Element(InfoFileRepresentationDict[SavedInfo.IsUser]).Value);
-                    string ip = contactNode.Element(InfoFileRepresentationDict[SavedInfo.Ip])?.Value;
-                    string id = contactNode.Element(InfoFileRepresentationDict[SavedInfo.Id]).Value;
-                    string name = contactNode.Element(InfoFileRepresentationDict[SavedInfo.Name]).Value;
+                    bool isUser = bool.Parse(contactNode.Element(InfoFileRepresentationDict[XmlSavedInfo.IsUser]).Value);
+                    string ip = contactNode.Element(InfoFileRepresentationDict[XmlSavedInfo.Ip])?.Value;
+                    string id = contactNode.Element(InfoFileRepresentationDict[XmlSavedInfo.Id]).Value;
+                    string name = contactNode.Element(InfoFileRepresentationDict[XmlSavedInfo.Name]).Value;
 
-                    var contact = new Contact(isUser ? localIp : ip) { _name = name, _save = false, _id = id };
+                    var contact = new Contact(isUser ? localIp : ip) { _name = name, _save = false, Id = id };
                     TryGetProfilePicture(contact.ProfilePicPath, out Image profileImage);
 
                     contact.ProfilePic = profileImage;

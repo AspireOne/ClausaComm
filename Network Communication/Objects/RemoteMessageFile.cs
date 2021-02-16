@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.IO;
-using System.Text;
-using System.Threading.Tasks;
-using System.Text.Json;
+﻿using System.IO;
+using ClausaComm.Messages;
 
-namespace ClausaComm.Messages
+namespace ClausaComm.Network_Communication.Objects
 {
     internal class RemoteMessageFile : MessageFile
     {

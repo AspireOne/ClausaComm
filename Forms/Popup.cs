@@ -1,15 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Drawing;
 using System.Windows.Forms;
-using System.Threading;
+using ClausaComm.Components;
 
-namespace ClausaComm.Components
+namespace ClausaComm.Forms
 {
     public class Popup
     {

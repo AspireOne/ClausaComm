@@ -1,20 +1,10 @@
 using System;
 using System.Diagnostics;
-using System.Drawing;
 using System.IO;
-using System.Net;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Runtime.CompilerServices;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Accessibility;
 using ClausaComm.Components;
 using ClausaComm.Forms;
-using ClausaComm.Network;
-using ClausaComm.Network_Communication.Networking;
-using ClausaComm.Utils;
 
 namespace ClausaComm
 {

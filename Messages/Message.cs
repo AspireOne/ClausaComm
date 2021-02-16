@@ -1,12 +1,6 @@
-﻿using ClausaComm.Communication;
-using ClausaComm.Messages;
-using System;
-using System.Text.Json.Serialization;
-using System.Text.Json;
-using System.Collections.Generic;
-using System.Drawing;
+﻿using ClausaComm.Network_Communication.Objects;
 
-namespace ClausaComm
+namespace ClausaComm.Messages
 {
     public readonly struct Message : ISendable
     {

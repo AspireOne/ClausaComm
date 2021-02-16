@@ -5,6 +5,7 @@ using ClausaComm.Properties;
 using System;
 using System.ComponentModel;
 using System.Windows.Forms;
+using ClausaComm.Contacts;
 
 namespace ClausaComm.Components
 {

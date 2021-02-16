@@ -5,15 +5,15 @@ using System.Windows.Forms;
 
 namespace ClausaComm.Components
 {
-    public partial class SimpleLineButton : Label
+    public sealed partial class SimpleLineButton : Label
     {
         private bool IsHovering;
         private static readonly Color DefaultLineColor = Color.White;
         public bool ColorLineOnHover { get; set; } = true;
         private const int DefaultLineWidth = 3;
 
-        private Pen Line { get; set; } = new(DefaultLineColor, DefaultLineWidth);
-        private Pen LineOnHover { get; set; } = new(Constants.UIConstants.ElementOnHoverColor, DefaultLineWidth);
+        private Pen Line { get; } = new(DefaultLineColor, DefaultLineWidth);
+        private Pen LineOnHover { get; } = new(Constants.UIConstants.ElementOnHoverColor, DefaultLineWidth);
 
         public float LineWidth
         {
@@ -45,8 +45,6 @@ namespace ClausaComm.Components
                 Invalidate();
             }
         }
-
-
 
         public SimpleLineButton()
         {

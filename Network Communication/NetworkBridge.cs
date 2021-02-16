@@ -1,22 +1,17 @@
-﻿using ClausaComm.Communication;
-using ClausaComm.Exceptions;
-using ClausaComm.Forms;
-using ClausaComm.Network;
-using ClausaComm.Network_Communication;
-using ClausaComm.Network_Communication.Networking;
-using ClausaComm.Network_Communication.Objects;
-using ClausaComm.Utils;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using ClausaComm.Contacts;
-using System.Text;
-using System.Threading.Tasks;
+using ClausaComm.Exceptions;
 using ClausaComm.Extensions;
+using ClausaComm.Messages;
+using ClausaComm.Network_Communication.Networking;
+using ClausaComm.Network_Communication.Objects;
+using ClausaComm.Utils;
 
-namespace ClausaComm
+namespace ClausaComm.Network_Communication
 {
     public class NetworkBridge
     {
@@ -82,7 +77,9 @@ namespace ClausaComm
             Contact contact = RetrieveContact(obj, ip);
             if (contact is null || contact.Id is null)
             {
-                contact.Id = obj.ContactId;
+                if (contact is not null)
+                    contact.Id = obj.ContactId;
+
                 Client.Send(ip, new RemoteObject(new FullContactDataRequest()));
                 return;
             }

@@ -1,15 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ClausaComm.Utils
 {
     public static class ConsoleUtils
     {
-
         public static ProcessStartInfo GetProcessStartInfo(string argument, bool fromSystem32, bool admin)
         {
             return new()

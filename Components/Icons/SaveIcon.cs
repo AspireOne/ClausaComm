@@ -1,8 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
-using System.Threading;
-using ClausaComm.Utils;
 using System.Threading.Tasks;
 
 namespace ClausaComm.Components.Icons
@@ -37,7 +35,9 @@ namespace ClausaComm.Components.Icons
             Task.Run(async () => { await Task.Delay(50); Image = new Bitmap(Image); });
         }
 
-        public SaveIcon(IContainer container) : base(container) { }
+        public SaveIcon(IContainer container) : base(container)
+        {
+        }
 
         protected override void OnPaint(PaintEventArgs pe)
         {

@@ -1,13 +1,12 @@
-﻿using ClausaComm.Exceptions;
-using ClausaComm.Forms;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
-using ClausaComm.Contacts;
+using ClausaComm.Exceptions;
+using ClausaComm.Extensions;
+using ClausaComm.Network_Communication;
 
-namespace ClausaComm.Network_Communication
+namespace ClausaComm.Contacts
 {
     public class ContactStatusWatcher
     {

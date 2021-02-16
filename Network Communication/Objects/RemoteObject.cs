@@ -1,13 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 using System.Text.Json;
-using ClausaComm.Communication;
+using ClausaComm.Contacts;
 
-namespace ClausaComm
+namespace ClausaComm.Network_Communication.Objects
 {
     [Serializable]
     public readonly struct RemoteObject

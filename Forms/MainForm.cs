@@ -1,17 +1,13 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Drawing;
-using System.Drawing.Text;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using ClausaComm.Extensions;
 using ClausaComm.Components.ContactData;
 using ClausaComm.Components;
-using ClausaComm.Utils;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using ClausaComm.Contacts;
+using ClausaComm.Network_Communication;
 
 namespace ClausaComm.Forms
 {
@@ -65,7 +61,7 @@ namespace ClausaComm.Forms
 
         private void InitializeProgram()
         {
-            Contact.XmlFile.Contacts.ForEach(c => AddContact(c));
+            Contact.XmlFile.Contacts.ForEach(AddContact);
             PanelOfContactPanels.SimulateClickOnFirstPanel();
         }
 

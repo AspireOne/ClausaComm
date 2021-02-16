@@ -1,11 +1,7 @@
 ﻿using ClausaComm.Exceptions;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Threading;
 
 namespace ClausaComm.Contacts
@@ -19,7 +15,7 @@ namespace ClausaComm.Contacts
         private readonly Timer Timer;
         public bool Running { get; private set; }
 
-        private struct LASTINPUTINFO
+        private struct Lastinputinfo
         {
             public uint cbSize;
 
@@ -47,7 +43,7 @@ namespace ClausaComm.Contacts
 
         // https://www.pinvoke.net/default.aspx/user32.getlastinputinfo
         [DllImport("User32.dll")]
-        private static extern bool GetLastInputInfo(ref LASTINPUTINFO plii);
+        private static extern bool GetLastInputInfo(ref Lastinputinfo plii);
 
         [DllImport("Kernel32.dll")]
         private static extern uint GetLastError();
@@ -66,7 +62,7 @@ namespace ClausaComm.Contacts
 
         public static uint GetIdleTimeMillis()
         {
-            LASTINPUTINFO lastInput = new();
+            Lastinputinfo lastInput = new();
             lastInput.cbSize = (uint)Marshal.SizeOf(lastInput);
 
             if (!GetLastInputInfo(ref lastInput))

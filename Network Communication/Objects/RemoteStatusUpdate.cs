@@ -1,11 +1,6 @@
-﻿using ClausaComm.Communication;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using ClausaComm.Contacts;
 
-namespace ClausaComm.Network_Communication
+namespace ClausaComm.Network_Communication.Objects
 {
     readonly struct RemoteStatusUpdate : ISendable
     {

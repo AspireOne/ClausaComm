@@ -1,13 +1,11 @@
-﻿using ClausaComm.Properties;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Drawing;
-using System.Linq;
 using System.IO;
-using System.Xml.Linq;
+using System.Linq;
+using ClausaComm.Properties;
 using ClausaComm.Utils;
 
-namespace ClausaComm
+namespace ClausaComm.Contacts
 {
     public partial class Contact
     {
@@ -27,7 +25,7 @@ namespace ClausaComm
 
         // TODO: Move this enum (SavedInfo) to a more appropriate place.
 
-        private enum SavedInfo { Id, Name, Ip, IsUser, ProfilePic }
+        private enum XmlSavedInfo { Id, Name, Ip, IsUser }
 
         #region backing fields
 
@@ -36,7 +34,6 @@ namespace ClausaComm
         private string _name = "Unknown";
         private readonly string _ip;
         private bool _save = false;
-        private string _id;
         private string _profilePicPath;
         private static Contact _userContact;
 
@@ -49,11 +46,7 @@ namespace ClausaComm
         public string ProfilePicPath => _profilePicPath ??= Path.Combine(ProgramDirectory.ProfilePicsDirPath, $"{Id}.png");
         private bool HasDefaultProfilePic { get; set; } = true;
 
-        public string Id
-        {
-            get => _id;
-            set => _id = value;
-        }
+        public string Id { get; set; }
 
         public Status CurrentStatus
         {
@@ -136,7 +129,7 @@ namespace ClausaComm
                 NameChange?.Invoke(this, value);
 
                 if (Save)
-                    Xml.Edit(SavedInfo.Name, value);
+                    Xml.Edit(XmlSavedInfo.Name, value);
             }
         }
 
@@ -172,10 +165,7 @@ namespace ClausaComm
         // the contact's data (including ID) are not initialized yet.
         public Contact(string ip)
         {
-            if (ip is null)
-                throw new ArgumentNullException(nameof(ip), "Ip of a contact must not be null");
-
-            Ip = ip;
+            Ip = ip ?? throw new ArgumentNullException(nameof(ip), "Ip of a contact must not be null");
             Xml = new XmlFile(this);
         }
 

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -42,7 +41,7 @@ namespace ClausaComm.Components
             Interval = 10
         };
 
-        public MainForm Form {get; set; }
+        public MainForm Form { get; set; }
 
         public struct NotificationArgs
         {
@@ -66,6 +65,7 @@ namespace ClausaComm.Components
             InitializeComponent();
 
             #region Panel initialization
+
             Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             AutoSize = true;
             BackColor = Color.FromArgb(31, 31, 33);
@@ -80,7 +80,8 @@ namespace ClausaComm.Components
             TabIndex = 11;
             Visible = false;
             Padding = new Padding(2, 2, 2, 2);
-            #endregion
+
+            #endregion Panel initialization
 
             #region Component Initialization
 
@@ -192,14 +193,13 @@ namespace ClausaComm.Components
             MiddleButt.Text = "MiddleButton";
             MiddleButt.UseVisualStyleBackColor = true;
 
-            #endregion
+            #endregion Component Initialization
 
-            Button[] notificationButts = {LeftButt, MiddleButt, RightButt};
+            Button[] notificationButts = { LeftButt, MiddleButt, RightButt };
             Array.ForEach(notificationButts, butt => butt.Click += (_, _) => Hide());
         }
 
         public NotificationPanel(IContainer container) : this() => container.Add(this);
-
 
         public void ShowNotification(NotificationArgs args)
         {
@@ -228,7 +228,7 @@ namespace ClausaComm.Components
             RegisterNotificationButt(LeftButt, args.LeftButton);
             RegisterNotificationButt(MiddleButt, args.MiddleButton);
             RegisterNotificationButt(RightButt, args.RightButton);
-            
+
             Show();
             StartSwipeIn();
 
@@ -279,7 +279,6 @@ namespace ClausaComm.Components
                 if (args.HasValue)
                     button.Click -= args.Value.ClickCallback;
             }
-
         }
 
         private void StartSwipeIn()
@@ -306,7 +305,7 @@ namespace ClausaComm.Components
 
         private void StartSwipeOutAndHide(Action completedCallback = null)
         {
-            Point targetPos = new Point(Form.Width - Width/2, Location.Y);
+            Point targetPos = new Point(Form.Width - Width / 2, Location.Y);
 
             NotificationSwipeTimer.Tick += OnSwipeTimerTick;
             NotificationSwipeTimer.Start();
@@ -329,7 +328,7 @@ namespace ClausaComm.Components
         protected override void OnPaint(PaintEventArgs e)
         {
             base.OnPaint(e);
-           
+
             // Substract a pixel from the width and height, because otherwise the rectangle is one pixel larger than the panel.
             e.Graphics.DrawRectangle(BorderPen, new Rectangle(ClientRectangle.Location, ClientRectangle.Size - BorderSizeOffset));
         }

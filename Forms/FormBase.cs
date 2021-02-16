@@ -8,9 +8,13 @@ namespace ClausaComm.Forms
     {
         //TODO: Make drag region larger
         protected static readonly Padding DraggableWindowBorderSize = new(3, 3, 3, 3);
+
         protected static readonly Padding NonDraggableWindowBorderSize = new(0, 0, 0, 0);
+
         public event EventHandler<bool> ResizableChanged;
+
         public event EventHandler<bool> PinnableChanged;
+
         private bool _resizable = false;
         private bool _pinnable = false;
         private Padding? PaddingBeforeMaximize;
@@ -32,7 +36,6 @@ namespace ClausaComm.Forms
                     if (PaddingBeforeMaximize.HasValue)
                         Padding = PaddingBeforeMaximize.Value;
                 }
-
             }
         }
 
@@ -91,7 +94,7 @@ namespace ClausaComm.Forms
             }
         }
 
-        protected override void WndProc(ref System.Windows.Forms.Message m)
+        protected override void WndProc(ref Message m)
         {
             /*
             * Modified from https://stackoverflow.com/questions/17748446/custom-resize-handle-in-border-less-form-c-sharp

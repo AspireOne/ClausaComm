@@ -1,9 +1,6 @@
-﻿using ClausaComm.Messages;
-using ClausaComm.Utils;
-using System;
-using System.Drawing;
+﻿using ClausaComm.Utils;
 
-namespace ClausaComm
+namespace ClausaComm.Messages
 {
     public class LocalMessageFile : MessageFile
     {

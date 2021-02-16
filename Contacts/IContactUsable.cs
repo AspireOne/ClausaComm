@@ -1,4 +1,4 @@
-﻿namespace ClausaComm
+﻿namespace ClausaComm.Contacts
 {
     internal interface IContactUsable
     {

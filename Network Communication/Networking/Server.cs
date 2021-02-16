@@ -1,18 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 using System.Net;
 using System.Net.Sockets;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using ClausaComm.Network_Communication.Networking;
-using ClausaComm.Utils;
+using ClausaComm.Network_Communication.Objects;
 using LiteNetLib;
-using LiteNetLib.Utils;
 
-namespace ClausaComm.Network
+namespace ClausaComm.Network_Communication.Networking
 {
     // TODO: Maybe make static?
     // TODO: Remove LiteNetLib and implement it yourself.

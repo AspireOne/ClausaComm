@@ -1,22 +1,19 @@
-﻿using ClausaComm.Communication;
-using ClausaComm.Utils;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Drawing;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using ClausaComm.Contacts;
+using ClausaComm.Utils;
 
-namespace ClausaComm.Network_Communication
+namespace ClausaComm.Network_Communication.Objects
 {
     [Serializable]
     public readonly struct RemoteContactData : ISendable
     {
         RemoteObject.ObjectType ISendable.ObjType => RemoteObject.ObjectType.ContactData;
         bool ISendable.Confirm => false;
+
         // Convert it so that it's serializable.
         public readonly string Base64ProfilePic;
+
         public readonly string Name;
         //public readonly string Id;
 
@@ -27,6 +24,8 @@ namespace ClausaComm.Network_Communication
             Base64ProfilePic = ImageUtils.ImageToBase64String(profilePic);
         }
 
-        public RemoteContactData(Contact contact) : this(/*contact.Id, */contact.Name, contact.ProfilePic) { }
+        public RemoteContactData(Contact contact) : this(/*contact.Id, */contact.Name, contact.ProfilePic)
+        {
+        }
     }
 }

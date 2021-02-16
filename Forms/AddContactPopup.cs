@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using ClausaComm.Contacts;
 
 namespace ClausaComm.Forms
 {
@@ -62,6 +63,7 @@ namespace ClausaComm.Forms
 
         [DllImport("user32.dll")]
         private static extern bool GetCaretPos(out Point lpPoint);
+
         private void OnIpTextChange()
         {
             string ip = IpBox.Textbox.Text;
@@ -70,7 +72,6 @@ namespace ClausaComm.Forms
 
             if (ip.Split('.').Any(x => x.Length > 3) || amountOfPeriods > 3 || ip.Contains(".."))
                 RevertTextBox();
-
 
             if (ip.Any(ch => ch != '.' && !char.IsDigit(ch)))
             {
@@ -94,7 +95,6 @@ namespace ClausaComm.Forms
             bool ipCorrect = IpUtils.IsIpCorrect(ip);
             AddButton.Cursor = ipCorrect ? AddButtonProps.AllowCursor : AddButtonProps.DisallowCursor;
             IpBox.BorderColor = string.IsNullOrEmpty(ip) || ipCorrect ? IpBoxProps.NeutralColor : IpBoxProps.IncorrectColor;
-
         }
     }
 }

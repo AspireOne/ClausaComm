@@ -1,7 +1,7 @@
 ﻿
 namespace ClausaComm.Components
 {
-    partial class SimpleLineButton
+    sealed partial class SimpleLineButton
     {
         /// <summary>
         /// Required designer variable.

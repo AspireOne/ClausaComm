@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using ClausaComm.Components.ContactData;
 using System.Windows.Forms;
+using ClausaComm.Contacts;
 
 namespace ClausaComm.Components
 {

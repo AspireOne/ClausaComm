@@ -1,7 +1,7 @@
 ﻿using ClausaComm.Components.Icons;
-using ClausaComm.Forms;
 using System.ComponentModel;
 using System.Windows.Forms;
+using ClausaComm.Contacts;
 
 namespace ClausaComm.Components
 {
@@ -9,6 +9,7 @@ namespace ClausaComm.Components
     {
         private SendIcon _sendIcon;
         private ChatTextBox _textbox;
+
         private readonly Label NoContactLabel = new()
         {
             Name = "NoContactLabel",
@@ -47,6 +48,7 @@ namespace ClausaComm.Components
         public ActionPanel ActionPanel { get; set; }
 
         private Contact _contact;
+
         public Contact Contact
         {
             get => _contact;
@@ -57,7 +59,6 @@ namespace ClausaComm.Components
                     ChangeContactSpecificElementsVisibility(false);
                     NoContactLabel.Visible = true;
                 }
-
                 else
                 {
                     NoContactLabel.Visible = false;

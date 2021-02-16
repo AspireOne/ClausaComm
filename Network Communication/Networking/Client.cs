@@ -1,15 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 using System.Net;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using ClausaComm.Network;
-using ClausaComm.Utils;
+using ClausaComm.Network_Communication.Objects;
 using LiteNetLib;
-using LiteNetLib.Utils;
 
 namespace ClausaComm.Network_Communication.Networking
 {

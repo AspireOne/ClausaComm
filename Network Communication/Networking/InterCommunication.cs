@@ -1,9 +1,5 @@
 ﻿using LiteNetLib;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 // System.Timers was a conscious decision over System.Threading. We want System.Timers' thread safety.
 using System.Timers;
@@ -18,7 +14,7 @@ namespace ClausaComm.Network_Communication.Networking
         protected static readonly Timer PollTimer = new(50) { Enabled = false };
 
         protected const int Port = 9524;
-        protected readonly EventBasedNetListener Listener = new EventBasedNetListener();
+        protected readonly EventBasedNetListener Listener = new();
         protected readonly NetManager Node;
 
         protected InterCommunication()
