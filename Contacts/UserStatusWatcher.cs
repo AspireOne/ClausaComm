@@ -34,7 +34,6 @@ namespace ClausaComm.Contacts
             User = user;
             Created = true;
             Timer = new(OnTimerTick, null, Timeout.Infinite, TimerIntervalMillis);
-            //TODO: Change all timers to System.Threading timers.
         }
 
         public void Run()

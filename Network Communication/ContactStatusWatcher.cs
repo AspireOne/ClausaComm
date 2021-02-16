@@ -4,10 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-
-// System.Timers was a conscious decision over System.Threading.Timer.
-using System.Timers;
+using System.Threading;
 
 namespace ClausaComm.Network_Communication
 {
@@ -19,9 +16,9 @@ namespace ClausaComm.Network_Communication
         // will be marked as offline.
         //
         // The list is re-created every time the timer fires.
-        public static readonly double CheckTime = TimeSpan.FromMinutes(2).TotalMilliseconds;
+        public static readonly int CheckTimeMillis = (int)TimeSpan.FromMinutes(2).TotalMilliseconds;
 
-        private static readonly Timer CheckTimer = new(CheckTime);
+        private readonly Timer CheckTimer;
 
         private HashSet<string> NoPing = new();
         public bool Running { get; private set; } = false;
@@ -31,7 +28,7 @@ namespace ClausaComm.Network_Communication
         static ContactStatusWatcher()
         {
             // Just in case.
-            if (CheckTime < PingSender.interval.TotalMilliseconds)
+            if (CheckTimeMillis < PingSender.FrequencyMillis)
                 throw new Exception("The interval for checking for a ping is smaller than the interval for sending a ping");
         }
 
@@ -40,7 +37,7 @@ namespace ClausaComm.Network_Communication
             if (Created)
                 throw new MultipleInstancesException(nameof(ContactStatusWatcher));
 
-            CheckTimer.Elapsed += HandleTimerTick;
+            CheckTimer = new(HandleTimerTick, null, Timeout.Infinite, CheckTimeMillis);
             AllContacts = allContacts;
             Created = true;
         }
@@ -50,11 +47,13 @@ namespace ClausaComm.Network_Communication
             if (Running)
                 return;
 
-            CheckTimer.Start();
+            if (!CheckTimer.Change(0, CheckTimeMillis))
+                throw new Exception($"The Timer in class {nameof(ContactStatusWatcher)} threw an error when being updated.");
+
             Running = true;
         }
 
-        private void HandleTimerTick(object obj, ElapsedEventArgs e)
+        private void HandleTimerTick(object obj)
         {
             // For each contact that was left (didn't send a ping) make his status offline.
             foreach (string contactId in NoPing)

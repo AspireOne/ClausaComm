@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Timers;
+using System.Threading;
 using ClausaComm.Extensions;
 using ClausaComm.Exceptions;
 
@@ -12,8 +12,8 @@ namespace ClausaComm.Network_Communication
 {
     public class PingSender
     {
-        public static readonly TimeSpan interval = TimeSpan.FromSeconds(90);
-        private static readonly Timer Timer = new(interval.TotalMilliseconds);
+        public static readonly int FrequencyMillis = (int)TimeSpan.FromSeconds(90).TotalMilliseconds;
+        private readonly Timer Timer;
         private static readonly RemoteObject Ping = new(new Ping());
         private static bool Created;
 
@@ -26,13 +26,13 @@ namespace ClausaComm.Network_Communication
             if (Created)
                 throw new MultipleInstancesException(nameof(PingSender));
 
-            Timer.Elapsed += OnIntervalPassed;
+            Timer = new(OnIntervalPassed, null, Timeout.Infinite, FrequencyMillis);
             AllContacts = allContacts;
             SendMethod = sendMethod;
             Created = true;
         }
 
-        private void OnIntervalPassed(object o, ElapsedEventArgs e)
+        private void OnIntervalPassed(object o)
         {
             //AllContacts.Where(c => c.CurrentStatus != Contact.Status.Offline).ForEach(c => SendMethod.Invoke(c.Ip, Ping));
             foreach (Contact contact in AllContacts)
@@ -48,7 +48,9 @@ namespace ClausaComm.Network_Communication
             if (Running)
                 return;
 
-            Timer.Start();
+            if (!Timer.Change(0, FrequencyMillis))
+                throw new Exception($"The Timer in class {nameof(PingSender)} threw an error when being updated.");
+
             Running = true;
         }
     }
