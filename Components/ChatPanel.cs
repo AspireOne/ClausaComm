@@ -14,10 +14,10 @@ namespace ClausaComm.Components
         {
             Name = "NoContactLabel",
             Anchor = AnchorStyles.None,
-            Font = new System.Drawing.Font("Segoe UI", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point),
+            Font = new("Segoe UI", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point),
             ForeColor = System.Drawing.Color.FromArgb(216, 216, 216),
-            Location = new System.Drawing.Point(248, 293),
-            Size = new System.Drawing.Size(399, 62),
+            Location = new(248, 293),
+            Size = new(399, 62),
             TabIndex = 10,
             Text = "Oops, it seems like you don't have any contacts yet. Let's add some!",
             TextAlign = System.Drawing.ContentAlignment.MiddleCenter,
