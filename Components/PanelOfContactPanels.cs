@@ -20,7 +20,7 @@ namespace ClausaComm.Components
 
         public void RemovePanel(Contact contact)
         {
-            ContactPanel panel = Panels.First(contactPanel => contactPanel.Contact.Id == contact.Id);
+            ContactPanel panel = Panels.First(contactPanel => contactPanel.Contact.Equals(contact));
             if (panel is not null)
                 Controls.Remove(panel);
         }

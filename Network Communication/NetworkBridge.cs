@@ -11,8 +11,10 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
+using ClausaComm.Contacts;
 using System.Text;
 using System.Threading.Tasks;
+using ClausaComm.Extensions;
 
 namespace ClausaComm
 {
@@ -56,6 +58,8 @@ namespace ClausaComm
             PingSender.Run();
             StatusWatcher.Run();
 
+            SubscribeToUserEvents();
+
             RemoteContactData contactData = new(Contact.UserContact);
             FullContactDataRequest request = new();
 
@@ -76,8 +80,9 @@ namespace ClausaComm
                 SendBackConfirmation(obj.ObjectId, ip);
 
             Contact contact = RetrieveContact(obj, ip);
-            if (contact is null)
+            if (contact is null || contact.Id is null)
             {
+                contact.Id = obj.ContactId;
                 Client.Send(ip, new RemoteObject(new FullContactDataRequest()));
                 return;
             }
@@ -103,7 +108,7 @@ namespace ClausaComm
                     break;
 
                 case RemoteObject.ObjectType.FullContactDataRequest:
-                    SendBackFullContactData(ip);
+                    SendFullContactData(ip);
                     break;
 
                 case RemoteObject.ObjectType.DataReceiveConfirmation:
@@ -127,6 +132,7 @@ namespace ClausaComm
 
             // else if AllContacts contains a contact with the sender's IP AND the contact's ID
             // is null (contact added by the user via IP but not initialized yet), return that contact.
+            // The parent method will
 
             contact = AllContacts.FirstOrDefault(c => c.Ip == ip && c.Id is null);
 
@@ -136,6 +142,7 @@ namespace ClausaComm
             // After this point we know that the contact doesn't exist in our list yet.
 
             // If the sender has sent all needed data to create it (ContactData object), create it and return it.
+            // The parent method will assign the data to the contact.
 
             if (obj.Data.ObjType == RemoteObject.ObjectType.ContactData)
             {
@@ -150,6 +157,38 @@ namespace ClausaComm
             return null;
         }
 
+        private void SubscribeToUserEvents()
+        {
+            Contact.UserContact.StatusChange += (_, status) =>
+            {
+                RemoteStatusUpdate statusData = new(status);
+                ProcessAndSendToAll(statusData);
+            };
+
+            Contact.UserContact.NameChange += (_, name) =>
+            {
+                RemoteContactData contactData = new(name: name);
+                ProcessAndSendToAll(contactData);
+            };
+
+            Contact.UserContact.ProfilePicChange += (_, profilePic) =>
+            {
+                RemoteContactData profilePicData = new(profilePic: profilePic);
+                ProcessAndSendToAll(profilePicData);
+            };
+
+            void ProcessAndSendToAll(ISendable data)
+            {
+                RemoteObject dataObj = new(data);
+                SendToAll(dataObj);
+            }
+        }
+
+        private void SendToAll(RemoteObject obj)
+        {
+            AllContacts.NotOffline().ForEach(contact => Client.Send(contact.Ip, obj));
+        }
+
         private void SendBackConfirmation(string objectId, string ip)
         {
             DataReceiveConfirmation data = new(objectId);
@@ -162,7 +201,7 @@ namespace ClausaComm
             // Handle the message, convert message.MessageFile to RemoteMessageFile etc.
         }
 
-        private void SendBackFullContactData(string ip)
+        private void SendFullContactData(string ip)
         {
             RemoteContactData data = new(Contact.UserContact);
             RemoteObject obj = new(data);

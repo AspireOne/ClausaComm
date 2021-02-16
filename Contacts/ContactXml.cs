@@ -14,7 +14,6 @@ namespace ClausaComm
     // TODO: Replace this fucker with Json... Seriously, how tf could I think that this was a good idea...
     public partial class Contact
     {
-
         private readonly IXmlFile Xml;
         public XmlFile ContactXml => Xml as XmlFile;
 
@@ -22,7 +21,9 @@ namespace ClausaComm
         private interface IXmlFile
         {
             public void Remove();
+
             public void Edit(SavedInfo attributeToChange, string newValue);
+
             public bool Save();
         }
 
@@ -46,7 +47,7 @@ namespace ClausaComm
             {
                 var doc = XDocument.Load(ProgramDirectory.ContactsPath);
 
-                if (doc.ToString().Contains(Contact.Id))
+                if (doc.ToString().Contains(Contact.Id ?? Contact.Ip))
                     return false;
 
                 Contacts.Add(Contact);
@@ -95,13 +96,13 @@ namespace ClausaComm
                 doc.Save(ProgramDirectory.ContactsPath);
             }
 
-
             private static IEnumerable<XElement> GetContactNodes(XDocument doc = null)
             {
                 var document = doc ?? XDocument.Load(ProgramDirectory.ContactsPath);
                 return document.Root?.Elements() ?? Enumerable.Empty<XElement>();
             }
 
+            // TODO: Check if saving a contact without an ID throws an exception.
             private XElement GetNode(XDocument doc = null)
                 => GetContactNodes(doc).FirstOrDefault(node => node.Element(InfoFileRepresentationDict[SavedInfo.Id]).Value == Contact.Id);
 
@@ -124,10 +125,8 @@ namespace ClausaComm
 
                     Debug.WriteLine("Found contact from xml. Data: " + contact);
                     yield return contact;
-
                 }
             }
         }
-
     }
 }

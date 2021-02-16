@@ -13,7 +13,9 @@ namespace ClausaComm
     {
         // Event handlers.
         public event EventHandler<Status> StatusChange;
+
         public event EventHandler<string> NameChange;
+
         public event EventHandler<Image> ProfilePicChange;
 
         // Status declaration.
@@ -28,6 +30,7 @@ namespace ClausaComm
         private enum SavedInfo { Id, Name, Ip, IsUser, ProfilePic }
 
         #region backing fields
+
         private Status _status = Status.Offline;
         private Image _profileImage = Resources.default_pfp;
         private string _name = "Unknown";
@@ -36,19 +39,20 @@ namespace ClausaComm
         private string _id;
         private string _profilePicPath;
         private static Contact _userContact;
-        #endregion
+
+        #endregion backing fields
 
         #region Properties
 
         public static Contact UserContact => _userContact ??= XmlFile.Contacts.FirstOrDefault(contact => contact.IsUser) ?? new Contact(IpUtils.LocalIp) { Save = true };
-        public bool IsUser { get; private init; } = false;
+        public bool IsUser { get; private init; }
         public string ProfilePicPath => _profilePicPath ??= Path.Combine(ProgramDirectory.ProfilePicsDirPath, $"{Id}.png");
         private bool HasDefaultProfilePic { get; set; } = true;
 
         public string Id
         {
             get => _id;
-            init => _id = value;
+            set => _id = value;
         }
 
         public Status CurrentStatus
@@ -161,8 +165,11 @@ namespace ClausaComm
                 }
             }
         }
-        #endregion
 
+        #endregion Properties
+
+        // Note: the contact doesn't have to have an ID! The user can add the contact via IP, and at that point,
+        // the contact's data (including ID) are not initialized yet.
         public Contact(string ip)
         {
             if (ip is null)
@@ -172,11 +179,11 @@ namespace ClausaComm
             Xml = new XmlFile(this);
         }
 
-        public override bool Equals(object obj) => obj is Contact contact && contact.Id == Id;
+        public override bool Equals(object obj) => obj is Contact contact && contact.Id == Id && contact.Ip == Ip;
+
         public override string ToString() => $"Name: {Name} | ID: {Id} | IsUser: {IsUser} | Save: {Save} | IP: {Ip}";
 
         public override int GetHashCode() => int.Parse(Ip.Replace(".", ""));
-
 
         private void DeleteProfilePicture() => File.Delete(ProfilePicPath);
 
@@ -203,6 +210,5 @@ namespace ClausaComm
             using Stream stream = new FileStream(ProfilePicPath, FileMode.Create, FileAccess.Write);
             ProfilePic.Save(stream, System.Drawing.Imaging.ImageFormat.Png);
         }
-
     }
 }

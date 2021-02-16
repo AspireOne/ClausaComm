@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using ClausaComm.Contacts;
 
 namespace ClausaComm.Network_Communication
 {
@@ -20,7 +21,7 @@ namespace ClausaComm.Network_Communication
 
         private readonly Timer CheckTimer;
 
-        private HashSet<string> NoPing = new();
+        private HashSet<string> NoActivity = new();
         public bool Running { get; private set; }
         private static bool Created;
         private readonly HashSet<Contact> AllContacts;
@@ -56,19 +57,19 @@ namespace ClausaComm.Network_Communication
         private void HandleTimerTick(object obj)
         {
             // For each contact that was left (didn't send a ping) make his status offline.
-            foreach (string contactId in NoPing)
+            foreach (string contactIdentifier in NoActivity)
             {
-                Contact contact = AllContacts.First(c => c.Id == contactId);
+                Contact contact = AllContacts.First(c => (c.Id ?? c.Ip) == contactIdentifier);
                 contact.CurrentStatus = Contact.Status.Offline;
             }
 
             // Create a list of the ids of not-offline offline contacts.
-            NoPing = AllContacts.Where(c => c.CurrentStatus != Contact.Status.Offline).Select(c => c.Id).ToHashSet();
+            NoActivity = AllContacts.NotOffline().Select(c => c.Id ?? c.Ip).ToHashSet();
         }
 
         public void HandleActivityReceived(Contact contact)
         {
-            NoPing.Remove(contact.Id);
+            NoActivity.Remove(contact.Id ?? contact.Ip);
 
             if (contact.CurrentStatus == Contact.Status.Offline)
                 contact.CurrentStatus = Contact.Status.Online;

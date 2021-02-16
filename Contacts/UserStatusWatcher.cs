@@ -61,7 +61,7 @@ namespace ClausaComm.Contacts
             else if (User.CurrentStatus == Contact.Status.Idle)
                 User.CurrentStatus = Contact.Status.Online;
 
-            //Debug.WriteLine("UserStatusWatcher timer tick fired. idle time: " + idleTimeMillis);
+            Debug.WriteLine($"UserStatusWatcher timer tick fired. idle time: {idleTimeMillis},");
         }
 
         public static uint GetIdleTimeMillis()

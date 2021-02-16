@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Threading;
 using ClausaComm.Extensions;
 using ClausaComm.Exceptions;
+using ClausaComm.Contacts;
 
 namespace ClausaComm.Network_Communication
 {
@@ -34,15 +35,9 @@ namespace ClausaComm.Network_Communication
 
         private void OnIntervalPassed(object o)
         {
-            //AllContacts.Where(c => c.CurrentStatus != Contact.Status.Offline).ForEach(c => SendMethod.Invoke(c.Ip, Ping));
-            foreach (Contact contact in AllContacts)
-            {
-                if (contact.CurrentStatus != Contact.Status.Offline)
-                    SendMethod.Invoke(contact.Ip, Ping);
-            }
+            AllContacts.NotOffline().ForEach(contact => SendMethod(contact.Ip, Ping));
         }
 
-        // Do not mark as static.
         public void Run()
         {
             if (Running)

@@ -9,11 +9,14 @@ namespace ClausaComm.Components.ContactData
     public sealed partial class ContactPanel : Panel
     {
         #region selected panel
+
         private readonly Pen ContactSelectedLinePenAppearance = new(Constants.UIConstants.SecondaryColor, 2);
         private readonly Color SelectedPanelBackgroundColor = Color.FromArgb(10, 255, 255, 255); /*Constants.UIConstants.SecondaryColor.R, Constants.UIConstants.SecondaryColor.G, Constants.UIConstants.SecondaryColor.B*/
+
         private static event EventHandler SelectedPanelChange;
 
         private static ContactPanel _currentlySelectedPanel;
+
         private static ContactPanel CurrentlySelectedPanel
         {
             get => _currentlySelectedPanel;
@@ -23,7 +26,8 @@ namespace ClausaComm.Components.ContactData
                 SelectedPanelChange?.Invoke(value, EventArgs.Empty);
             }
         }
-        #endregion
+
+        #endregion selected panel
 
         private static readonly Dictionary<ComponentUtils.MouseEvent, Color> MouseEventBackColor = new()
         {
@@ -51,6 +55,7 @@ namespace ClausaComm.Components.ContactData
             SelectedPanelChange += (_, _) => Invalidate();
 
             #region Panel initialization
+
             InitializeComponent();
             parentContainer.Controls.Add(this);
             DoubleBuffered = true;
@@ -58,10 +63,11 @@ namespace ClausaComm.Components.ContactData
             Dock = Contact.IsUser ? DockStyle.Fill : DockStyle.Top;
             Height = 57;
             Parent = parentContainer;
-            Name = Contact.Id;
+            //Name = Contact.Id ?? Contact.Ip;
             Padding = Padding.Empty;
             Cursor = Cursors.Hand;
-            #endregion
+
+            #endregion Panel initialization
 
             #region child controls initialization
 
@@ -88,7 +94,8 @@ namespace ClausaComm.Components.ContactData
                 Location = new Point(profilePictureBox.Width - statusIconSize, profilePictureBox.Height - statusIconSize),
                 Parent = profilePictureBox
             };
-            #endregion
+
+            #endregion child controls initialization
 
             foreach (Control control in Controls)
             {
@@ -152,8 +159,10 @@ namespace ClausaComm.Components.ContactData
         {
             public readonly Timer Timer = new() { Interval = 1 };
             private readonly ContactPanel Panel;
-            //Higher = faster. 
+
+            //Higher = faster.
             private const int FlashSpeed = 2;
+
             private bool IncreaseFlash = true;
             private int LastFlashAlpha = 0;
 
@@ -182,6 +191,5 @@ namespace ClausaComm.Components.ContactData
                 }
             }
         }
-
     }
 }
