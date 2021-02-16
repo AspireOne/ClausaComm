@@ -9,10 +9,15 @@ namespace ClausaComm.Messages
         public readonly string Text;
         public readonly MessageFile File;
         public readonly string Id;
+        public const int MaxTextLength = 10000;
 
-        public Message(string text) : this(text, null) { }
+        public Message(string text) : this(text, null)
+        {
+        }
 
-        public Message(MessageFile file) : this(null, file) { }
+        public Message(MessageFile file) : this(null, file)
+        {
+        }
 
         private Message(string text, MessageFile file)
         {

@@ -6,13 +6,16 @@ namespace ClausaComm.Components
     public sealed partial class ChatTextBox : TextBox
     {
         #region backing properties
+
         private int _nLeftRect = 2;
         private int _nTopRect = 3;
         private int _nHeightRect = 15;
         private int _nWeightRect = 15;
-        #endregion
+
+        #endregion backing properties
 
         #region properties
+
         public int RectLeft
         {
             get => _nLeftRect;
@@ -52,7 +55,8 @@ namespace ClausaComm.Components
                 Invalidate();
             }
         }
-        #endregion
+
+        #endregion properties
 
         public ChatTextBox()
         {
@@ -70,6 +74,7 @@ namespace ClausaComm.Components
             int nheightRect, // Height of ellipse.
             int nwidthRect // Width of ellipse.
         );
+
         protected override void OnResize(EventArgs e)
         {
             base.OnResize(e);
