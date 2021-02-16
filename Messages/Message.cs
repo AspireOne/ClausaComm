@@ -1,4 +1,5 @@
 ﻿using ClausaComm.Network_Communication.Objects;
+using System;
 
 namespace ClausaComm.Messages
 {
@@ -21,9 +22,12 @@ namespace ClausaComm.Messages
 
         private Message(string text, MessageFile file)
         {
+            if (text?.Length > MaxTextLength)
+                throw new ArgumentException("The text is too long.", nameof(text));
+
             Text = text;
             File = file;
-            Id = IdGenerator.GenerateId();
+            Id = IdGenerator.GenerateId(4);
         }
     }
 }
