@@ -43,7 +43,7 @@ namespace ClausaComm.Network_Communication
         }
 
         // Do not mark as static.
-        public void Start()
+        public void Run()
         {
             if (Running)
                 return;

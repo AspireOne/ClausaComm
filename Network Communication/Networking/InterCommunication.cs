@@ -36,7 +36,7 @@ namespace ClausaComm.Network_Communication.Networking
                 => throw new Exception($"Connection request received from {request.RemoteEndPoint.Address}. Data should only be sent without being connected.");
         }
 
-        public void Start()
+        public void Run()
         {
             if (Running)
                 return;

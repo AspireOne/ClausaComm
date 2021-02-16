@@ -21,7 +21,7 @@ namespace ClausaComm.Network_Communication
         private readonly Timer CheckTimer;
 
         private HashSet<string> NoPing = new();
-        public bool Running { get; private set; } = false;
+        public bool Running { get; private set; }
         private static bool Created;
         private readonly HashSet<Contact> AllContacts;
 
@@ -42,7 +42,7 @@ namespace ClausaComm.Network_Communication
             Created = true;
         }
 
-        public void Start()
+        public void Run()
         {
             if (Running)
                 return;

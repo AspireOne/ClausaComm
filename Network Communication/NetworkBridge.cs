@@ -30,6 +30,7 @@ namespace ClausaComm
 
         public NetworkBridge(HashSet<Contact> allContacts, Action<Contact> addContactMethod)
         {
+            // TODO: Profile all timers and check if it is more efficient to have just one global timer with a list of callbacks.
             if (Created)
                 throw new MultipleInstancesException(nameof(NetworkBridge));
 
@@ -50,10 +51,10 @@ namespace ClausaComm
                 return;
 
             Running = true;
-            Server.Start();
-            Client.Start();
-            PingSender.Start();
-            StatusWatcher.Start();
+            Server.Run();
+            Client.Run();
+            PingSender.Run();
+            StatusWatcher.Run();
 
             RemoteContactData contactData = new(Contact.UserContact);
             FullContactDataRequest request = new();
