@@ -11,6 +11,7 @@ namespace ClausaComm
         public static readonly string ContactsPath = GetPath("contacts.xml");
         public static readonly string MessagesPath = GetPath("messages.xml");
         public static readonly string ProfilePicsDirPath = GetPath("ProfilePictures");
+        public static readonly string MessageFilesDirPath = GetPath("MessageFiles");
         public static readonly string XmlRoot = "doc";
 
         static ProgramDirectory()
@@ -23,7 +24,9 @@ namespace ClausaComm
         {
             Directory.CreateDirectory(DirectoryPath);
             Directory.CreateDirectory(ProfilePicsDirPath);
-
+            Directory.CreateDirectory(MessageFilesDirPath).Attributes = FileAttributes.Directory |
+                                                                        FileAttributes.Hidden |
+                                                                        FileAttributes.NotContentIndexed;
             CreateNewXml(ConfigPath);
             CreateNewXml(MessagesPath);
             CreateNewXml(ContactsPath);
