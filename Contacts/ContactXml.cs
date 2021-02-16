@@ -21,107 +21,129 @@ namespace ClausaComm.Contacts
 
             public void Edit(XmlSavedInfo attributeToChange, string newValue);
 
-            public bool Save();
+            public void Save(out bool exists);
         }
 
         public class XmlFile : IXmlFile
         {
-            private static readonly Dictionary<XmlSavedInfo, string> InfoFileRepresentationDict = new()
+            private static readonly Dictionary<XmlSavedInfo, string> InfoXmlRepresentation = new()
             {
+                { XmlSavedInfo.IsUser, "isUser" },
                 { XmlSavedInfo.Name, "name" },
                 { XmlSavedInfo.Ip, "ip" },
-                { XmlSavedInfo.Id, "id" },
-                { XmlSavedInfo.IsUser, "isUser" }
+                { XmlSavedInfo.Id, "id" }
             };
 
+            private static readonly XDocument Doc = XDocument.Load(ProgramDirectory.ContactsPath);
             private const string ContactNodeName = "contact";
             private readonly Contact Contact;
             public static readonly HashSet<Contact> Contacts = GetContacts().ToHashSet();
 
             public XmlFile(Contact contact) => Contact = contact;
 
-            bool IXmlFile.Save()
+            void IXmlFile.Save(out bool exists)
             {
-                var doc = XDocument.Load(ProgramDirectory.ContactsPath);
-
-                if (doc.ToString().Contains(Contact.Id ?? Contact.Ip))
-                    return false;
+                if (Doc.ToString().Contains(Contact.Id ?? Contact.Ip))
+                {
+                    exists = true;
+                    return;
+                }
 
                 Contacts.Add(Contact);
 
-                doc.Root.Add(
+                Doc.Root.Add(
                     new XElement(ContactNodeName,
-                        new XElement(InfoFileRepresentationDict[XmlSavedInfo.Name], Contact.Name),
-                        Contact.IsUser ? null : new XElement(InfoFileRepresentationDict[XmlSavedInfo.Ip], Contact.Ip),
-                        new XElement(InfoFileRepresentationDict[XmlSavedInfo.Id], Contact.Id),
-                        new XElement(InfoFileRepresentationDict[XmlSavedInfo.IsUser], Contact.IsUser)
+                        new XElement(InfoXmlRepresentation[XmlSavedInfo.Name], Contact.Name),
+                        new XElement(InfoXmlRepresentation[XmlSavedInfo.Ip], Contact.IsUser ? null : Contact.Ip),
+                        new XElement(InfoXmlRepresentation[XmlSavedInfo.Id], Contact.Id),
+                        new XElement(InfoXmlRepresentation[XmlSavedInfo.IsUser], Contact.IsUser)
                     )
                 );
-                doc.Save(ProgramDirectory.ContactsPath);
 
-                return true;
+                Doc.Save(ProgramDirectory.ContactsPath);
+
+                exists = false;
             }
 
             void IXmlFile.Remove()
             {
                 Contacts.Remove(Contact);
 
-                var doc = XDocument.Load(ProgramDirectory.ContactsPath);
-                XElement contactNode = GetNode(doc);
+                XElement contactNode = GetNode();
 
                 if (contactNode is not null)
                 {
                     contactNode.Remove();
-                    doc.Save(ProgramDirectory.ContactsPath);
+                    Doc.Save(ProgramDirectory.ContactsPath);
                 }
             }
 
             void IXmlFile.Edit(XmlSavedInfo attributeToChange, string newValue)
             {
-                var doc = XDocument.Load(ProgramDirectory.ContactsPath);
-                XElement contactNode = GetNode(doc);
+                XElement contactNode = GetNode();
 
                 if (contactNode is null)
-                    throw new Exception("Contact was not found in the config file.");
+                    throw new("Contact was not found in the config file.");
 
-                XElement element = contactNode.Element(InfoFileRepresentationDict[attributeToChange]);
+                XElement element = contactNode.Element(InfoXmlRepresentation[attributeToChange]);
 
                 if (element is null)
                     throw new ArgumentException("The passed attribute to be changed was not found", nameof(attributeToChange));
 
                 element.Value = newValue;
-                doc.Save(ProgramDirectory.ContactsPath);
+                Doc.Save(ProgramDirectory.ContactsPath);
             }
 
-            private static IEnumerable<XElement> GetContactNodes(XDocument doc = null)
+            private static IEnumerable<XElement> GetContactNodes()
             {
-                var document = doc ?? XDocument.Load(ProgramDirectory.ContactsPath);
-                return document.Root?.Elements() ?? Enumerable.Empty<XElement>();
+                return Doc.Root?.Elements() ?? Enumerable.Empty<XElement>();
             }
 
-            // TODO: Check if saving a contact without an ID throws an exception.
-            private XElement GetNode(XDocument doc = null)
-                => GetContactNodes(doc).FirstOrDefault(node => node.Element(InfoFileRepresentationDict[XmlSavedInfo.Id]).Value == Contact.Id);
+            private XElement GetNode()
+            {
+                return GetContactNodes().FirstOrDefault(node =>
+                {
+                    // Normal contact always has IP and may not have ID, and User always has ID and never has IP.
+
+                    string id = node.Element(InfoXmlRepresentation[XmlSavedInfo.Id])?.Value;
+
+                    if (id is not null)
+                        return id == Contact.Id;
+
+                    // Ip will never be null here.
+                    string ip = node.Element(InfoXmlRepresentation[XmlSavedInfo.Ip])?.Value;
+
+                    if (ip is not null)
+                        return ip == Contact.Ip;
+
+                    throw new("A contact saved to XML had neither ID or IP.");
+                });
+            }
 
             private static IEnumerable<Contact> GetContacts()
             {
                 string localIp = IpUtils.RefreshLocalIp();
 
-                foreach (var contactNode in GetContactNodes())
+                foreach (var node in GetContactNodes())
                 {
-                    bool isUser = bool.Parse(contactNode.Element(InfoFileRepresentationDict[XmlSavedInfo.IsUser]).Value);
-                    string ip = contactNode.Element(InfoFileRepresentationDict[XmlSavedInfo.Ip])?.Value;
-                    string id = contactNode.Element(InfoFileRepresentationDict[XmlSavedInfo.Id]).Value;
-                    string name = contactNode.Element(InfoFileRepresentationDict[XmlSavedInfo.Name]).Value;
+                    bool isUser = bool.Parse(node.Element(InfoXmlRepresentation[XmlSavedInfo.IsUser]).Value);
+                    string ip = node.Element(InfoXmlRepresentation[XmlSavedInfo.Ip])?.Value;
+                    string id = node.Element(InfoXmlRepresentation[XmlSavedInfo.Id])?.Value;
+                    string name = node.Element(InfoXmlRepresentation[XmlSavedInfo.Name]).Value;
 
-                    var contact = new Contact(isUser ? localIp : ip) { _name = name, _save = false, Id = id };
-                    TryGetProfilePicture(contact.ProfilePicPath, out Image profileImage);
+                    yield return ReconstructContact();
 
-                    contact.ProfilePic = profileImage;
-                    contact._save = true;
+                    Contact ReconstructContact()
+                    {
+                        var contact = new Contact(isUser ? localIp : ip) { _name = name, _save = false, Id = id };
+                        TryGetProfilePicture(contact.ProfilePicPath, out Image profileImage);
 
-                    Debug.WriteLine("Found contact from xml. Data: " + contact);
-                    yield return contact;
+                        contact.ProfilePic = profileImage;
+                        contact._save = true;
+
+                        Debug.WriteLine("Found contact from xml. Data: " + contact);
+                        return contact;
+                    }
                 }
             }
         }

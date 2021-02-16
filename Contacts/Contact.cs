@@ -33,20 +33,39 @@ namespace ClausaComm.Contacts
         private Image _profileImage = Resources.default_pfp;
         private string _name = "Unknown";
         private readonly string _ip;
-        private bool _save = false;
-        private string _profilePicPath;
+        private bool _save;
         private static Contact _userContact;
+        private string _id;
 
         #endregion backing fields
 
         #region Properties
 
-        public static Contact UserContact => _userContact ??= XmlFile.Contacts.FirstOrDefault(contact => contact.IsUser) ?? new Contact(IpUtils.LocalIp) { Save = true };
+        public static Contact UserContact => _userContact ??=
+            XmlFile.Contacts.FirstOrDefault(contact => contact.IsUser)
+            ?? new Contact(IpUtils.LocalIp) { Id = IdGenerator.GenerateId(8), Save = true };
+
         public bool IsUser { get; private init; }
-        public string ProfilePicPath => _profilePicPath ??= Path.Combine(ProgramDirectory.ProfilePicsDirPath, $"{Id}.png");
+        public string ProfilePicPath => Path.Combine(ProgramDirectory.ProfilePicsDirPath, $"{Id}.png");
         private bool HasDefaultProfilePic { get; set; } = true;
 
-        public string Id { get; set; }
+        public string Id
+        {
+            get => _id;
+            set
+            {
+                if (value == _id)
+                    return;
+
+                if (_id is not null)
+                    throw new("Id cannot be reassigned.");
+
+                if (Save)
+                    Xml.Edit(XmlSavedInfo.Id, value);
+
+                _id = value;
+            }
+        }
 
         public Status CurrentStatus
         {
@@ -68,13 +87,12 @@ namespace ClausaComm.Contacts
             {
                 if (value is null)
                     throw new ArgumentNullException(nameof(value), "The supplied IP was null.");
-                else if (!IpUtils.IsIpCorrect(value))
+
+                if (!IpUtils.IsIpCorrect(value))
                     throw new InvalidIpException($"The supplied IP ({value}) was incorrect.");
-                else
-                {
-                    _ip = value;
-                    IsUser = IpUtils.LocalIp == value;
-                }
+
+                _ip = value;
+                IsUser = IpUtils.LocalIp == value;
             }
         }
 
@@ -120,12 +138,6 @@ namespace ClausaComm.Contacts
                         value += "_";
                 _name = value;
 
-                /*
-                _name = value.Length is <= NameLength.max and >= NameLength.min
-                    ? value
-                    : throw new ArgumentException($@"The supplied name's length is not right.
-                       Should be <= {NameLength.max} and >= {NameLength.min}, but was {value.Length})", nameof(value));
-                */
                 NameChange?.Invoke(this, value);
 
                 if (Save)
@@ -143,10 +155,10 @@ namespace ClausaComm.Contacts
 
                 if ((_save = value))
                 {
-                    bool exists = !Xml.Save();
+                    Xml.Save(out bool alreadyExists);
 
-                    if (exists)
-                        throw new Exception("One instance of this contact is already saved.");
+                    if (alreadyExists)
+                        throw new("One instance of this contact is already saved.");
 
                     if (!HasDefaultProfilePic)
                         SaveProfilePicture();
@@ -173,7 +185,7 @@ namespace ClausaComm.Contacts
 
         public override string ToString() => $"Name: {Name} | ID: {Id} | IsUser: {IsUser} | Save: {Save} | IP: {Ip}";
 
-        public override int GetHashCode() => int.Parse(Ip.Replace(".", ""));
+        public override int GetHashCode() => int.Parse(string.Concat(Ip.Where(c => c != '.').Skip(3)));
 
         private void DeleteProfilePicture() => File.Delete(ProfilePicPath);
 

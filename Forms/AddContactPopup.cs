@@ -25,14 +25,19 @@ namespace ClausaComm.Forms
         private string IpTextBefore = "";
         private int CaretPositionBefore;
         private readonly Action<Contact> Callback;
+        private readonly MainForm MainForm;
 
-        public AddContactPopup()
+        private AddContactPopup()
         {
             InitializeComponent();
             InitializeComponentFurther();
         }
 
-        public AddContactPopup(Action<Contact> callback) : this() => Callback = callback;
+        public AddContactPopup(Action<Contact> callback, MainForm mainForm) : this()
+        {
+            Callback = callback;
+            MainForm = mainForm;
+        }
 
         private void InitializeComponentFurther()
         {
@@ -52,10 +57,19 @@ namespace ClausaComm.Forms
         {
             if (AddButton.Cursor == AddButtonProps.AllowCursor)
             {
-                if (!Contact.XmlFile.Contacts.Any(x => x.Ip == IpBox.Textbox.Text))
+                if (MainForm.Contacts.All(x => x.Ip != IpBox.Textbox.Text))
                 {
-                    var contact = new Contact(IpBox.Textbox.Text) { Save = true };
+                    var contact = new Contact(IpBox.Textbox.Text);
                     Callback(contact);
+                }
+                else
+                {
+                    MainForm.NotificationPanel.ShowNotification(new Components.NotificationPanel.NotificationArgs
+                    {
+                        Content = "Cannot add, because a contact with the same IP already exists.",
+                        Title = "Cannot add contact",
+                        DurationMillis = 4500,
+                    });
                 }
                 Close();
             }

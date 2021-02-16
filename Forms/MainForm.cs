@@ -62,6 +62,8 @@ namespace ClausaComm.Forms
         private void InitializeProgram()
         {
             Contact.XmlFile.Contacts.ForEach(AddContact);
+            AddContact(Contact.UserContact);
+
             PanelOfContactPanels.SimulateClickOnFirstPanel();
         }
 
@@ -95,10 +97,14 @@ namespace ClausaComm.Forms
         private void AddContactPictureBox_Click(object sender, EventArgs e)
         {
             // Creating contacts for debugging purposes.
-            AddContact(new Contact("92.16.1.71") { Name = "Mistr Yoda [Debug]" });
-            AddContact(new Contact("19.168.0.52") { Name = "Descartes [Debug]" });
-            AddContact(new Contact("14.118.8.13") { Name = "Socrates [Debug]" });
-            AddContact(new Contact("132.18.4.94") { Name = "Kant [Debug]" });
+
+            if (PanelOfContactPanels.Panels.Count() < 2)
+            {
+                AddContact(new("92.16.1.71") { Name = "Mistr Yoda [Debug]", Id = "d18ss7f8" });
+                AddContact(new("19.168.0.52") { Name = "Descartes [Debug]", Id = "PALDNGHV" });
+                AddContact(new("14.118.8.13") { Name = "Socrates [Debug]", Id = "LCMIDNC" });
+                AddContact(new("132.18.4.94") { Name = "Kant [Debug]", Id = "DFSDGDsq" });
+            }
 
             if (PanelOfContactPanels.Panels.Any())
             {
@@ -108,7 +114,7 @@ namespace ClausaComm.Forms
                 PanelOfContactPanels.Panels.ElementAt(0).FlashPanel();
             }
 
-            ShowPopup(new AddContactPopup(AddContact));
+            ShowPopup(new AddContactPopup(AddContact, this));
         }
 
         private void ChangeControlsEnabled(bool enabled)

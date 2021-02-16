@@ -8,7 +8,6 @@ namespace ClausaComm.Utils
 {
     internal static class ImageUtils
     {
-
         public static Image ClipToCircle(Image img)
         {
             if (img is null)
@@ -57,7 +56,6 @@ namespace ClausaComm.Utils
 
             return alteredImage;
         }
-
 
         public static Image AlterColor(Image image, Color newColor)
         {
@@ -124,16 +122,19 @@ namespace ClausaComm.Utils
 
         public static string ImageToBase64String(Image img)
         {
+            if (img is null)
+                return null;
+
             using (MemoryStream ms = new())
             {
-                img.Save(ms, img.RawFormat);
+                img.Save(ms, ImageFormat.Png);
                 return Convert.ToBase64String(ms.ToArray());
             }
         }
 
-        public static Image ImageFromBase64String(string img)
+        public static Image ImageFromBase64String(string imgStr)
         {
-            byte[] array = Convert.FromBase64String(img);
+            byte[] array = Convert.FromBase64String(imgStr);
 
             using (MemoryStream ms = new(array))
                 return Image.FromStream(ms);

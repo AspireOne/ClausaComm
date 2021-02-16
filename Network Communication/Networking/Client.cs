@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Net;
+using System.Net.Sockets;
 using ClausaComm.Network_Communication.Objects;
 using LiteNetLib;
 
@@ -12,13 +14,21 @@ namespace ClausaComm.Network_Communication.Networking
         {
             Listener.NetworkReceiveUnconnectedEvent += (IPEndPoint remoteEndPoint, NetPacketReader reader, UnconnectedMessageType messageType) =>
             {
-                throw new Exception("Sending data to client's endpoint is not allowed.");
+                throw new("Sending data to client's endpoint is not allowed.");
             };
         }
 
         public bool Send(string ip, RemoteObject obj)
         {
-            return Node.SendUnconnectedMessage(obj.SerializeToUtf8Bytes(), NetUtils.MakeEndPoint(ip, Port));
+            try
+            {
+                return Node.SendUnconnectedMessage(obj.SerializeToUtf8Bytes(), NetUtils.MakeEndPoint(ip, Port));
+            }
+            catch (SocketException e)
+            {
+                Debug.WriteLine($"Error uccured while sending. Ip: {ip}. Error: {e}");
+                return false;
+            }
         }
     }
 }
