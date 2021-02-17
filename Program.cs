@@ -1,10 +1,16 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using ClausaComm.Components;
 using ClausaComm.Forms;
+using ClausaComm.Network_Communication.Networking;
+using ClausaComm.Network_Communication.Objects;
+using LiteNetLib;
+using LiteNetLib.Utils;
 
 namespace ClausaComm
 {
@@ -19,6 +25,68 @@ namespace ClausaComm
         [STAThread]
         private static void Main()
         {
+            EventBasedNetListener listener = new EventBasedNetListener();
+            NetManager client = new NetManager(listener);
+            client.Start();
+            client.Connect("localhost", 9050, "SomeConnectionKey");
+            //client.SendUnconnectedMessage(Encoding.UTF8.GetBytes("ahoy"), NetUtils.MakeEndPoint("localhost", 9050));
+            listener.NetworkReceiveUnconnectedEvent += (fromPeer, dataReader, deliveryMethod) =>
+            {
+                Debug.WriteLine("We got: {0}", dataReader.GetString());
+                dataReader.Recycle();
+            };
+
+            Task.Run(() =>
+            {
+                while (true)
+                {
+                    client.PollEvents();
+                    Thread.Sleep(15);
+                }
+            });
+
+            EventBasedNetListener listener2 = new();
+            NetManager server = new NetManager(listener2);
+            server.Start(9050 /* port */);
+
+            listener2.ConnectionRequestEvent += request =>
+            {
+                if (server.ConnectedPeersCount < 10 /* max connections */)
+                    request.AcceptIfKey("SomeConnectionKey");
+                else
+                    request.Reject();
+            };
+            /*
+            listener2.NetworkReceiveUnconnectedEvent += (fromPeer, dataReader, deliveryMethod) =>
+            {
+                Debug.WriteLine("We got: {0}", dataReader.GetString());
+                dataReader.Recycle();
+            };
+            */
+            listener2.PeerConnectedEvent += peer =>
+            {
+                Debug.WriteLine("We got connection: {0}", peer.EndPoint); // Show peer ip
+                NetDataWriter writer = new NetDataWriter();                 // Create writer class
+                writer.Put("Hello client!");                                // Put some string
+                peer.Send(writer, DeliveryMethod.ReliableOrdered);             // Send with reliability
+            };
+
+            while (true)
+            {
+                server.PollEvents();
+                Thread.Sleep(15);
+            }
+            server.Stop();
+
+            /*
+            Client c = new();
+            Server s = new((_, _) => Debug.WriteLine("Server received something"));
+            s.Run();
+
+            c.Run();
+            c.Send("localhost", new(new Ping()));
+            */
+            Application.Run();
 #if !DEBUG
             if (IsAnotherInstanceRunning())
                 Close();

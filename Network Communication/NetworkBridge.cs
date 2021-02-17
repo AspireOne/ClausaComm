@@ -27,7 +27,6 @@ namespace ClausaComm.Network_Communication
 
         public NetworkBridge(HashSet<Contact> allContacts, Action<Contact> addContactMethod)
         {
-            // TODO: Profile all timers and check if it is more efficient to have just one global timer with a list of callbacks.
             if (Created)
                 throw new MultipleInstancesException(nameof(NetworkBridge));
 
@@ -83,6 +82,9 @@ namespace ClausaComm.Network_Communication
                 Client.Send(ip, new RemoteObject(new FullContactDataRequest()));
                 return;
             }
+
+            if (contact.Ip != ip)
+                contact.Ip = ip;
 
             StatusWatcher.HandleActivityReceived(contact);
 
