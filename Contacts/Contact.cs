@@ -32,7 +32,7 @@ namespace ClausaComm.Contacts
         private Status _status = Status.Offline;
         private Image _profileImage = Resources.default_pfp;
         private string _name = "Unknown";
-        private readonly string _ip;
+        private string _ip;
         private bool _save;
         private static Contact _userContact;
         private string _id;
@@ -43,7 +43,7 @@ namespace ClausaComm.Contacts
 
         public static Contact UserContact => _userContact ??=
             XmlFile.Contacts.FirstOrDefault(contact => contact.IsUser)
-            ?? new Contact(IpUtils.LocalIp) { Id = IdGenerator.GenerateId(8), Save = true };
+            ?? new Contact(IpUtils.LocalIp) { Id = IdGenerator.GenerateId(8), IsUser = true, Save = true };
 
         public bool IsUser { get; private init; }
         public string ProfilePicPath => Path.Combine(ProgramDirectory.ProfilePicsDirPath, $"{Id}.png");
@@ -83,7 +83,7 @@ namespace ClausaComm.Contacts
         public string Ip
         {
             get => _ip;
-            private init
+            set
             {
                 if (value is null)
                     throw new ArgumentNullException(nameof(value), "The supplied IP was null.");
@@ -92,7 +92,6 @@ namespace ClausaComm.Contacts
                     throw new InvalidIpException($"The supplied IP ({value}) was incorrect.");
 
                 _ip = value;
-                IsUser = IpUtils.LocalIp == value;
             }
         }
 
