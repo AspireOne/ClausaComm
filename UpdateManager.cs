@@ -12,7 +12,6 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using ClausaComm.Extensions;
 using ClausaComm.Utils;
-using Microsoft.Win32;
 
 namespace ClausaComm
 {
