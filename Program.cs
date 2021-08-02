@@ -20,7 +20,6 @@ namespace ClausaComm
         [STAThread]
         private static void Main()
         {
-            Application.Run();
 #if !DEBUG
             if (IsAnotherInstanceRunning())
                 Close();
