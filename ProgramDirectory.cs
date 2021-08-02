@@ -24,9 +24,7 @@ namespace ClausaComm
         {
             Directory.CreateDirectory(DirectoryPath);
             Directory.CreateDirectory(ProfilePicsDirPath);
-            Directory.CreateDirectory(MessageFilesDirPath).Attributes = FileAttributes.Directory |
-                                                                        FileAttributes.Hidden |
-                                                                        FileAttributes.NotContentIndexed;
+            Directory.CreateDirectory(MessageFilesDirPath).Attributes = FileAttributes.Directory | FileAttributes.Hidden | FileAttributes.NotContentIndexed;
             CreateNewXml(ConfigPath);
             CreateNewXml(MessagesPath);
             CreateNewXml(ContactsPath);
