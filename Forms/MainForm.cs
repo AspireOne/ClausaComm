@@ -96,6 +96,7 @@ namespace ClausaComm.Forms
 
         private void AddContactPictureBox_Click(object sender, EventArgs e)
         {
+#if DEBUG
             // Creating contacts for debugging purposes.
 
             if (PanelOfContactPanels.Panels.Count() < 2)
@@ -106,13 +107,16 @@ namespace ClausaComm.Forms
                 AddContact(new("132.18.4.94") { Name = "Kant [Debug]", Id = "DFSDGDsq" });
             }
 
+            // Personalizing the first debug contact for testing purposes.
+
             if (PanelOfContactPanels.Panels.Any())
             {
-                PanelOfContactPanels.Panels.ElementAt(0).Contact.ProfilePic = Image.FromFile(@"C:\Users\matej\Desktop\Desktop1\profilovky a obrázky\santa_mitu.png");
+                PanelOfContactPanels.Panels.ElementAt(0).Contact.ProfilePic = Image.FromFile(@"C:\Users\matej\Pictures\profilovky a obrázky\mitu192.png");
                 PanelOfContactPanels.Panels.ElementAt(0).Contact.CurrentStatus = Contact.Status.Online;
                 PanelOfContactPanels.Panels.ElementAt(0).Contact.Name = "Ej ej ejj";
                 PanelOfContactPanels.Panels.ElementAt(0).FlashPanel();
             }
+#endif
 
             ShowPopup(new AddContactPopup(AddContact, this));
         }
