@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using ClausaComm.Exceptions;
@@ -20,7 +21,7 @@ namespace ClausaComm.Contacts
 
         private readonly Timer CheckTimer;
 
-        private HashSet<string> NoActivity = new();
+        private HashSet<string> Contacts = new();
         public bool Running { get; private set; }
         private static bool Created;
         private readonly HashSet<Contact> AllContacts;
@@ -56,22 +57,27 @@ namespace ClausaComm.Contacts
         private void HandleTimerTick(object obj)
         {
             // For each contact that was left (didn't send a ping) make his status offline.
-            foreach (string contactIdentifier in NoActivity)
+            foreach (string contactIdentifier in Contacts)
             {
                 Contact contact = AllContacts.First(c => (c.Id ?? c.Ip) == contactIdentifier);
                 contact.CurrentStatus = Contact.Status.Offline;
+                Debug.WriteLine($"[ContactStatusWatcher] {contact.Name} went offline.");
             }
 
             // Create a list of the ids of not-offline offline contacts.
-            NoActivity = AllContacts.NotOffline().Select(c => c.Id ?? c.Ip).ToHashSet();
+            Contacts = AllContacts.NotOffline().Select(c => c.Id ?? c.Ip).ToHashSet();
+            Debug.WriteLine($"[ContactStatusWatcher] Amount of online contacts: {Contacts.Count}");
+            Debug.WriteLine($"[ContactStatusWatcher] Amount of offline contacts: {AllContacts.Count - Contacts.Count}");
         }
 
         public void HandleActivityReceived(Contact contact)
         {
-            NoActivity.Remove(contact.Id ?? contact.Ip);
+            Contacts.Remove(contact.Id ?? contact.Ip);
 
             if (contact.CurrentStatus == Contact.Status.Offline)
                 contact.CurrentStatus = Contact.Status.Online;
-        }
+            
+            Debug.WriteLine($"[ContactStatusWatcher] received activity from {contact.Name}");
+            }
     }
 }

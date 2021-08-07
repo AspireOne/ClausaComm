@@ -30,7 +30,7 @@ namespace ClausaComm.Network_Communication
             Created = true;
         }
 
-        private void OnIntervalPassed(object o)
+        private void OnIntervalPassed(object _)
         {
             AllContacts.NotOffline().ForEach(contact => SendMethod(contact.Ip, Ping));
         }

@@ -12,7 +12,7 @@ namespace ClausaComm.Network_Communication.Networking
     class Server : InterCommunication
     {
         private readonly byte[] Buffer = new byte[8192];
-        private Action<RemoteObject, string> OnReceiveCallback;
+        private readonly Action<RemoteObject, string> OnReceiveCallback;
 
         public Server(Action<RemoteObject, string> onReceiveCallback)
         {
