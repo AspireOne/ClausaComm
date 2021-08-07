@@ -11,6 +11,7 @@ namespace ClausaComm.Contacts
     // TODO: Replace this fucker with Json... Seriously, how tf could I think that this was a good idea...
     public partial class Contact
     {
+        private enum XmlSavedInfo { Id, Name, Ip, IsUser }
         private readonly IXmlFile Xml;
         // public XmlFile ContactXml => Xml as XmlFile;
 

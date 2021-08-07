@@ -23,10 +23,6 @@ namespace ClausaComm.Contacts
 
         //public readonly HashSet<Contact> UnreadMessages = new HashSet<Contact>();
 
-        // TODO: Move this enum (SavedInfo) to a more appropriate place.
-
-        private enum XmlSavedInfo { Id, Name, Ip, IsUser }
-
         #region backing fields
 
         private Status _status = Status.Offline;
