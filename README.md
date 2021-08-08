@@ -1,4 +1,4 @@
 # ClausaComm
-## a LAN Communication app
+## a Skype-like LAN chatting app
 
 Still in the middle of development.
