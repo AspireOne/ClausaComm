@@ -2,7 +2,7 @@
 {
     public readonly struct ReceptionConfirmation : ISendable
     {
-        RemoteObject.ObjectType ISendable.ObjType => RemoteObject.ObjectType.DataReceiveConfirmation;
+        RemoteObject.ObjectType ISendable.ObjectType => RemoteObject.ObjectType.DataReceiveConfirmation;
         public readonly string ConfirmedDataId;
         bool ISendable.Confirm => false;
 

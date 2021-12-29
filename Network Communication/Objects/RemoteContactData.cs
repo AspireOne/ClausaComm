@@ -8,7 +8,7 @@ namespace ClausaComm.Network_Communication.Objects
     [Serializable]
     public readonly struct RemoteContactData : ISendable
     {
-        RemoteObject.ObjectType ISendable.ObjType => RemoteObject.ObjectType.ContactData;
+        RemoteObject.ObjectType ISendable.ObjectType => RemoteObject.ObjectType.ContactData;
         bool ISendable.Confirm => false;
 
         // Convert it so that it's serializable.

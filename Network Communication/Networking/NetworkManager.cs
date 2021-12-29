@@ -23,6 +23,7 @@ namespace ClausaComm.Network_Communication.Networking
             Server.OnReceive += (message, endpoint) => OnReceive?.Invoke(message, endpoint);
         }
 
+        /// <summary>Will start up the Server.</summary>
         public static void Run() => Server.Run();
 
         /// <summary>

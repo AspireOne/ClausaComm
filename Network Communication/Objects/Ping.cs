@@ -2,7 +2,7 @@
 {
     internal struct Ping : ISendable
     {
-        RemoteObject.ObjectType ISendable.ObjType => RemoteObject.ObjectType.Ping;
+        RemoteObject.ObjectType ISendable.ObjectType => RemoteObject.ObjectType.Ping;
         bool ISendable.Confirm => false;
     }
 }
