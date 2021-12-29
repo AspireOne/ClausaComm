@@ -120,7 +120,7 @@ namespace ClausaComm.Utils
             }
         }
 
-        public static string ImageToBase64String(Image img)
+        public static string? ImageToBase64String(Image? img)
         {
             if (img is null)
                 return null;

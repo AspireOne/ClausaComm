@@ -3,7 +3,5 @@
     public struct FullContactDataRequest : ISendable
     {
         RemoteObject.ObjectType ISendable.ObjectType => RemoteObject.ObjectType.FullContactDataRequest;
-
-        bool ISendable.Confirm => false;
     }
 }

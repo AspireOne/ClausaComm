@@ -7,7 +7,7 @@ namespace ClausaComm.Network_Communication.Objects
     [Serializable]
     public readonly struct RemoteObject
     {
-        public enum ObjectType { Message, ContactData, StatusUpdate, Ping, FullContactDataRequest, DataReceiveConfirmation }
+        public enum ObjectType { Message, ContactData, StatusUpdate, Ping, FullContactDataRequest }
 
         private static readonly JsonSerializerOptions SerializerOptions = new()
         {

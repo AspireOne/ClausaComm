@@ -18,7 +18,7 @@ namespace ClausaComm.Network_Communication
     public class NetworkBridge
     {
         // We don't need to confirm the data now that it's all connection based.
-        private readonly HashSet<RemoteObject> UncomfirmedData = new();
+        //private readonly HashSet<RemoteObject> UncomfirmedData = new();
         //private readonly ContactStatusWatcher StatusWatcher;
         //private readonly PingSender PingSender;
         public bool Running { get; private set; }
@@ -72,9 +72,6 @@ namespace ClausaComm.Network_Communication
         public void HandleIncomingData(RemoteObject obj, string ip) // TODO: Change all "string ip" to IPAddress -es
         {
             Debug.WriteLine($"Received data from {ip}");
-            // If the data demand to be confirmed, send back a confirmation.
-            if (obj.Data.Confirm)
-                SendBackConfirmation(obj.ObjectId, ip);
 
             Contact contact = RetrieveContact(obj, ip);
             if (contact?.Id is null)
@@ -115,10 +112,6 @@ namespace ClausaComm.Network_Communication
                     SendFullContactData(ip);
                     break;
 
-                case RemoteObject.ObjectType.DataReceiveConfirmation:
-                    UncomfirmedData.RemoveWhere(o => o.ObjectId == ((ReceptionConfirmation)obj.Data).ConfirmedDataId);
-                    break;
-
                 default:
                     throw new NotImplementedException($"One of {nameof(RemoteObject)}'s ObjectTypes weren't implemented in {nameof(NetworkBridge)}'s {nameof(HandleIncomingData)} method.");
             }
@@ -134,7 +127,7 @@ namespace ClausaComm.Network_Communication
         /// Else if the object received is an object with contact data, creates it and returns it.<br/>
         /// Else returns null.
         /// </summary>
-        private Contact RetrieveContact(RemoteObject obj, string ip)
+        private Contact? RetrieveContact(RemoteObject obj, string ip)
         {
             // If AllContacts contains a contact with the sender's ID, return that contact.
 
@@ -198,14 +191,6 @@ namespace ClausaComm.Network_Communication
         private void SendToAll(RemoteObject obj)
         {
             AllContacts.NotOffline().ForEach(contact => Client.Send(contact.Ip, obj));
-        }
-
-        /// <summary> Sends a confirmation to {ip} about receiving object {objectId}</summary>
-        private void SendBackConfirmation(string objectId, string ip)
-        {
-            ReceptionConfirmation confirmationData = new(objectId);
-            RemoteObject confirmationObj = new(confirmationData);
-            Client.Send(ip, confirmationObj);
         }
 
         private void HandleMessageReceived(Message message, Contact sender)
