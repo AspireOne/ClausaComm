@@ -42,8 +42,7 @@ namespace ClausaComm
             {
                 (bool newVersionAvailable, string newVersion) = UpdateManager.IsNewVersionAvailable().Result;
                 if (newVersionAvailable)
-                    UpdateManager.DownloadNewVersionBinaryAsync(completedHandler: (_, _) =>
-                        ShowUpdateNotification(mainForm, newVersion));
+                    UpdateManager.DownloadNewVersionBinaryAsync(completedHandler: (_, _) => ShowUpdateNotification(mainForm, newVersion));
             });
         }
 
@@ -76,9 +75,6 @@ namespace ClausaComm
         }
 
         private static bool IsAnotherInstanceRunning()
-        {
-            return Process.GetProcessesByName(
-                Path.GetFileNameWithoutExtension(Assembly.GetEntryAssembly().Location)).Length > 1;
-        }
+            => Process.GetProcessesByName(Path.GetFileNameWithoutExtension(Assembly.GetEntryAssembly()?.Location)).Length > 1;
     }
 }
