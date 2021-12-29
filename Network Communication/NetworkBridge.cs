@@ -17,19 +17,20 @@ namespace ClausaComm.Network_Communication
 {
     public class NetworkBridge
     {
+        // We don't need to confirm the data now that it's all connection based.
         private readonly HashSet<RemoteObject> UncomfirmedData = new();
         //private readonly ContactStatusWatcher StatusWatcher;
         //private readonly PingSender PingSender;
         public bool Running { get; private set; }
         private readonly HashSet<Contact> AllContacts;
         private readonly Action<Contact> AddContactMethod;
-        private static bool Created;
+        private static bool InstanceCreated;
         
         /// <param name="allContacts">A collection with all the existing contacts</param>
         /// <param name="addContactMethod">A method for adding new contacts that might be sent from the network.</param>
         public NetworkBridge(HashSet<Contact> allContacts, Action<Contact> addContactMethod)
         {
-            if (Created)
+            if (InstanceCreated)
                 throw new MultipleInstancesException(nameof(NetworkBridge));
 
             AllContacts = allContacts;
@@ -41,7 +42,7 @@ namespace ClausaComm.Network_Communication
                 .First(contact => contact.Ip == endpoint.Address.ToString())
                 .CurrentStatus = Contact.Status.Offline;
             
-            Created = true;
+            InstanceCreated = true;
             
             // TODO for tomorrow: wrap allContactData remoteObject type in a GreetingMessage or something - we need
             // TODO to identify first messages and react to them (add contact if doesn't exist, update the contact's data...)
@@ -56,12 +57,12 @@ namespace ClausaComm.Network_Communication
 
             Running = true;
             new Thread(NetworkManager.Run).Start();
-            AllContacts.ForEach(contact =>
-                new Thread(() => NetworkManager.CreateConnection(IPAddress.Parse(contact.Ip))).Start());
+            AllContacts.ForEach(contact => new Thread(() => NetworkManager.CreateConnection(IPAddress.Parse(contact.Ip))).Start());
 
             SubscribeToUserEvents();
         }
 
+        // Send all user data (and the other end will send theirs).
         private static void HandleNewConnection(IPAddress ip)
         {
             RemoteContactData contactData = new(Contact.UserContact);
@@ -92,7 +93,7 @@ namespace ClausaComm.Network_Communication
 
             StatusWatcher.HandleActivityReceived(contact);
 
-            switch (obj.Data.ObjType)
+            switch (obj.Data.ObjectType)
             {
                 case RemoteObject.ObjectType.ContactData:
                     UpdateContactData((RemoteContactData)obj.Data, contact);
@@ -156,7 +157,7 @@ namespace ClausaComm.Network_Communication
             // If the sender has sent all needed data to create it (ContactData object), create it and return it.
             // The parent method will assign the data to the contact.
             // Else return null (and the parent method will send a request to the sender to send back the data).
-            if (obj.Data.ObjType != RemoteObject.ObjectType.ContactData)
+            if (obj.Data.ObjectType != RemoteObject.ObjectType.ContactData)
                 return null;
             
             contact = new(ip);
