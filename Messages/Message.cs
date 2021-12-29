@@ -5,7 +5,7 @@ namespace ClausaComm.Messages
 {
     public readonly struct Message : ISendable
     {
-        public RemoteObject.ObjectType ObjType => RemoteObject.ObjectType.Message;
+        public RemoteObject.ObjectType ObjectType => RemoteObject.ObjectType.Message;
         bool ISendable.Confirm => true;
         public readonly string Text;
         public readonly MessageFile File;
