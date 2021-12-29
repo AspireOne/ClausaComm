@@ -1,34 +1,39 @@
 ﻿using System;
-using System.Diagnostics;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
+using System.Text;
+using System.Transactions;
 using ClausaComm.Network_Communication.Objects;
 using LiteNetLib;
 
 namespace ClausaComm.Network_Communication.Networking
 {
-    // The CLIENT takes care ONLY of SENDING.
-    internal class Client : InterCommunication
+    internal class Client : NetworkNode
     {
-        public Client()
+        private readonly TcpClient UnderlyingClient = new();
+        public readonly IPEndPoint TargetEndpoint;
+
+        public Client(IPEndPoint targetEndpoint) => TargetEndpoint = targetEndpoint;
+
+        public override bool Equals(object obj) => obj is Client client && TargetEndpoint.ToString() == client.TargetEndpoint.ToString();
+        public override int GetHashCode() => int.Parse(TargetEndpoint.ToString().Replace(".", "").Replace(":", ""));
+
+        /// <summary>
+        /// Connects to the host and starts reading from the network. Blocking.
+        /// </summary>
+        /// <returns>True if successfully connected and able to read from the network; false otherwise.</returns>
+        public virtual bool Run()
         {
-            Listener.NetworkReceiveUnconnectedEvent += (IPEndPoint remoteEndPoint, NetPacketReader reader, UnconnectedMessageType messageType) =>
-            {
-                throw new("Sending data to client's endpoint is not allowed.");
-            };
+            if (UnderlyingClient.Connected) return false;
+            UnderlyingClient.Connect(TargetEndpoint);
+            if (!UnderlyingClient.Connected) return false;
+
+            OnConnect?.Invoke(TargetEndpoint);
+            StartReading(UnderlyingClient);
+            return true;
         }
 
-        public bool Send(string ip, RemoteObject obj)
-        {
-            try
-            {
-                return Node.SendUnconnectedMessage(obj.SerializeToUtf8Bytes(), NetUtils.MakeEndPoint(ip, Port));
-            }
-            catch (SocketException e)
-            {
-                Debug.WriteLine($"Error uccured while sending. Ip: {ip}. Error: {e}");
-                return false;
-            }
-        }
+        public bool Send(byte[] bytes) => Send(UnderlyingClient, bytes);
     }
 }

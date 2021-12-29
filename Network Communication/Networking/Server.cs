@@ -1,35 +1,65 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
-using ClausaComm.Network_Communication.Objects;
-using LiteNetLib;
+using System.Threading;
+using ClausaComm.Exceptions;
 
 namespace ClausaComm.Network_Communication.Networking
 {
-    // TODO: Maybe make static?
-    // TODO: Remove LiteNetLib and implement it yourself.
-    // The SERVER takes care ONLY of RECEIVING.
-    class Server : InterCommunication
+    // Singleton
+    internal class Server : NetworkNode
     {
-        private readonly byte[] Buffer = new byte[8192];
-        private readonly Action<RemoteObject, string> OnReceiveCallback;
+        private static bool InstanceCreated;
+        public const int Port = 5000;
+        private readonly List<TcpClient> Connections = new();
+        private TcpListener? Listener;
 
-        public Server(Action<RemoteObject, string> onReceiveCallback)
+        public Server()
         {
-            OnReceiveCallback = onReceiveCallback;
-
-            Listener.NetworkReceiveUnconnectedEvent += (IPEndPoint remoteEndPoint, NetPacketReader reader, UnconnectedMessageType messageType) =>
-            {
-                reader.GetBytes(Buffer, reader.AvailableBytes);
-                RemoteObject obj = RemoteObject.Deserialize(Buffer);
-                // If the IP is Ipv6, try to use remoteEndPoint.Address.MapToIpv4();
-                if (remoteEndPoint.Address.AddressFamily == AddressFamily.InterNetworkV6)
-                {
-                    throw new Exception("The received address is IPv6. The code to handle this was not written yet, because" +
-                        " you thought, that it won't be in IPv6. So better fix it.");
-                }
-                OnReceiveCallback(obj, remoteEndPoint.Address.ToString());
-            };
+            if (InstanceCreated)
+                throw new MultipleInstancesException("Only one instance of Server can be created");
+            InstanceCreated = true;
         }
-    }
+
+        public virtual bool Run()
+        {
+            if (Listener is not null && Listener.Server.Connected)
+                return false;
+            
+            Listener = new TcpListener(IPAddress.Any, Port);
+            
+            try { Listener.Start(); }
+            catch (SocketException) { return false; }
+            Debug.WriteLine($"Server listening on port {Port} (any IP)...");
+            
+            while (true)
+            {
+                TcpClient client = Listener.AcceptTcpClient();
+                OnConnect?.Invoke((IPEndPoint)client.Client.RemoteEndPoint);
+                lock (Connections) 
+                    Connections.Add(client);
+                
+                new Thread(() =>
+                {
+                    StartReading(client);
+                    lock (Connections)
+                        Connections.Remove(client);
+                }).Start();
+            }
+        
+            Listener.Stop();
+            return true;
+        }
+
+        public bool Send(IPEndPoint endpoint, byte[] bytes)
+        {
+            TcpClient client;
+            lock (Connections)
+                client = Connections.Find(c => ((IPEndPoint)c.Client.RemoteEndPoint).ToString() == endpoint.ToString());
+            
+            return client is not null && Send(client, bytes);
+        }
+    }   
 }
