@@ -31,7 +31,7 @@ namespace ClausaComm.Contacts
         private string _ip;
         private bool _save;
         private static Contact _userContact;
-        private string _id;
+        private string? _id;
 
         #endregion backing fields
 
@@ -45,7 +45,7 @@ namespace ClausaComm.Contacts
         public string ProfilePicPath => Path.Combine(ProgramDirectory.ProfilePicsDirPath, $"{Id}.png");
         private bool HasDefaultProfilePic { get; set; } = true;
 
-        public string Id
+        public string? Id
         {
             get => _id;
             set

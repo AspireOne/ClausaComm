@@ -23,6 +23,7 @@ namespace ClausaComm.Network_Communication.Networking
             InstanceCreated = true;
         }
 
+        // Will start listening and handling incoming connections. Blocking.
         public virtual bool Run()
         {
             if (Listener is not null && Listener.Server.Connected)

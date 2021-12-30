@@ -14,6 +14,7 @@ namespace ClausaComm.Network_Communication.Networking
         public static readonly Server Server = new();
         public static NetworkNode.ReceiveHandler? OnReceive; // RemoteObject
         public static NetworkNode.ConnectionChangeHandler? OnDisconnect;
+        /// <summary> This event is raised both if it's an outgoing or an ingoing connection.</summary>
         public static NetworkNode.ConnectionChangeHandler? OnConnect;
 
         static NetworkManager()
@@ -23,7 +24,7 @@ namespace ClausaComm.Network_Communication.Networking
             Server.OnReceive += (message, endpoint) => OnReceive?.Invoke(message, endpoint);
         }
 
-        /// <summary>Will start up the Server.</summary>
+        /// <summary>Will start up the Server. Blocking.</summary>
         public static void Run() => Server.Run();
 
         /// <summary>

@@ -43,7 +43,8 @@ namespace ClausaComm.Utils
             return LocalIp;
         }
 
-        public static bool IsIpCorrect(string ip) => ip is not null && IpRegex.IsMatch(ip);
+        public static bool IsIpCorrect(string? ip) =>
+            ip is not null && IpRegex.IsMatch(ip) && IPAddress.TryParse(ip, out _);
     }
 
     public class InvalidIpException : Exception
