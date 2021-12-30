@@ -15,12 +15,9 @@ using ClausaComm.Utils;
 
 namespace ClausaComm.Network_Communication
 {
+    // Singleton.
     public class NetworkBridge
     {
-        // We don't need to confirm the data now that it's all connection based.
-        //private readonly HashSet<RemoteObject> UncomfirmedData = new();
-        //private readonly ContactStatusWatcher StatusWatcher;
-        //private readonly PingSender PingSender;
         public bool Running { get; private set; }
         private readonly HashSet<Contact> AllContacts;
         private readonly Action<Contact> AddContactMethod;
@@ -46,6 +43,10 @@ namespace ClausaComm.Network_Communication
             
             // TODO for tomorrow: wrap allContactData remoteObject type in a GreetingMessage or something - we need
             // TODO to identify first messages and react to them (add contact if doesn't exist, update the contact's data...)
+            // edit: There's no reason we'd need to know it's the first message. Both parties send an object with
+            // all the contact's data right when they connect, so it'll be immediately updated (and will be no matter
+            // if it's the first message or not).
+            // Leaving the TODO here in case I missed something and it actually IS needed.
             
             // TODO somehow solve idle status
         }
@@ -62,33 +63,27 @@ namespace ClausaComm.Network_Communication
             SubscribeToUserEvents();
         }
 
-        // Send all user data (and the other end will send theirs).
+        // Send all user data (the other end will send theirs).
         private static void HandleNewConnection(IPAddress ip)
         {
             RemoteContactData contactData = new(Contact.UserContact);
             NetworkManager.Send(ip, new RemoteObject(contactData).SerializeToUtf8Bytes());
         }
 
-        public void HandleIncomingData(RemoteObject obj, string ip) // TODO: Change all "string ip" to IPAddress -es
+        public void HandleIncomingData(RemoteObject obj, string ip) // TODO: Change all "string ip" to IPAddresses
         {
             Debug.WriteLine($"Received data from {ip}");
 
-            Contact contact = RetrieveContact(obj, ip);
-            if (contact?.Id is null)
-            {
-                // If the ID is not assigned to the contact, take it from the remoteObject and assign it.
-                if (contact is not null)
-                    contact.Id = obj.ContactId;
+            Contact? contact = RetrieveOrCreateContact(obj, ip);
 
-                Client.Send(ip, new RemoteObject(new FullContactDataRequest()));
+            if (contact is null)
                 return;
-            }
-
-            // If the contact's ID matches but the IP is different, update it.
+            
+            contact.Id ??= obj.ContactId;
+            
+            // TODO: Handle IP collision
             if (contact.Ip != ip)
                 contact.Ip = ip;
-
-            StatusWatcher.HandleActivityReceived(contact);
 
             switch (obj.Data.ObjectType)
             {
@@ -102,14 +97,6 @@ namespace ClausaComm.Network_Communication
 
                 case RemoteObject.ObjectType.Message:
                     HandleMessageReceived((Message)obj.Data, contact);
-                    break;
-
-                case RemoteObject.ObjectType.Ping:
-                    // Ignored (because the ping is already registered/recognized before this code).
-                    break;
-
-                case RemoteObject.ObjectType.FullContactDataRequest:
-                    SendFullContactData(ip);
                     break;
 
                 default:
@@ -127,10 +114,10 @@ namespace ClausaComm.Network_Communication
         /// Else if the object received is an object with contact data, creates it and returns it.<br/>
         /// Else returns null.
         /// </summary>
-        private Contact? RetrieveContact(RemoteObject obj, string ip)
+        private Contact? RetrieveOrCreateContact(RemoteObject obj, string ip)
         {
             // If AllContacts contains a contact with the sender's ID, return that contact.
-
+            
             Contact contact = AllContacts.FirstOrDefault(c => c.Id == obj.ContactId);
 
             if (contact is not null)
@@ -138,7 +125,7 @@ namespace ClausaComm.Network_Communication
 
             // else if AllContacts contains a contact with the sender's IP AND the contact's ID
             // is null (contact added by the user via IP but not initialized yet), return that contact.
-            // The parent method will assign an ID and request other data.
+            // The caller method will assign the ID.
 
             contact = AllContacts.FirstOrDefault(c => c.Ip == ip && c.Id is null);
 
@@ -149,11 +136,12 @@ namespace ClausaComm.Network_Communication
 
             // If the sender has sent all needed data to create it (ContactData object), create it and return it.
             // The parent method will assign the data to the contact.
-            // Else return null (and the parent method will send a request to the sender to send back the data).
+            // Else return null.
+            
             if (obj.Data.ObjectType != RemoteObject.ObjectType.ContactData)
                 return null;
             
-            contact = new(ip);
+            contact = new Contact(ip);
             AddContactMethod.Invoke(contact);
             return contact;
 
@@ -190,7 +178,7 @@ namespace ClausaComm.Network_Communication
         /// <summary> Sends the object to all not-offline contacts.</summary>
         private void SendToAll(RemoteObject obj)
         {
-            AllContacts.NotOffline().ForEach(contact => Client.Send(contact.Ip, obj));
+            AllContacts.NotOffline().ForEach(contact => NetworkManager.Send(IPAddress.Parse(contact.Ip), obj.SerializeToUtf8Bytes()));
         }
 
         private void HandleMessageReceived(Message message, Contact sender)
@@ -203,12 +191,14 @@ namespace ClausaComm.Network_Communication
         {
             RemoteContactData data = new(Contact.UserContact);
             RemoteObject obj = new(data);
-            Client.Send(ip, obj);
+            NetworkManager.Send(IPAddress.Parse(ip), obj.SerializeToUtf8Bytes());
         }
 
         /// <summary> Updates {contact}'s status to match that in the {statusUpdate} object.</summary>
         private static void UpdateContactStatus(RemoteStatusUpdate statusUpdate, Contact contact)
         {
+            // The check is there because when the properties get updated, they are sent to all connected peers,
+            // so it would be wasteful to send it even when it actually didn't change.
             if (contact.CurrentStatus != statusUpdate.Status)
                 contact.CurrentStatus = statusUpdate.Status;
         }
@@ -216,7 +206,7 @@ namespace ClausaComm.Network_Communication
         /// <summary> Updates {contact}'s data to match those in the {data} object.</summary>
         private static void UpdateContactData(RemoteContactData data, Contact contact)
         {
-            if (contact.Name != data.Name)
+            if (data.Name is not null && contact.Name != data.Name) 
                 contact.Name = data.Name;
 
             if (data.Base64ProfilePic is not null)
