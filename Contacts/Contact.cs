@@ -41,6 +41,7 @@ namespace ClausaComm.Contacts
             XmlFile.Contacts.FirstOrDefault(contact => contact.IsUser)
             ?? new Contact(IpUtils.LocalIp) { Id = IdGenerator.GenerateId(8), IsUser = true, Save = true };
 
+        // TODO: Rework the whole IsUser thing (save just UserId: id and remove he IsUser property)
         public bool IsUser { get; private init; }
         public string ProfilePicPath => Path.Combine(ProgramDirectory.ProfilePicsDirPath, $"{Id}.png");
         private bool HasDefaultProfilePic { get; set; } = true;
@@ -193,7 +194,7 @@ namespace ClausaComm.Contacts
                 // Cloning because otherwise the program doesn't let of the image's handle for some reason.
                 image = (Image)fromFile.Clone();
             }
-            catch (Exception e) when (e is FileNotFoundException || e is ArgumentException)
+            catch (Exception e) when (e is FileNotFoundException or ArgumentException)
             {
                 image = null;
             }
