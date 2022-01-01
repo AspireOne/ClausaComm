@@ -11,7 +11,7 @@ namespace ClausaComm.Contacts
         private readonly Contact User;
         private static bool Created;
         private static readonly int NecessaryIdleTimeMillis = (int)TimeSpan.FromMinutes(10).TotalMilliseconds;
-        private static readonly int TimerIntervalMillis = (int)TimeSpan.FromSeconds(30).TotalMilliseconds;
+        private static readonly int TimerIntervalMillis = (int)TimeSpan.FromSeconds(15).TotalMilliseconds;
         private readonly Timer Timer;
         public bool Running { get; private set; }
 
@@ -54,13 +54,13 @@ namespace ClausaComm.Contacts
 
             if (idleTimeMillis >= NecessaryIdleTimeMillis)
                 User.CurrentStatus = Contact.Status.Idle;
-            else if (User.CurrentStatus == Contact.Status.Idle)
+            else if (User.CurrentStatus is Contact.Status.Idle or Contact.Status.Offline)
                 User.CurrentStatus = Contact.Status.Online;
 
-            Debug.WriteLine($"UserStatusWatcher timer tick fired. idle time: {idleTimeMillis}. User status: {User.CurrentStatus}");
+            //Debug.WriteLine($"UserStatusWatcher timer tick fired. idle time: {idleTimeMillis}. User status: {User.CurrentStatus}");
         }
 
-        public static uint GetIdleTimeMillis()
+        private static uint GetIdleTimeMillis()
         {
             Lastinputinfo lastInput = new();
             lastInput.cbSize = (uint)Marshal.SizeOf(lastInput);
