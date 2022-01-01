@@ -133,10 +133,14 @@ namespace ClausaComm.Utils
             if (img is null)
                 return null;
 
-            using (MemoryStream ms = new())
+            // Otherwise it throws "object is already in use elsewhere".
+            lock (img)
             {
-                img.Save(ms, ImageFormat.Png);
-                return Convert.ToBase64String(ms.ToArray());
+                using (MemoryStream ms = new())
+                {
+                    img.Save(ms, ImageFormat.Png);
+                    return Convert.ToBase64String(ms.ToArray());
+                }   
             }
         }
 
