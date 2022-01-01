@@ -136,7 +136,7 @@ namespace ClausaComm.Contacts
 
                     Contact ReconstructContact()
                     {
-                        var contact = new Contact(isUser ? localIp : ip) { _name = name, _save = false, Id = id, IsUser = true };
+                        var contact = new Contact(isUser ? localIp : ip) { _name = name, _save = false, Id = id, IsUser = isUser };
                         TryGetProfilePicture(contact.ProfilePicPath, out Image profileImage);
 
                         contact.ProfilePic = profileImage;
