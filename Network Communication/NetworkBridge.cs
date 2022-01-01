@@ -43,7 +43,7 @@ namespace ClausaComm.Network_Communication
             
             // TODO for tomorrow: wrap allContactData remoteObject type in a GreetingMessage or something - we need
             // TODO to identify first messages and react to them (add contact if doesn't exist, update the contact's data...)
-            // edit: There's no reason we'd need to know it's the first message. Both parties send an object with
+            // edit: There's no reason we'd need to know that it's the first message. Both parties send an object with
             // all the contact's data right when they connect, so it'll be immediately updated (and will be no matter
             // if it's the first message or not).
             // Leaving the TODO here in case I missed something and it actually IS needed.
@@ -57,10 +57,27 @@ namespace ClausaComm.Network_Communication
                 return;
 
             Running = true;
-            new Thread(NetworkManager.Run).Start();
-            AllContacts.ForEach(contact => new Thread(() => NetworkManager.CreateConnection(IPAddress.Parse(contact.Ip))).Start());
+            ThreadUtils.RunThread(() => NetworkManager.Run(HandleServerRunning));
 
-            SubscribeToUserEvents();
+            void HandleServerRunning(bool running)
+            {
+                if (!running)
+                {
+                    Debug.WriteLine($"{nameof(NetworkBridge)}: Server did not start - NOT trying to connect to contacts.");
+                    return;
+                }
+                
+                // TODO: Maybe wait for the server to start up?
+                Debug.WriteLine($"{nameof(NetworkBridge)}: Recursively trying to connect to all contacts.");
+                AllContacts.ForEach(contact => ThreadUtils.RunThread(() =>
+                {
+                    bool connected = NetworkManager.CreateConnection(IPAddress.Parse(contact.Ip));
+                    if (!connected)
+                        Debug.WriteLine($"{nameof(NetworkBridge)}: Could not connect to {contact.Ip}");
+                }));
+                
+                SubscribeToUserEvents();
+            }
         }
 
         // Send all user data (the other end will send theirs).
