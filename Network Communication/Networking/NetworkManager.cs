@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Net;
 
 namespace ClausaComm.Network_Communication.Networking
@@ -25,7 +27,10 @@ namespace ClausaComm.Network_Communication.Networking
         }
 
         /// <summary>Will start up the Server. Blocking.</summary>
-        public static void Run() => Server.Run();
+        public static void Run(Action<bool> serverRunningCallback)
+        {
+            Server.Run(serverRunningCallback);
+        }
 
         /// <summary>
         /// Determines if a connection with the specified endpoint is present either to the server or from one of clients,
