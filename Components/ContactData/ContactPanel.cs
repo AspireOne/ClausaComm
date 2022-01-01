@@ -36,11 +36,11 @@ namespace ClausaComm.Components.ContactData
             { ComponentUtils.MouseEvent.Leave, Color.Transparent },
             { ComponentUtils.MouseEvent.Down, Color.FromArgb(40, 255, 255, 255) },
         };
-
-        public Action OnClickAction { get; set; }
-        public Action<Contact> OnClickActionContact { get; set; }
+        
+        public Action<Contact> OnClickAction { get; set; }
         private readonly FlashTimer Flasher;
         private bool Selected;
+        private bool IsUserPanel;
 
         private static readonly Color FlashPeakColor = Color.FromArgb(80, Constants.UIConstants.SecondaryColor.R, Constants.UIConstants.SecondaryColor.G, Constants.UIConstants.SecondaryColor.B);
 
@@ -49,8 +49,9 @@ namespace ClausaComm.Components.ContactData
         private readonly ContactStatus StatusBox;
         private readonly ContactName NameLabel;
 
-        public ContactPanel(Contact contact, Panel parentContainer)
+        public ContactPanel(Contact contact, Panel parentContainer, bool userPanel = false)
         {
+            IsUserPanel = userPanel;
             Flasher = new FlashTimer(this);
             Contact = contact;
             SelectedPanelChange += (_, _) => Invalidate();
@@ -61,7 +62,7 @@ namespace ClausaComm.Components.ContactData
             parentContainer.Controls.Add(this);
             DoubleBuffered = true;
             BorderStyle = BorderStyle.None;
-            Dock = Contact.IsUser ? DockStyle.Fill : DockStyle.Top;
+            Dock = userPanel ? DockStyle.Fill : DockStyle.Top;
             Height = 57;
             Parent = parentContainer;
             //Name = Contact.Id ?? Contact.Ip;
@@ -84,13 +85,13 @@ namespace ClausaComm.Components.ContactData
             {
                 Location = new Point(profilePictureBox.Width + nameOffset, 0),
                 Size = new Size(Width - profilePictureBox.Width - nameOffset, Height),
-                Font = new Font(Contact.IsUser ? "Sans UI" : "Segoe UI", 13, FontStyle.Regular),
+                Font = new Font(userPanel ? "Sans UI" : "Segoe UI", 13, FontStyle.Regular),
                 Parent = this,
                 ForeColor = Color.FromArgb(225, 225, 225)
             };
 
             const int statusIconSize = 13;
-            StatusBox = contact.IsUser ? null : new ContactStatus(Contact)
+            StatusBox = new ContactStatus(Contact)
             {
                 Size = new Size(statusIconSize, statusIconSize),
                 Location = new Point(profilePictureBox.Width - statusIconSize, profilePictureBox.Height - statusIconSize),
@@ -114,12 +115,11 @@ namespace ClausaComm.Components.ContactData
         protected override void OnClick(EventArgs e)
         {
             base.OnClick(e);
-            OnClickAction?.Invoke();
-            OnClickActionContact?.Invoke(Contact);
             Selected = true;
+            OnClickAction?.Invoke(Contact);
             ChangeBackgroundColor(SelectedPanelBackgroundColor);
 
-            if (!Contact.IsUser)
+            if (!IsUserPanel)
                 CurrentlySelectedPanel = this;
 
             Invalidate();
