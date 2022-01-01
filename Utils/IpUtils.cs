@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
 using System.Text.RegularExpressions;
@@ -35,8 +36,10 @@ namespace ClausaComm.Utils
                 var endPoint = socket.LocalEndPoint as IPEndPoint;
                 LocalIp = endPoint?.Address.ToString();
             }
-            catch
+            catch (Exception e)
             {
+                Debug.WriteLine("A handled error occured while refreshing local IP.");
+                Debug.WriteLine(e);
                 LocalIp = null;
             }
 

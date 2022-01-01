@@ -23,16 +23,26 @@ namespace ClausaComm.Network_Communication.Networking
             InstanceCreated = true;
         }
 
-        // Will start listening and handling incoming connections. Blocking.
-        public virtual bool Run()
+        /// <summary>Will start listening and handling incoming connections. Blocking.</summary>
+        /// <returns>False if there was an error during (or before) listening. Otherwise true.</returns>
+        public bool Run()
         {
             if (Listener is not null && Listener.Server.Connected)
                 return false;
             
             Listener = new TcpListener(IPAddress.Any, Port);
-            
-            try { Listener.Start(); }
-            catch (SocketException) { return false; }
+
+            try
+            {
+                Listener.Start();
+
+            }
+            catch (SocketException e)
+            {
+                Debug.WriteLine($"There was a handled error during a Server socket listening (err code: {e.ErrorCode})");
+                Debug.WriteLine(e);
+                return false;
+            }
             Debug.WriteLine($"Server listening on port {Port} (any IP)...");
             
             while (true)

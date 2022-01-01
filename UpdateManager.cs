@@ -42,8 +42,8 @@ namespace ClausaComm
             return (highestIsHigherThanCurr, highestIsHigherThanCurr ? highestVer : null);
         }
 
-        public static void DownloadNewVersionBinaryAsync(DownloadProgressChangedEventHandler progressHandler = null,
-            AsyncCompletedEventHandler completedHandler = null, Action errorHandler = null)
+        public static void DownloadNewVersionBinaryAsync(DownloadProgressChangedEventHandler? progressHandler = null,
+            AsyncCompletedEventHandler? completedHandler = null, Action? errorHandler = null)
         {
             using WebClient wc = new();
             wc.DownloadFileCompleted += (_, _) => UpdateDownloaded = true;
@@ -61,6 +61,7 @@ namespace ClausaComm
             }
             catch (WebException e)
             {
+                Debug.WriteLine("A handled error occured while trying to download new update binary.");
                 Debug.WriteLine(e);
                 errorHandler?.Invoke();
             }

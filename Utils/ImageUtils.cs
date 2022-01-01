@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
@@ -116,6 +117,13 @@ namespace ClausaComm.Utils
             }
             catch (OutOfMemoryException)
             {
+                // We do not have to print the exception because this error will only be thrown under expected conditions.
+                return false;
+            }
+            catch (FileNotFoundException e)
+            {
+                Debug.WriteLine("A handled exception was thrown when trying to check if a file is an image - the file does not exist.");
+                Debug.WriteLine(e);
                 return false;
             }
         }
