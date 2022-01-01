@@ -4,11 +4,13 @@ using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
+using System.Transactions;
 using ClausaComm.Exceptions;
+using ClausaComm.Utils;
 
 namespace ClausaComm.Network_Communication.Networking
 {
-    // Singleton
+    // Singleton.
     internal class Server : NetworkNode
     {
         private static bool InstanceCreated;
@@ -25,52 +27,63 @@ namespace ClausaComm.Network_Communication.Networking
 
         /// <summary>Will start listening and handling incoming connections. Blocking.</summary>
         /// <returns>False if there was an error during (or before) listening. Otherwise true.</returns>
-        public bool Run()
+        public void Run(Action<bool> runningCallback)
         {
-            if (Listener is not null && Listener.Server.Connected)
-                return false;
+            Debug.WriteLine($"Server's Run method was called. Is already running: {Running}");
             
+            if (Running)
+                runningCallback.Invoke(false);
+
+            Running = true;
             Listener = new TcpListener(IPAddress.Any, Port);
 
             try
             {
                 Listener.Start();
-
             }
             catch (SocketException e)
             {
-                Debug.WriteLine($"There was a handled error during a Server socket listening (err code: {e.ErrorCode})");
+                Debug.WriteLine($"There was an error during starting a Server socket listening (TcpListener.Start) (err code: {e.ErrorCode})");
                 Debug.WriteLine(e);
-                return false;
+                Running = false;
+                runningCallback.Invoke(false);
             }
-            Debug.WriteLine($"Server listening on port {Port} (any IP)...");
             
+            Debug.WriteLine($"Server listening on port {Port} (any IP)...");
+            runningCallback.Invoke(true);
+
             while (true)
             {
                 TcpClient client = Listener.AcceptTcpClient();
                 OnConnect?.Invoke((IPEndPoint)client.Client.RemoteEndPoint);
                 lock (Connections) 
                     Connections.Add(client);
-                
-                new Thread(() =>
+
+                ThreadUtils.RunThread(() =>
                 {
+                    var connectionEndpoint = (IPEndPoint)client.Client.RemoteEndPoint;
+                    Debug.WriteLine($"Server got new connection. IP: {connectionEndpoint}");
                     StartReading(client);
+                    Debug.WriteLine($"Node disconnected from server. IP: {connectionEndpoint}");
                     lock (Connections)
                         Connections.Remove(client);
-                }).Start();
+                });
             }
         
             Listener.Stop();
-            return true;
+            Running = false;
         }
 
         public bool Send(IPEndPoint endpoint, byte[] bytes)
         {
-            TcpClient client;
+            TcpClient? client;
             lock (Connections)
                 client = Connections.Find(c => ((IPEndPoint)c.Client.RemoteEndPoint).ToString() == endpoint.ToString());
             
-            return client is not null && Send(client, bytes);
+            Debug.WriteLine($"Server's Send method was invoked. Active connection to the desired endpoint found: {client is not null}");
+            bool success = client is not null && Send(client, bytes);
+            Debug.WriteLine($"Server's Send succesfull: {success}");
+            return success;
         }
     }   
 }
