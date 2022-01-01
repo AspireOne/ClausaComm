@@ -6,6 +6,7 @@ using ClausaComm.Extensions;
 using ClausaComm.Components.ContactData;
 using ClausaComm.Components;
 using System.Collections.Generic;
+using System.Diagnostics;
 using ClausaComm.Contacts;
 using ClausaComm.Network_Communication;
 
@@ -14,7 +15,7 @@ namespace ClausaComm.Forms
     public partial class MainForm : FormBase
     {
         public readonly HashSet<Contact> Contacts = new();
-        private readonly NetworkBridge Network;
+        private readonly NetworkBridge NetworkBridge;
         private readonly UserStatusWatcher UserStatusWatcher;
 
         public MainForm()
@@ -24,8 +25,8 @@ namespace ClausaComm.Forms
             InitializeProgram();
             UserStatusWatcher = new(Contact.UserContact);
             UserStatusWatcher.Run();
-            Network = new(Contacts, AddContact);
-            Network.Run();
+            NetworkBridge = new(Contacts, AddContact);
+            NetworkBridge.Run();
         }
 
         private void InitializeComponentFurther()
@@ -61,9 +62,17 @@ namespace ClausaComm.Forms
 
         private void InitializeProgram()
         {
-            Contact.XmlFile.Contacts.ForEach(AddContact);
-            AddContact(Contact.UserContact);
+            bool userAdded = false;
+            Contact.XmlFile.Contacts.ForEach(contact =>
+            {
+                AddContact(contact);
+                if (contact.IsUser)
+                    userAdded = true;
+            });
 
+            if (!userAdded)
+                AddContact(Contact.UserContact);
+            
             PanelOfContactPanels.SimulateClickOnFirstPanel();
         }
 
@@ -74,13 +83,13 @@ namespace ClausaComm.Forms
             if (contactToAdd is null)
                 throw new ArgumentNullException(nameof(contactToAdd));
 
-            void ClickActionIfUser() => ShowPopup(new EditInfoPopup(contactToAdd));
+            void ClickActionIfUser(Contact contact) => ShowPopup(new EditInfoPopup(contactToAdd));
             void ClickActionIfContact(Contact contact) => ChangeChatContact(contact);
-
+            
+            _ = new ContactPanel(contactToAdd, PanelOfContactPanels) { OnClickAction = ClickActionIfContact };
+    
             if (contactToAdd.IsUser)
-                _ = new ContactPanel(contactToAdd, OwnProfilePanel) { OnClickAction = ClickActionIfUser };
-            else
-                _ = new ContactPanel(contactToAdd, PanelOfContactPanels) { OnClickActionContact = ClickActionIfContact };
+                _ = new ContactPanel(contactToAdd, OwnProfilePanel, true) { OnClickAction = ClickActionIfUser };
 
             PanelOfContactPanels.SimulateClickOnFirstPanel();
         }
