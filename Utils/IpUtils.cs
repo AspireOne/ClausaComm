@@ -27,7 +27,7 @@ namespace ClausaComm.Utils
         /// <summary>
         /// Refreshes the local IP (if it's null will be null), assign it to the LocalIp property, and return it.
         /// </summary>
-        public static string RefreshLocalIp()
+        public static string? RefreshLocalIp()
         {
             try
             {
