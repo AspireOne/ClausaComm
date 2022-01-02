@@ -120,8 +120,8 @@ namespace ClausaComm.Network_Communication
                     UpdateContactStatus((RemoteStatusUpdate)obj.Data, contact);
                     break;
 
-                case RemoteObject.ObjectType.Message:
-                    HandleMessageReceived((Message)obj.Data, contact);
+                case RemoteObject.ObjectType.ChatMessage:
+                    HandleMessageReceived((ChatMessage)obj.Data, contact);
                     break;
 
                 default:
@@ -129,10 +129,9 @@ namespace ClausaComm.Network_Communication
             }
         }
 
-        public bool SendMessage(string message, IPAddress ip)
+        public bool SendMessage(ChatMessage message, IPAddress ip)
         {
-            Message msg = new(message);
-            RemoteObject obj = new RemoteObject(msg);
+            RemoteObject obj = new RemoteObject(message);
             return NetworkManager.Send(ip, obj.SerializeToUtf8Bytes());
         }
 
@@ -209,9 +208,12 @@ namespace ClausaComm.Network_Communication
             AllContacts.NotOffline().ForEach(contact => NetworkManager.Send(IPAddress.Parse(contact.Ip), obj.SerializeToUtf8Bytes()));
         }
 
-        private void HandleMessageReceived(Message message, Contact sender)
+        private void HandleMessageReceived(ChatMessage message, Contact sender)
         {
-            // TODO: Handle the message, convert message.MessageFile to RemoteMessageFile etc.
+            // TODO: Is it a good idea to save the ingoing message here, when outgoing messages are saved
+            // somewhere else? Save it elsewhere.
+            message = ChatMessage.ReconstructMessage(message.Text, ChatMessage.Ways.In, message.Id);
+            // TODO: Handle the message, save it, convert message.MessageFile to RemoteMessageFile etc.
         }
 
         /// <summary> Updates {contact}'s status to match that in the {statusUpdate} object.</summary>
