@@ -7,6 +7,7 @@ using ClausaComm.Components.ContactData;
 using ClausaComm.Components;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Net;
 using ClausaComm.Contacts;
 using ClausaComm.Network_Communication;
 
@@ -35,13 +36,13 @@ namespace ClausaComm.Forms
 
             // ChatPanel
             ActionPanel1.MainForm = this;
-            ChatPanel1.ActionPanel = ActionPanel1;
-            ChatPanel1.SendIcon = SendIcon1;
-            ChatPanel1.Textbox = chatTextBox1;
+            ChatPanel.ActionPanel = ActionPanel1;
+            ChatPanel.SendIcon = SendIcon1;
+            ChatPanel.Textbox = chatTextBox1;
 
             //TitleBar
             TitleBar.Form = this;
-            TitleBar.BackColor = ChatPanel1.BackColor;
+            TitleBar.BackColor = ChatPanel.BackColor;
             TitleBar.PinNotifyIcon = new NotifyIcon
             {
                 Text = "Click to open ClausaComm",
@@ -69,14 +70,20 @@ namespace ClausaComm.Forms
                 if (contact.IsUser)
                     userAdded = true;
             });
-
+            
+            // For the first startup.
             if (!userAdded)
                 AddContact(Contact.UserContact);
             
             PanelOfContactPanels.SimulateClickOnFirstPanel();
+            ChatPanel.OnSendPressed += message =>
+            {
+                // TODO: Save it to xml.
+                NetworkBridge.SendMessage(message, IPAddress.Parse(ChatPanel.Contact.Ip));
+            };
         }
 
-        public void AddContact(Contact contactToAdd)
+        private void AddContact(Contact contactToAdd)
         {
             Contacts.Add(contactToAdd);
 
@@ -98,8 +105,7 @@ namespace ClausaComm.Forms
         {
             PanelOfContactPanels.Panels.ForEach(panel => panel.Visible =
                 string.IsNullOrWhiteSpace(ContactSearchBox.Text)
-                || panel.Contact.Name
-                    .Split(' ')
+                || panel.Contact.Name.Split(' ')
                     .Any(name => name.Contains(ContactSearchBox.Text, StringComparison.OrdinalIgnoreCase)));
         }
 
@@ -127,7 +133,11 @@ namespace ClausaComm.Forms
             }
 #endif
 
-            ShowPopup(new AddContactPopup(AddContact, this));
+            ShowPopup(new AddContactPopup(contact =>
+            {
+                AddContact(contact);
+                NetworkBridge.Connect(contact);
+            }, this));
         }
 
         private void ChangeControlsEnabled(bool enabled)
@@ -153,7 +163,7 @@ namespace ClausaComm.Forms
 
         private void ChangeChatContact(Contact contact)
         {
-            ChatPanel1.Contact = contact;
+            ChatPanel.Contact = contact;
         }
 
         private void ChatPanel1_Paint(object sender, PaintEventArgs e)
