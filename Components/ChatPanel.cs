@@ -3,6 +3,7 @@ using ClausaComm.Components.Icons;
 using System.ComponentModel;
 using System.Windows.Forms;
 using ClausaComm.Contacts;
+using ClausaComm.Messages;
 
 namespace ClausaComm.Components
 {
@@ -11,9 +12,9 @@ namespace ClausaComm.Components
         private SendIcon _sendIcon;
         private ChatTextBox _textbox;
         
-        public delegate void SendPressedHandler(string message);
+        public delegate void SendPressedHandler(ChatMessage message);
 
-        public SendPressedHandler OnSendPressed;
+        public event SendPressedHandler OnSendPressed;
 
         private readonly Label NoContactLabel = new()
         {
@@ -53,11 +54,23 @@ namespace ClausaComm.Components
 
                 if (value is not null)
                 {
+                    bool handleNextEnter = false;
                     Textbox.KeyDown += (_, e) =>
                     {
-                        if (e.KeyCode == Keys.Enter)
+                        if (e.KeyCode == Keys.Enter && !e.Shift)
+                        {
+                            handleNextEnter = true;
                             HandleSendPressed();
-                    };   
+                        }
+                    };
+                    Textbox.KeyPress += (_, e) =>
+                    {
+                        if (handleNextEnter && e.KeyChar == (char)Keys.Enter)
+                        {
+                            handleNextEnter = false;
+                            e.Handled = true;
+                        }
+                    };
                 }
             }
         }
@@ -100,7 +113,10 @@ namespace ClausaComm.Components
         private void HandleSendPressed()
         {
             if (Textbox.Text != "")
-                OnSendPressed?.Invoke(Textbox.Text);
+            {
+                ChatMessage msg = new(Textbox.Text); 
+                OnSendPressed?.Invoke(msg);
+            }
             Textbox.Text = "";
         }
 
