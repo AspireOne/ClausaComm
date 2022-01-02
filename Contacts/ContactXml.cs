@@ -95,11 +95,6 @@ namespace ClausaComm.Contacts
                 Doc.Save(ProgramDirectory.ContactsPath);
             }
 
-            private static IEnumerable<XElement> GetContactNodes()
-            {
-                return Doc.Root?.Elements() ?? Enumerable.Empty<XElement>();
-            }
-
             private XElement GetNode()
             {
                 return GetContactNodes().FirstOrDefault(node =>
@@ -132,21 +127,23 @@ namespace ClausaComm.Contacts
                     string id = node.Element(InfoXmlRepresentation[XmlSavedInfo.Id])?.Value;
                     string name = node.Element(InfoXmlRepresentation[XmlSavedInfo.Name]).Value;
 
-                    yield return ReconstructContact();
+                    yield return ReconstructContact(isUser: isUser, ip: ip, id: id, name: name);
+                }
+                
+                Contact ReconstructContact(bool isUser, string ip, string id, string name)
+                {
+                    var contact = new Contact(isUser ? localIp : ip) { _name = name, _save = false, Id = id, IsUser = isUser };
+                    TryGetProfilePicture(contact.ProfilePicPath, out Image profileImage);
 
-                    Contact ReconstructContact()
-                    {
-                        var contact = new Contact(isUser ? localIp : ip) { _name = name, _save = false, Id = id, IsUser = isUser };
-                        TryGetProfilePicture(contact.ProfilePicPath, out Image profileImage);
+                    contact.ProfilePic = profileImage;
+                    contact._save = true;
 
-                        contact.ProfilePic = profileImage;
-                        contact._save = true;
-
-                        Debug.WriteLine("Found contact from xml. Data: " + contact);
-                        return contact;
-                    }
+                    Debug.WriteLine("Found contact from xml. Data: " + contact);
+                    return contact;
                 }
             }
+            
+            private static IEnumerable<XElement> GetContactNodes() => Doc.Root?.Elements() ?? Enumerable.Empty<XElement>();
         }
     }
 }
