@@ -12,11 +12,11 @@ namespace ClausaComm.Network_Communication.Networking
     /// </summary>
     internal static class NetworkManager
     {
-        public static readonly List<Client> ClientConnections = new();
-        public static readonly Server Server = new();
-        public static NetworkNode.ReceiveHandler? OnReceive; // RemoteObject
+        private static readonly List<Client> ClientConnections = new();
+        private static readonly Server Server = new();
+        public static NetworkNode.ReceiveHandler? OnReceive;
         public static NetworkNode.ConnectionChangeHandler? OnDisconnect;
-        /// <summary> This event is raised both if it's an outgoing or an ingoing connection.</summary>
+        /// <summary> This event is raised for both outgoing and ingoing connections.</summary>
         public static NetworkNode.ConnectionChangeHandler? OnConnect;
 
         static NetworkManager()
@@ -40,11 +40,7 @@ namespace ClausaComm.Network_Communication.Networking
         public static bool Send(IPAddress ip, byte[] bytes)
         {
             IPEndPoint endpoint = new(ip, Server.Port);
-            
-            Client client;
-            lock (ClientConnections)
-                client = ClientConnections.Find(c => c.TargetEndpoint.ToString() == endpoint.ToString());
-
+            Client client = GetConnectionOrNull(endpoint);
             return client?.Send(bytes) ?? Server.Send(endpoint, bytes);
         }
 
@@ -55,6 +51,9 @@ namespace ClausaComm.Network_Communication.Networking
         public static bool CreateConnection(IPAddress ip)
         {
             IPEndPoint endpoint = new(ip, Server.Port);
+            if (GetConnectionOrNull(endpoint) is not null || Server.ConnectionExists(ip))
+                return true;
+                
             var client = new Client(endpoint);
             
             client.OnReceive += (message, _) => OnReceive?.Invoke(message, endpoint);
@@ -72,6 +71,12 @@ namespace ClausaComm.Network_Communication.Networking
             };
 
             return client.Run();
+        }
+        
+        private static Client? GetConnectionOrNull(IPEndPoint endpoint)
+        {
+            lock (ClientConnections)
+                return ClientConnections.Find(c => c.TargetEndpoint.ToString() == endpoint.ToString());
         }
     }
 }
