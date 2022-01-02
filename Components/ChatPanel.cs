@@ -1,4 +1,5 @@
-﻿using ClausaComm.Components.Icons;
+﻿using System;
+using ClausaComm.Components.Icons;
 using System.ComponentModel;
 using System.Windows.Forms;
 using ClausaComm.Contacts;
@@ -9,6 +10,10 @@ namespace ClausaComm.Components
     {
         private SendIcon _sendIcon;
         private ChatTextBox _textbox;
+        
+        public delegate void SendPressedHandler(string message);
+
+        public SendPressedHandler OnSendPressed;
 
         private readonly Label NoContactLabel = new()
         {
@@ -31,6 +36,9 @@ namespace ClausaComm.Components
                 _sendIcon = value;
                 if (Contact is null)
                     ChangeContactSpecificElementsVisibility(false);
+                
+                if (value is not null)
+                    SendIcon.Click += (_, _) => HandleSendPressed();
             }
         }
 
@@ -42,6 +50,15 @@ namespace ClausaComm.Components
                 _textbox = value;
                 if (Contact is null)
                     ChangeContactSpecificElementsVisibility(false);
+
+                if (value is not null)
+                {
+                    Textbox.KeyDown += (_, e) =>
+                    {
+                        if (e.KeyCode == Keys.Enter)
+                            HandleSendPressed();
+                    };   
+                }
             }
         }
 
@@ -78,6 +95,13 @@ namespace ClausaComm.Components
         {
             InitializeComponent();
             NoContactLabel.Parent = this;
+        }
+        
+        private void HandleSendPressed()
+        {
+            if (Textbox.Text != "")
+                OnSendPressed?.Invoke(Textbox.Text);
+            Textbox.Text = "";
         }
 
         private void ChangeContactSpecificElementsVisibility(bool visible)
