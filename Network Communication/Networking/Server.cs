@@ -24,6 +24,12 @@ namespace ClausaComm.Network_Communication.Networking
                 throw new MultipleInstancesException("Only one instance of Server can be created");
             InstanceCreated = true;
         }
+        
+        public bool ConnectionExists(IPAddress ip)
+        {
+            lock (Connections)
+                return Connections.Exists(c => ((IPEndPoint)c.Client.RemoteEndPoint).Address.Equals(ip));
+        }
 
         /// <summary>Will start listening and handling incoming connections. Blocking.</summary>
         /// <returns>False if there was an error during (or before) listening. Otherwise true.</returns>
