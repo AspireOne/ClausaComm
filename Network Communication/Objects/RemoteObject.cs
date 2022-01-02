@@ -21,7 +21,7 @@ namespace ClausaComm.Network_Communication.Objects
         
         public enum ObjectType
         {
-            Message,
+            ChatMessage,
             ContactData,
             StatusUpdate
         }
