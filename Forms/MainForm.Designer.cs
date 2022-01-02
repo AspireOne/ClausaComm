@@ -200,24 +200,20 @@ namespace ClausaComm.Forms
             // 
             // chatTextBox1
             // 
-            this.chatTextBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.chatTextBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.chatTextBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(30)))), ((int)(((byte)(31)))));
             this.chatTextBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.chatTextBox1.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.chatTextBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(190)))), ((int)(((byte)(190)))), ((int)(((byte)(190)))));
-            this.chatTextBox1.Location = new System.Drawing.Point(14, 12);
             this.chatTextBox1.MaxLength = 20000;
             this.chatTextBox1.Multiline = true;
             this.chatTextBox1.Name = "chatTextBox1";
             this.chatTextBox1.PlaceholderText = "Write a message...";
-            this.chatTextBox1.RectHeight = 15;
-            this.chatTextBox1.RectLeft = 2;
-            this.chatTextBox1.RectTop = 3;
-            this.chatTextBox1.RectWidth = 15;
             this.chatTextBox1.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.chatTextBox1.Size = new System.Drawing.Size(807, 44);
+            this.chatTextBox1.Location = new System.Drawing.Point(8, 0);
+            this.chatTextBox1.Size = new System.Drawing.Size(807, 70);
             this.chatTextBox1.TabIndex = 3;
             this.chatTextBox1.Visible = false;
             // 
