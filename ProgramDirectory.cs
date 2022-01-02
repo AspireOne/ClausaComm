@@ -6,32 +6,30 @@ namespace ClausaComm
 {
     public static class ProgramDirectory
     {
-        public static readonly string DirectoryPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "ClausaComm");
+        public static readonly string MainDirPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "ClausaComm");
+        public static readonly string ProfilePicsDirPath = GetPath("ProfilePictures");
+        public static readonly string MessagesPath = GetPath("messages.xml");
         public static readonly string ConfigPath = GetPath("config.xml");
         public static readonly string ContactsPath = GetPath("contacts.xml");
-        public static readonly string MessagesPath = GetPath("messages.xml");
-        public static readonly string ProfilePicsDirPath = GetPath("ProfilePictures");
-        public static readonly string MessageFilesDirPath = GetPath("MessageFiles");
-        public static readonly string XmlRoot = "doc";
+        public const string XmlRoot = "doc";
 
         static ProgramDirectory()
         {
-            if (!Directory.Exists(DirectoryPath))
+            if (!Directory.Exists(MainDirPath))
                 CreateProgramDirectory();
         }
 
         private static void CreateProgramDirectory()
         {
-            Directory.CreateDirectory(DirectoryPath);
-            Directory.CreateDirectory(ProfilePicsDirPath);
-            Directory.CreateDirectory(MessageFilesDirPath).Attributes = FileAttributes.Directory | FileAttributes.Hidden | FileAttributes.NotContentIndexed;
+            Directory.CreateDirectory(MainDirPath);
+            Directory.CreateDirectory(ProfilePicsDirPath).Attributes = FileAttributes.Hidden | FileAttributes.NotContentIndexed;
             CreateNewXml(ConfigPath);
-            CreateNewXml(MessagesPath);
             CreateNewXml(ContactsPath);
+            CreateNewXml(MessagesPath);
         }
 
-        private static string GetPath(string filename) => Path.Combine(DirectoryPath, filename);
+        private static string GetPath(string filename) => Path.Combine(MainDirPath, filename);
 
-        private static void CreateNewXml(string path) => new XDocument(new XElement(XmlRoot)).Save(path);
+        public static void CreateNewXml(string path) => new XDocument(new XElement(XmlRoot)).Save(path);
     }
 }
