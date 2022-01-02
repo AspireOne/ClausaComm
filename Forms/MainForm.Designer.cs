@@ -39,7 +39,7 @@ namespace ClausaComm.Forms
             this.ProfilePicture = new ClausaComm.Components.ContactData.ContactProfilePicture(this.components);
             this.ToolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.TitleBar = new ClausaComm.Components.TitleBar(this.components);
-            this.ChatPanel1 = new ClausaComm.Components.ChatPanel(this.components);
+            this.ChatPanel = new ClausaComm.Components.ChatPanel(this.components);
             this.NotificationPanel = new ClausaComm.Components.NotificationPanel(this.components);
             this.ActionPanel1 = new ClausaComm.Components.ActionPanel(this.components);
             this.panel1 = new System.Windows.Forms.Panel();
@@ -54,7 +54,7 @@ namespace ClausaComm.Forms
             ((System.ComponentModel.ISupportInitialize)(this.Status)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.CallContactIcon)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ProfilePicture)).BeginInit();
-            this.ChatPanel1.SuspendLayout();
+            this.ChatPanel.SuspendLayout();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.SendIcon1)).BeginInit();
             this.LeftPanel.SuspendLayout();
@@ -148,20 +148,20 @@ namespace ClausaComm.Forms
             // 
             // ChatPanel1
             // 
-            this.ChatPanel1.ActionPanel = null;
-            this.ChatPanel1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(19)))), ((int)(((byte)(19)))), ((int)(((byte)(21)))));
-            this.ChatPanel1.Contact = null;
-            this.ChatPanel1.Controls.Add(this.NotificationPanel);
-            this.ChatPanel1.Controls.Add(this.ActionPanel1);
-            this.ChatPanel1.Controls.Add(this.panel1);
-            this.ChatPanel1.Controls.Add(this.panel2);
-            this.ChatPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.ChatPanel1.Location = new System.Drawing.Point(184, 26);
-            this.ChatPanel1.Name = "ChatPanel1";
-            this.ChatPanel1.Size = new System.Drawing.Size(882, 680);
-            this.ChatPanel1.TabIndex = 28;
-            this.ChatPanel1.Textbox = null;
-            this.ChatPanel1.Paint += new System.Windows.Forms.PaintEventHandler(this.ChatPanel1_Paint);
+            this.ChatPanel.ActionPanel = null;
+            this.ChatPanel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(19)))), ((int)(((byte)(19)))), ((int)(((byte)(21)))));
+            this.ChatPanel.Contact = null;
+            this.ChatPanel.Controls.Add(this.NotificationPanel);
+            this.ChatPanel.Controls.Add(this.ActionPanel1);
+            this.ChatPanel.Controls.Add(this.panel1);
+            this.ChatPanel.Controls.Add(this.panel2);
+            this.ChatPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.ChatPanel.Location = new System.Drawing.Point(184, 26);
+            this.ChatPanel.Name = "ChatPanel";
+            this.ChatPanel.Size = new System.Drawing.Size(882, 680);
+            this.ChatPanel.TabIndex = 28;
+            this.ChatPanel.Textbox = null;
+            this.ChatPanel.Paint += new System.Windows.Forms.PaintEventHandler(this.ChatPanel1_Paint);
             // 
             // NotificationPanel
             // 
@@ -330,7 +330,7 @@ namespace ClausaComm.Forms
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(61)))), ((int)(((byte)(68)))), ((int)(((byte)(90)))));
             this.ClientSize = new System.Drawing.Size(1067, 707);
-            this.Controls.Add(this.ChatPanel1);
+            this.Controls.Add(this.ChatPanel);
             this.Controls.Add(this.LeftPanel);
             this.Controls.Add(this.TitleBar);
             this.DoubleBuffered = true;
@@ -345,8 +345,8 @@ namespace ClausaComm.Forms
             ((System.ComponentModel.ISupportInitialize)(this.Status)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.CallContactIcon)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.ProfilePicture)).EndInit();
-            this.ChatPanel1.ResumeLayout(false);
-            this.ChatPanel1.PerformLayout();
+            this.ChatPanel.ResumeLayout(false);
+            this.ChatPanel.PerformLayout();
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.SendIcon1)).EndInit();
@@ -364,7 +364,7 @@ namespace ClausaComm.Forms
         private Components.ContactData.ContactName NameLbl;
         private Components.ContactData.ContactStatus Status;
         private System.Windows.Forms.Label IpLbl;
-        private Components.ChatPanel ChatPanel1;
+        private Components.ChatPanel ChatPanel;
         private Components.TitleBar TitleBar;
         private Components.ActionPanel ActionPanel1;
         private System.Windows.Forms.Panel panel1;

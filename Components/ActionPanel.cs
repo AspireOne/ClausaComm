@@ -32,7 +32,7 @@ namespace ClausaComm.Components
                 {
                     MainForm.ToolTip1.SetToolTip(SaveUnsaveContactIcon,
                     "If the person's ip doesn't change, you can \n" +
-                    "keep him saved instead of re-adding him \n" +
+                    "keep them saved instead of re-adding them \n" +
                     "every time you restart the program.");
                 }
             }
@@ -152,7 +152,7 @@ namespace ClausaComm.Components
         public ActionPanel()
         {
             InitializeComponent();
-            CompleteComponentInitialization();
+            InitializeComponentFurther();
 
             ChildControls = new Control[] { Status, NameLbl, SaveUnsaveContactIcon, CallContactIcon, ProfilePicture, IpLbl };
             ChangeContactSpecificElementsVisibility(false);
@@ -166,7 +166,7 @@ namespace ClausaComm.Components
                     {
                         Content = "You cannot save a contact that has never been active.",
                         Title = "Cannot save contact",
-                        DurationMillis = 4100,
+                        DurationMillis = 4000,
                     });
                     return;
                 }
@@ -175,7 +175,7 @@ namespace ClausaComm.Components
             };
         }
 
-        private void CompleteComponentInitialization()
+        private void InitializeComponentFurther()
         {
             BackColor = Color.FromArgb(29, 29, 31);
             Dock = DockStyle.Top;

@@ -13,7 +13,7 @@ namespace ClausaComm.Network_Communication.Objects
     [Serializable]
     public readonly struct RemoteObject
     {
-        private static readonly JsonSerializerSettings SerializerSettings = new JsonSerializerSettings
+        private static readonly JsonSerializerSettings SerializerSettings = new()
         {
             TypeNameHandling = TypeNameHandling.Auto,
             Formatting = Formatting.Indented,
@@ -36,9 +36,9 @@ namespace ClausaComm.Network_Communication.Objects
             ContactId = Contact.UserContact.Id;
         }
 
-        public string Serialize() => JsonConvert.SerializeObject(this, typeof(RemoteObject), SerializerSettings);
         public byte[] SerializeToUtf8Bytes() => Encoding.UTF8.GetBytes(Serialize());
-        
+        public string Serialize() => JsonConvert.SerializeObject(this, typeof(RemoteObject), SerializerSettings);
+
         public static RemoteObject Deserialize(byte[] obj) => Deserialize(Encoding.UTF8.GetString(obj));
         public static RemoteObject Deserialize(string obj) => JsonConvert.DeserializeObject<RemoteObject>(obj, SerializerSettings);
     }
