@@ -79,7 +79,7 @@ namespace ClausaComm.Forms
             ChatPanel.OnSendPressed += message =>
             {
                 // TODO: Save it to xml.
-                NetworkBridge.SendMessage(message, IPAddress.Parse(ChatPanel.Contact.Ip));
+                bool sent = NetworkBridge.SendMessage(message, IPAddress.Parse(ChatPanel.Contact.Ip));
             };
         }
 
