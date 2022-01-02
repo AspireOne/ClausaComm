@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
-using Message = ClausaComm.Messages.Message;
+using ClausaComm.Messages;
 
 namespace ClausaComm.Components
 {
@@ -10,8 +10,8 @@ namespace ClausaComm.Components
 
         private int _nLeftRect = 2;
         private int _nTopRect = 3;
-        private int _nHeightRect = 15;
-        private int _nWeightRect = 15;
+        private int _nHeightRect = 10;
+        private int _nWeightRect = 10;
 
         #endregion backing properties
 
@@ -20,7 +20,7 @@ namespace ClausaComm.Components
         public int RectLeft
         {
             get => _nLeftRect;
-            set
+            private set
             {
                 _nLeftRect = value;
                 Invalidate();
@@ -30,7 +30,7 @@ namespace ClausaComm.Components
         public int RectTop
         {
             get => _nTopRect;
-            set
+            private set
             {
                 _nTopRect = value;
                 Invalidate();
@@ -40,7 +40,7 @@ namespace ClausaComm.Components
         public int RectHeight
         {
             get => _nHeightRect;
-            set
+            private set
             {
                 _nHeightRect = value;
                 Invalidate();
@@ -50,7 +50,7 @@ namespace ClausaComm.Components
         public int RectWidth
         {
             get => _nWeightRect;
-            set
+            private set
             {
                 _nWeightRect = value;
                 Invalidate();
@@ -62,7 +62,7 @@ namespace ClausaComm.Components
         // TODO: Try to add border / adjust vertical alignment and/or try to change placeholder text's position
         public ChatTextBox()
         {
-            MaxLength = Message.MaxTextLength - 2;
+            MaxLength = ChatMessage.MaxTextLength - 2;
         }
 
         [System.Runtime.InteropServices.DllImport("gdi32.dll", EntryPoint = "CreateRoundRectRgn")]
