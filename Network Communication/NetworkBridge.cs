@@ -51,6 +51,7 @@ namespace ClausaComm.Network_Communication
             // TODO somehow solve idle status
         }
 
+        /// <summary>Runs the network connects to all contacts. Non-blocking.</summary>
         public void Run()
         {
             if (Running)
@@ -66,28 +67,32 @@ namespace ClausaComm.Network_Communication
                     Debug.WriteLine($"{nameof(NetworkBridge)}: Server did not start - NOT trying to connect to contacts.");
                     return;
                 }
-                
-                // TODO: Maybe wait for the server to start up?
+
                 Debug.WriteLine($"{nameof(NetworkBridge)}: Recursively trying to connect to all contacts.");
-                AllContacts.ForEach(contact => ThreadUtils.RunThread(() =>
-                {
-                    bool connected = NetworkManager.CreateConnection(IPAddress.Parse(contact.Ip));
-                    if (!connected)
-                        Debug.WriteLine($"{nameof(NetworkBridge)}: Could not connect to {contact.Ip}");
-                }));
+                AllContacts.ForEach(Connect);
                 
                 SubscribeToUserEvents();
             }
         }
 
-        // Send all user data (the other end will send theirs).
+        public void Connect(Contact contact)
+        {
+            ThreadUtils.RunThread(() =>
+            {
+                bool connected = NetworkManager.CreateConnection(IPAddress.Parse(contact.Ip));
+                if (!connected)
+                    Debug.WriteLine($"{nameof(NetworkBridge)}: Could not connect to {contact.Ip}");
+            });
+        }
+
+        // Send all user data on connection (both ongoing and ingoing).
         private static void HandleNewConnection(IPAddress ip)
         {
             RemoteContactData contactData = new(Contact.UserContact);
             NetworkManager.Send(ip, new RemoteObject(contactData).SerializeToUtf8Bytes());
         }
 
-        public void HandleIncomingData(RemoteObject obj, string ip) // TODO: Change all "string ip" to IPAddresses
+        private void HandleIncomingData(RemoteObject obj, string ip) // TODO: Change all "string ip" to IPAddresses
         {
             Debug.WriteLine($"Received data from {ip}");
 
@@ -101,6 +106,9 @@ namespace ClausaComm.Network_Communication
             // TODO: Handle IP collision
             if (contact.Ip != ip)
                 contact.Ip = ip;
+
+            if (contact.CurrentStatus == Contact.Status.Offline)
+                contact.CurrentStatus = Contact.Status.Online;
 
             switch (obj.Data.ObjectType)
             {
@@ -121,8 +129,11 @@ namespace ClausaComm.Network_Communication
             }
         }
 
-        public void SendMessage()
+        public bool SendMessage(string message, IPAddress ip)
         {
+            Message msg = new(message);
+            RemoteObject obj = new RemoteObject(msg);
+            return NetworkManager.Send(ip, obj.SerializeToUtf8Bytes());
         }
 
         /// <summary>
@@ -203,34 +214,22 @@ namespace ClausaComm.Network_Communication
             // TODO: Handle the message, convert message.MessageFile to RemoteMessageFile etc.
         }
 
-        /// <summary> Sends an object with all user's data to {ip}.</summary>
-        private void SendFullContactData(string ip)
-        {
-            RemoteContactData data = new(Contact.UserContact);
-            RemoteObject obj = new(data);
-            NetworkManager.Send(IPAddress.Parse(ip), obj.SerializeToUtf8Bytes());
-        }
-
         /// <summary> Updates {contact}'s status to match that in the {statusUpdate} object.</summary>
         private static void UpdateContactStatus(RemoteStatusUpdate statusUpdate, Contact contact)
         {
-            // The check is there because when the properties get updated, they are sent to all connected peers,
-            // so it would be wasteful to send it even when it actually didn't change.
-            if (contact.CurrentStatus != statusUpdate.Status)
-                contact.CurrentStatus = statusUpdate.Status;
+            contact.CurrentStatus = statusUpdate.Status;
         }
 
         /// <summary> Updates {contact}'s data to match those in the {data} object.</summary>
         private static void UpdateContactData(RemoteContactData data, Contact contact)
         {
-            if (data.Name is not null && contact.Name != data.Name) 
+            if (data.Name is not null) 
                 contact.Name = data.Name;
 
             if (data.Base64ProfilePic is not null)
             {
                 Image img = ImageUtils.ImageFromBase64String(data.Base64ProfilePic);
-                if (contact.ProfilePic != img)
-                    contact.ProfilePic = img;
+                contact.ProfilePic = img;
             }
         }
     }
