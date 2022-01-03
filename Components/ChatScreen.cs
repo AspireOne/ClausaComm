@@ -1,13 +1,13 @@
-﻿using System;
-using ClausaComm.Components.Icons;
-using System.ComponentModel;
+﻿using System.ComponentModel;
+using System.Drawing;
 using System.Windows.Forms;
+using ClausaComm.Components.Icons;
 using ClausaComm.Contacts;
 using ClausaComm.Messages;
 
 namespace ClausaComm.Components
 {
-    public partial class ChatPanel : Panel, IContactUsable
+    public partial class ChatScreen : Panel, IContactUsable
     {
         private SendIcon _sendIcon;
         private ChatTextBox _textbox;
@@ -20,13 +20,26 @@ namespace ClausaComm.Components
         {
             Name = "NoContactLabel",
             Anchor = AnchorStyles.None,
-            Font = new("Segoe UI", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point),
-            ForeColor = System.Drawing.Color.FromArgb(216, 216, 216),
+            Font = new("Segoe UI", 15.75F, FontStyle.Regular, GraphicsUnit.Point),
+            ForeColor = Color.FromArgb(216, 216, 216),
             Location = new(248, 293),
             Size = new(399, 62),
             TabIndex = 10,
             Text = "Oops, it seems like you don't have any contacts yet. Let's add some!",
-            TextAlign = System.Drawing.ContentAlignment.MiddleCenter,
+            TextAlign = ContentAlignment.MiddleCenter,
+        };
+
+        private readonly Panel ChatPanel = new()
+        {
+            Name = "ChatPanel",
+            Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right,
+            ForeColor = Color.FromArgb(216, 216, 216),
+            Location = new Point(248, 293),
+            Dock = DockStyle.Fill,
+            HorizontalScroll = { Enabled = false, Visible = false, Maximum = 0 },
+            VerticalScroll = {Enabled = true},
+            AutoScroll = true,
+            BackColor = Color.FromArgb(116, 116, 116),
         };
 
         public SendIcon SendIcon
@@ -104,17 +117,34 @@ namespace ClausaComm.Components
             }
         }
 
-        public ChatPanel()
+        public ChatScreen()
         {
             InitializeComponent();
             NoContactLabel.Parent = this;
+            ChatPanel.Parent = this;
+
+            for (int i = 0; i < 5; ++i)
+            {
+                var a = new ChatMessagePanel(new ChatMessage("tohle je nějakej text", ChatMessage.Ways.Out), Contact.UserContact);
+                a.Dock = DockStyle.Top;
+                a.Parent = ChatPanel;
+                ChatPanel.Controls.Add(a);    
+            }
+            
+            /*for (int i = 0; i < 15; ++i)
+            {
+                var textnox = new RoundTextBox();
+                textnox.Parent = ChatPanel;
+                textnox.Dock = DockStyle.Top;
+                ChatPanel.Controls.Add(textnox);   
+            }*/
         }
         
         private void HandleSendPressed()
         {
             if (Textbox.Text != "")
             {
-                ChatMessage msg = new(Textbox.Text); 
+                ChatMessage msg = new(Textbox.Text);
                 OnSendPressed?.Invoke(msg);
             }
             Textbox.Text = "";
@@ -128,8 +158,8 @@ namespace ClausaComm.Components
                 Textbox.Visible = visible;
         }
 
-        public ChatPanel(Contact contact) : this() => Contact = contact;
+        public ChatScreen(Contact contact) : this() => Contact = contact;
 
-        public ChatPanel(IContainer container) : this() => container.Add(this);
+        public ChatScreen(IContainer container) : this() => container.Add(this);
     }
 }
