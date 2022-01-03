@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Net.Sockets;
+using System.Windows.Forms.VisualStyles;
 using System.Xml.Linq;
 
 namespace ClausaComm.Messages
@@ -9,6 +10,11 @@ namespace ClausaComm.Messages
     public static class MessagesXml
     {
         private static readonly XDocument Doc = XDocument.Load(ProgramDirectory.MessagesPath);
+        private const string InNodeName = "in";
+        private const string OutNodeName = "out";
+        private const string ContactNodeName = "contact";
+        private const string IdAttrName = "id";
+        private const string TimeAttrName = "time";
         
         public static void SaveMessage(ChatMessage message, string contactId)
         {
@@ -18,12 +24,17 @@ namespace ClausaComm.Messages
 
                 if (contactNode is null)
                 {
-                    Doc.Root.Add(new XElement("contact", new XAttribute("id", contactId)));
+                    Doc.Root.Add(new XElement(ContactNodeName, new XAttribute(IdAttrName, contactId)));
                     SaveMessage(message, contactId);
                     return;
                 }
                 
-                contactNode.Add(new XElement(message.Way == ChatMessage.Ways.In ? "IN" : "OUT", message.Text, new XAttribute("id", message.Id)));
+                contactNode.Add(
+                    new XElement(message.Way == ChatMessage.Ways.In ? InNodeName : OutNodeName, // First argument - name.
+                        new XAttribute(IdAttrName, message.Id),
+                        new XAttribute(TimeAttrName, message.Time),
+                        message.Text // Value.
+                        ));
                 Doc.Save(ProgramDirectory.MessagesPath);
             }
         }
@@ -35,16 +46,17 @@ namespace ClausaComm.Messages
                 yield break;
 
             int i = 0;
-            foreach (XElement element in contactNode.Elements())
+            foreach (XElement node in contactNode.Elements())
             {
                 if (i++ >= messageCount)
                     yield break;
                 
-                ChatMessage.Ways way = element.Name == "IN" ? ChatMessage.Ways.In : ChatMessage.Ways.Out;
-                string id = element.Attribute("id").Value;
-                string text = element.Value;
+                ChatMessage.Ways way = node.Name == InNodeName ? ChatMessage.Ways.In : ChatMessage.Ways.Out;
+                string id = node.Attribute(IdAttrName).Value;
+                string text = node.Value;
+                long time = long.Parse(node.Attribute(TimeAttrName).Value);
                 
-                ChatMessage message = ChatMessage.ReconstructMessage(text, way, id);
+                ChatMessage message = ChatMessage.ReconstructMessage(text, way, id, time);
                 yield return message;
             }
         }
