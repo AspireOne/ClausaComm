@@ -40,7 +40,7 @@ namespace ClausaComm.Components.ContactData
         public Action<Contact> OnClickAction { get; set; }
         private readonly FlashTimer Flasher;
         private bool Selected;
-        private bool IsUserPanel;
+        private readonly bool IsUserPanel;
 
         private static readonly Color FlashPeakColor = Color.FromArgb(80, Constants.UIConstants.SecondaryColor.R, Constants.UIConstants.SecondaryColor.G, Constants.UIConstants.SecondaryColor.B);
 
