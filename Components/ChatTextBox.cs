@@ -10,8 +10,8 @@ namespace ClausaComm.Components
 
         private int _nLeftRect = 2;
         private int _nTopRect = 3;
-        private int _nHeightRect = 10;
-        private int _nWeightRect = 10;
+        private int _nHeightRect = 13;
+        private int _nWeightRect = 13;
 
         #endregion backing properties
 
