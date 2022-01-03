@@ -36,13 +36,13 @@ namespace ClausaComm.Forms
 
             // ChatPanel
             ActionPanel1.MainForm = this;
-            ChatPanel.ActionPanel = ActionPanel1;
-            ChatPanel.SendIcon = SendIcon1;
-            ChatPanel.Textbox = chatTextBox1;
+            ChatScreen.ActionPanel = ActionPanel1;
+            ChatScreen.SendIcon = SendIcon1;
+            ChatScreen.Textbox = chatTextBox1;
 
             //TitleBar
             TitleBar.Form = this;
-            TitleBar.BackColor = ChatPanel.BackColor;
+            TitleBar.BackColor = ChatScreen.BackColor;
             TitleBar.PinNotifyIcon = new NotifyIcon
             {
                 Text = "Click to open ClausaComm",
@@ -76,10 +76,10 @@ namespace ClausaComm.Forms
                 AddContact(Contact.UserContact);
             
             PanelOfContactPanels.SimulateClickOnFirstPanel();
-            ChatPanel.OnSendPressed += message =>
+            ChatScreen.OnSendPressed += message =>
             {
                 // TODO: Save it to xml.
-                bool sent = NetworkBridge.SendMessage(message, IPAddress.Parse(ChatPanel.Contact.Ip));
+                bool sent = NetworkBridge.SendMessage(message, IPAddress.Parse(ChatScreen.Contact.Ip));
             };
         }
 
@@ -163,7 +163,7 @@ namespace ClausaComm.Forms
 
         private void ChangeChatContact(Contact contact)
         {
-            ChatPanel.Contact = contact;
+            ChatScreen.Contact = contact;
         }
 
         private void ChatPanel1_Paint(object sender, PaintEventArgs e)
