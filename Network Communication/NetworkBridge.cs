@@ -212,7 +212,7 @@ namespace ClausaComm.Network_Communication
         {
             // TODO: Is it a good idea to save the ingoing message here, when outgoing messages are saved
             // somewhere else? Save it elsewhere.
-            message = ChatMessage.ReconstructMessage(message.Text, ChatMessage.Ways.In, message.Id);
+            message = ChatMessage.ReconstructMessage(message.Text, ChatMessage.Ways.In, message.Id, message.Time);
             // TODO: Handle the message, save it, convert message.MessageFile to RemoteMessageFile etc.
         }
 
