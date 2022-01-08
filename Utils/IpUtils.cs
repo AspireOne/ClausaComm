@@ -9,7 +9,6 @@ namespace ClausaComm.Utils
     public static class IpUtils
     {
         public static readonly Regex IpRegex = new(@"\b([0-9]{1,3}\.){3}[0-9]{1,3}\b");
-        public static readonly (byte min, byte max) IpLength = new(7, 15);
         private static readonly (string address, int port) TestingDns = new("1.1.1.1", 65530);
         private static string _localIp;
         public static string LocalIp

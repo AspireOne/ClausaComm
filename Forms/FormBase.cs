@@ -59,7 +59,7 @@ namespace ClausaComm.Forms
             }
         }
 
-        public FormBase()
+        protected FormBase()
         {
             Padding = Resizable ? DraggableWindowBorderSize : NonDraggableWindowBorderSize;
             MaximizedBounds = Screen.FromHandle(Handle).WorkingArea;
