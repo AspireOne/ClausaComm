@@ -2,7 +2,6 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net5.0-windows</TargetFramework>
     <OutputType>Exe</OutputType>
     <PublishReadyToRun>false</PublishReadyToRun>
     <UseWindowsForms>true</UseWindowsForms>
@@ -14,6 +13,7 @@
     <StartupObject>ClausaComm.Program</StartupObject>
     <Platforms>AnyCPU</Platforms>
     <ApplicationIcon>program_icon.ico</ApplicationIcon>
+    <TargetFramework>net6.0-windows</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
