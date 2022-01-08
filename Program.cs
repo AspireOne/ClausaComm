@@ -1,17 +1,19 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using ClausaComm.Components;
 using ClausaComm.Forms;
+using ClausaComm.Messages;
 
 namespace ClausaComm
 {
     public static class Program
     {
-        public const string Version = "0.0.3";
+        public const string Version = "1.0.0";
 
         public static readonly string ThisProgramPath = Path.Combine(Directory.GetCurrentDirectory(),
             Process.GetCurrentProcess().MainModule.FileName);
@@ -36,6 +38,7 @@ namespace ClausaComm
             Close();
         }
 
+        // TODO: Check all thread.new and consider switching it for task.run
         private static void CheckAndDownloadNewVersionAsync(MainForm mainForm)
         {
             _ = Task.Run(() =>
