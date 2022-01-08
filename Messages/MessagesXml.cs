@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Sockets;
@@ -39,7 +40,7 @@ namespace ClausaComm.Messages
             }
         }
 
-        public static IEnumerable<ChatMessage> GetMessages(int messageCount, string contactId)
+        public static IEnumerable<ChatMessage> GetMessages(string contactId, int messageCount = int.MaxValue)
         {
             XElement contactNode = GetContactNode(contactId);
             if (contactNode is null)

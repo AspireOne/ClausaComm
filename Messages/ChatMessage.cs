@@ -1,6 +1,8 @@
 ﻿using ClausaComm.Network_Communication.Objects;
 using System;
+using System.Linq;
 using System.Runtime.CompilerServices;
+using ClausaComm.Extensions;
 
 namespace ClausaComm.Messages
 {
@@ -32,6 +34,9 @@ namespace ClausaComm.Messages
             Time = time;
             Id = id;
         }
+
+        public override bool Equals(object? obj) => obj is ChatMessage message && message.Id == Id;
+        public override int GetHashCode() => Time.GetHashCode();
 
         public static ChatMessage ReconstructMessage(string text, Ways way, string id, long time) => new ChatMessage(text, way, id, time);
     }

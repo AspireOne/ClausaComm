@@ -8,7 +8,9 @@ using ClausaComm.Components;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net;
+using System.Text;
 using ClausaComm.Contacts;
+using ClausaComm.Messages;
 using ClausaComm.Network_Communication;
 
 namespace ClausaComm.Forms
@@ -26,7 +28,7 @@ namespace ClausaComm.Forms
             InitializeProgram();
             UserStatusWatcher = new(Contact.UserContact);
             UserStatusWatcher.Run();
-            NetworkBridge = new(Contacts, AddContact);
+            NetworkBridge = new(Contacts, AddContact, OnMessageReceived);
             NetworkBridge.Run();
         }
 
@@ -38,7 +40,7 @@ namespace ClausaComm.Forms
             ActionPanel1.MainForm = this;
             ChatScreen.ActionPanel = ActionPanel1;
             ChatScreen.SendIcon = SendIcon1;
-            ChatScreen.Textbox = chatTextBox1;
+            ChatScreen.Textbox = ChatTextBox1;
 
             //TitleBar
             TitleBar.Form = this;
@@ -75,12 +77,23 @@ namespace ClausaComm.Forms
             if (!userAdded)
                 AddContact(Contact.UserContact);
             
-            PanelOfContactPanels.SimulateClickOnFirstPanel();
-            ChatScreen.OnSendPressed += message =>
+            PanelOfContactPanels.SelectFirstPanel();
+            ChatScreen.OnSendPressed += (message, contact) =>
             {
-                // TODO: Save it to xml.
-                bool sent = NetworkBridge.SendMessage(message, IPAddress.Parse(ChatScreen.Contact.Ip));
+                bool sent = NetworkBridge.SendMessage(message, IPAddress.Parse(contact.Ip));
+                if (sent)
+                {
+                    MessagesXml.SaveMessage(message, contact.Id);
+                    ChatScreen.HandleMessageDelivered(contact, message);
+                }
             };
+        }
+
+        private void OnMessageReceived(ChatMessage message, Contact contact)
+        {
+            Debug.WriteLine("saving message " + message.Text + "contact id " + contact.Id);
+            MessagesXml.SaveMessage(message, contact.Id);
+            Invoke(new Action(() => ChatScreen.HandleMessageReceived(contact, message)));
         }
 
         private void AddContact(Contact contactToAdd)
@@ -98,7 +111,7 @@ namespace ClausaComm.Forms
             if (contactToAdd.IsUser)
                 _ = new ContactPanel(contactToAdd, OwnProfilePanel, true) { OnClickAction = ClickActionIfUser };
 
-            PanelOfContactPanels.SimulateClickOnFirstPanel();
+            PanelOfContactPanels.SelectFirstPanel();
         }
 
         private void ContactSearchBox_TextChanged(object sender, EventArgs e)
@@ -163,7 +176,7 @@ namespace ClausaComm.Forms
 
         private void ChangeChatContact(Contact contact)
         {
-            ChatScreen.Contact = contact;
+            ChatScreen.SetContact(contact);
         }
 
         private void ChatPanel1_Paint(object sender, PaintEventArgs e)

@@ -21,17 +21,19 @@ namespace ClausaComm.Network_Communication
         public bool Running { get; private set; }
         private readonly HashSet<Contact> AllContacts;
         private readonly Action<Contact> AddContactMethod;
+        private readonly Action<ChatMessage, Contact> MessageReceivedMethod;
         private static bool InstanceCreated;
         
         /// <param name="allContacts">A collection with all the existing contacts</param>
         /// <param name="addContactMethod">A method for adding new contacts that might be sent from the network.</param>
-        public NetworkBridge(HashSet<Contact> allContacts, Action<Contact> addContactMethod)
+        public NetworkBridge(HashSet<Contact> allContacts, Action<Contact> addContactMethod, Action<ChatMessage, Contact> messageReceivedMethod)
         {
             if (InstanceCreated)
                 throw new MultipleInstancesException(nameof(NetworkBridge));
 
             AllContacts = allContacts;
             AddContactMethod = addContactMethod;
+            MessageReceivedMethod = messageReceivedMethod;
             
             NetworkManager.OnReceive += (message, endpoint) => HandleIncomingData(message, endpoint.Address.ToString());
             NetworkManager.OnConnect += endpoint => HandleNewConnection(endpoint.Address);
@@ -213,6 +215,7 @@ namespace ClausaComm.Network_Communication
             // TODO: Is it a good idea to save the ingoing message here, when outgoing messages are saved
             // somewhere else? Save it elsewhere.
             message = ChatMessage.ReconstructMessage(message.Text, ChatMessage.Ways.In, message.Id, message.Time);
+            MessageReceivedMethod(message, sender);
             // TODO: Handle the message, save it, convert message.MessageFile to RemoteMessageFile etc.
         }
 
