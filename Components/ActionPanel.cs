@@ -177,7 +177,6 @@ namespace ClausaComm.Components
 
         private void InitializeComponentFurther()
         {
-            BackColor = Color.FromArgb(29, 29, 31);
             Dock = DockStyle.Top;
             Location = new Point(0, 0);
             Name = "ActionPanel";
