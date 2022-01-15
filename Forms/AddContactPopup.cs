@@ -49,8 +49,7 @@ namespace ClausaComm.Forms
 
             IpBox.Textbox.TextChanged += (_, _) => OnIpTextChange();
 
-            TitleBar.Form = this;
-            TitleBar.Title = "Add a Contact";
+            InitTitleBar(this, "Add a Contact");
         }
 
         private void OnAddButtonClicked()

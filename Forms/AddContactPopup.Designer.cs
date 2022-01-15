@@ -35,7 +35,6 @@ namespace ClausaComm.Forms
             this.IpBox = new ClausaComm.Components.RoundTextBox();
             this.NoteLabel = new System.Windows.Forms.Label();
             this.AddButton = new ClausaComm.Components.SimpleLineButton(this.components);
-            this.TitleBar = new ClausaComm.Components.TitleBar(this.components);
             this.SuspendLayout();
             // 
             // HeaderLabel
@@ -113,19 +112,6 @@ namespace ClausaComm.Forms
             this.AddButton.Text = "Add";
             this.AddButton.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
-            // TitleBar
-            // 
-            this.TitleBar.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(28)))), ((int)(((byte)(28)))), ((int)(((byte)(28)))));
-            this.TitleBar.Dock = System.Windows.Forms.DockStyle.Top;
-            this.TitleBar.Form = null;
-            this.TitleBar.Location = new System.Drawing.Point(0, 0);
-            this.TitleBar.MaximumSize = new System.Drawing.Size(0, 25);
-            this.TitleBar.MinimumSize = new System.Drawing.Size(0, 25);
-            this.TitleBar.Name = "TitleBar";
-            this.TitleBar.Size = new System.Drawing.Size(517, 25);
-            this.TitleBar.TabIndex = 1;
-            this.TitleBar.Title = "ClausaComm";
-            // 
             // AddContactPopup
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -134,7 +120,6 @@ namespace ClausaComm.Forms
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(40)))), ((int)(((byte)(40)))), ((int)(((byte)(40)))));
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.ClientSize = new System.Drawing.Size(517, 426);
-            this.Controls.Add(this.TitleBar);
             this.Controls.Add(this.AddButton);
             this.Controls.Add(this.NoteLabel);
             this.Controls.Add(this.IpBox);
@@ -159,6 +144,5 @@ namespace ClausaComm.Forms
         private System.Windows.Forms.Label NoteLabel;
         private Components.RoundTextBox IpBox;
         private Components.SimpleLineButton AddButton;
-        private Components.TitleBar TitleBar;
     }
 }

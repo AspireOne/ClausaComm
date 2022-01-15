@@ -39,7 +39,6 @@ namespace ClausaComm.Forms
             this.IpBox = new ClausaComm.Components.RoundTextBox();
             this.ProfilePictureBox = new ClausaComm.Components.ContactData.ContactProfilePicture(this.components);
             this.SaveButton = new ClausaComm.Components.SimpleLineButton(this.components);
-            this.TitleBar = new ClausaComm.Components.TitleBar(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.ProfilePictureBox)).BeginInit();
             this.SuspendLayout();
             // 
@@ -53,7 +52,6 @@ namespace ClausaComm.Forms
             this.HeaderLabel.TabIndex = 2;
             this.HeaderLabel.Text = "Info";
             this.HeaderLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.HeaderLabel.Click += new System.EventHandler(this.HeaderLabel_Click);
             // 
             // NameLbl
             // 
@@ -154,27 +152,11 @@ namespace ClausaComm.Forms
             this.SaveButton.Text = "Save it!";
             this.SaveButton.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
-            // TitleBar
-            // 
-            this.TitleBar.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(28)))), ((int)(((byte)(28)))), ((int)(((byte)(28)))));
-            this.TitleBar.Dock = System.Windows.Forms.DockStyle.Top;
-            this.TitleBar.Form = null;
-            this.TitleBar.Location = new System.Drawing.Point(0, 0);
-            this.TitleBar.MaximumSize = new System.Drawing.Size(0, 25);
-            this.TitleBar.MinimumSize = new System.Drawing.Size(0, 25);
-            this.TitleBar.Name = "TitleBar";
-            this.TitleBar.PinNotifyIcon = null;
-            this.TitleBar.Size = new System.Drawing.Size(471, 25);
-            this.TitleBar.TabIndex = 1;
-            this.TitleBar.Title = "ClausaComm";
-            // 
             // EditInfoPopup
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(40)))), ((int)(((byte)(40)))), ((int)(((byte)(40)))));
             this.ClientSize = new System.Drawing.Size(471, 508);
-            this.Controls.Add(this.TitleBar);
             this.Controls.Add(this.SaveButton);
             this.Controls.Add(this.ProfilePictureBox);
             this.Controls.Add(this.IpBox);
@@ -205,6 +187,5 @@ namespace ClausaComm.Forms
         private Components.RoundTextBox IpBox;
         private Components.ContactData.ContactProfilePicture ProfilePictureBox;
         private Components.SimpleLineButton SaveButton;
-        private Components.TitleBar TitleBar;
     }
 }
