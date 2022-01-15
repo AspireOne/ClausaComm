@@ -12,6 +12,7 @@ using ClausaComm.Components.Icons;
 using ClausaComm.Contacts;
 using ClausaComm.Extensions;
 using ClausaComm.Messages;
+using ClausaComm.Utils;
 using ContentAlignment = System.Drawing.ContentAlignment;
 
 namespace ClausaComm.Components
@@ -20,6 +21,8 @@ namespace ClausaComm.Components
     {
         private SendIcon _sendIcon;
         private ChatTextBox _textbox;
+        private const int InitialMessages = 15;
+        //private const int MaxMessages = 15;
         private readonly Dictionary<Contact, HashSet<ChatMessage>> CachedChats = new();
 
         public delegate void SendPressedHandler(ChatMessage message, Contact contact);
@@ -43,12 +46,13 @@ namespace ClausaComm.Components
         {
             Name = "ChatPanel",
             Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right,
-            ForeColor = Color.FromArgb(216, 216, 216),
+            ForeColor = Color.FromArgb(210, 210, 210),
             Location = new Point(248, 293),
             Dock = DockStyle.Fill,
             HorizontalScroll = { Enabled = false, Visible = false, Maximum = 0 },
             VerticalScroll = {Enabled = true},
-            AutoScroll = true
+            AutoScroll = true,
+            BackColor = Constants.UiConstants.ChatColor
         };
 
         public SendIcon SendIcon
@@ -107,25 +111,25 @@ namespace ClausaComm.Components
             ChatPanel.Parent = this;
         }
 
-        private void AddMessage(Contact contact, ChatMessage message)
+        private void AddMessage(Contact contact, ChatMessage message, bool focus = true, bool addToChat = true)
         {
             if (!CachedChats.TryGetValue(contact, out var messages))
                 CachedChats.Add(contact, messages = new HashSet<ChatMessage>());
 
             // No need to worry about accidentally adding it twice, because it is a HashSet.
             messages.Add(message);
-            if (ReferenceEquals(Contact, contact)) 
-                AddMessageToChat();
             
+            if (ReferenceEquals(Contact, contact) && addToChat)
+                AddMessageToChat();
+
             void AddMessageToChat()
             {
                 var panel = new ChatMessagePanel(message, contact);
                 panel.Dock = DockStyle.Top;
                 panel.Parent = ChatPanel;
                 ChatPanel.Controls.Add(panel);
-                // WORKAROUD FOR REVERSING THE ORDER. CHILDREN MUST BE ADDED THIS WAY.
-                ChatPanel.Controls.SetChildIndex(panel, 0);
-                ChatPanel.ScrollControlIntoView(panel);
+                if (focus)
+                    ChatPanel.ScrollControlIntoView(panel);
             }
         }
 
@@ -144,7 +148,7 @@ namespace ClausaComm.Components
                 break;
             }
         }
-
+        
         public void SetContact(Contact contact)
         {
             if (ReferenceEquals(Contact, contact))
@@ -157,36 +161,38 @@ namespace ClausaComm.Components
             if (ActionPanel is not null)
                 ActionPanel.Contact = contact;
 
-            if (contact is null)
-                return;
-            
-            // TODO: Retrieve messages and save them to a collection and cache them.
             // When the user switches to another contact and then back to this one check if it's cached and use that.
             // When a message is sent or received, add it to the array. If the array doesn't exist, don't do anything -
             //   it's not created yet because the user didn't open the chat with this contact yet - when 
             //   they will do, we will create the array from the messages saved in xml, which will include
             //   the new messages.
-            // When the user swiches to another contact, a message is received AND the array exists, it will
-            // TODO: Save controls instead of messages?
 
             // Remove messages from the previous contact.
-            foreach (ChatMessagePanel panel in Controls.OfType<ChatMessagePanel>())
-                Controls.Remove(panel);
-
+            ChatPanel.Controls.Clear();
+            
+            if (contact?.Id is null)
+                return;
+            
             // The XML takes it from the oldest.
-            if (CachedChats.TryGetValue(contact, out var messages))
+            HashSet<ChatMessage> messages;
+            if (!CachedChats.TryGetValue(contact, out messages))
             {
-                messages.ForEach(message => AddMessage(contact, message));
+                MessagesXml.GetMessages(contact.Id).Reverse().ForEach(message => AddMessage(contact, message, false, false));
+                CachedChats.TryGetValue(contact, out messages);
             }
-            else
-            {
-                // TODO: Pull all the messages, but just show less of them.
-                MessagesXml.GetMessages(contact.Id).ForEach(message => AddMessage(contact, message));
-            }
+            
+            int i = 0;
+            messages.TakeWhile(_ => ++i < InitialMessages).ForEach(message => AddMessage(contact, message, false));
+
+            if (ChatPanel.Controls.Count > 1)
+                ChatPanel.ScrollControlIntoView(ChatPanel.Controls[0]);
         }
 
         private void HandleSendPressed()
         {
+            if (Contact.Id is null)
+                return;
+            
             if (Textbox.Text != "")
             {
                 ChatMessage msg = new(Textbox.Text);
