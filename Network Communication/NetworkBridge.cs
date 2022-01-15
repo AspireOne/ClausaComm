@@ -77,7 +77,7 @@ namespace ClausaComm.Network_Communication
             }
         }
 
-        public void Connect(Contact contact)
+        public static void Connect(Contact contact)
         {
             ThreadUtils.RunThread(() =>
             {
@@ -101,7 +101,12 @@ namespace ClausaComm.Network_Communication
             Contact? contact = RetrieveOrCreateContact(obj, ip);
 
             if (contact is null)
+            {
+                Debug.WriteLine($"Could not get or create contact. Returning. ip: {ip}");
                 return;
+            }
+            
+            Debug.WriteLine(contact);
             
             contact.Id ??= obj.ContactId;
             
