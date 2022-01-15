@@ -35,6 +35,7 @@ namespace ClausaComm.Forms
         private void InitializeComponentFurther()
         {
             SetStyle(ControlStyles.ResizeRedraw, true);
+            InitTitleBar(this);
 
             // ChatPanel
             ActionPanel1.MainForm = this;
@@ -42,22 +43,13 @@ namespace ClausaComm.Forms
             ChatScreen.SendIcon = SendIcon1;
             ChatScreen.Textbox = ChatTextBox1;
 
-            //TitleBar
-            TitleBar.Form = this;
-            TitleBar.BackColor = ChatScreen.BackColor;
-            TitleBar.PinNotifyIcon = new NotifyIcon
-            {
-                Text = "Click to open ClausaComm",
-                Icon = Properties.Resources.program_icon,
-                Visible = false
-            };
-
             AddContactIcon.Click += AddContactPictureBox_Click;
             ContactSearchBox.TextChanged += ContactSearchBox_TextChanged;
             NotificationPanel.Form = this;
 
             // This form
             Resizable = true;
+            // Affects the borders.
             BackColor = TitleBar.BackColor;
             Pinnable = true;
             Padding = DraggableWindowBorderSize;
@@ -91,7 +83,10 @@ namespace ClausaComm.Forms
 
         private void OnMessageReceived(ChatMessage message, Contact contact)
         {
-            Debug.WriteLine("saving message " + message.Text + "contact id " + contact.Id);
+            ContactPanel panel = PanelOfContactPanels.Panels.First(panel => ReferenceEquals(panel.Contact, contact));
+            if (!ReferenceEquals(ContactPanel.CurrentlySelectedPanel, panel))
+                panel.Flash();
+            
             MessagesXml.SaveMessage(message, contact.Id);
             Invoke(new Action(() => ChatScreen.HandleMessageReceived(contact, message)));
         }
@@ -124,28 +119,6 @@ namespace ClausaComm.Forms
 
         private void AddContactPictureBox_Click(object sender, EventArgs e)
         {
-#if DEBUG
-            // Creating contacts for debugging purposes.
-
-            if (PanelOfContactPanels.Panels.Count() < 2)
-            {
-                AddContact(new("92.16.1.71") { Name = "Mistr Yoda [Debug]", Id = "d18ss7f8" });
-                AddContact(new("19.168.0.52") { Name = "Descartes [Debug]", Id = "PALDNGHV" });
-                AddContact(new("14.118.8.13") { Name = "Socrates [Debug]", Id = "LCMIDNC" });
-                AddContact(new("132.18.4.94") { Name = "Kant [Debug]", Id = "DFSDGDsq" });
-            }
-
-            // Personalizing the first debug contact for testing purposes.
-
-            if (PanelOfContactPanels.Panels.Any())
-            {
-                PanelOfContactPanels.Panels.ElementAt(0).Contact.ProfilePic = Image.FromFile(@"C:\Users\matej\Pictures\profilovky a obrázky\mitu192.png");
-                PanelOfContactPanels.Panels.ElementAt(0).Contact.CurrentStatus = Contact.Status.Online;
-                PanelOfContactPanels.Panels.ElementAt(0).Contact.Name = "Ej ej ejj";
-                PanelOfContactPanels.Panels.ElementAt(0).FlashPanel();
-            }
-#endif
-
             ShowPopup(new AddContactPopup(contact =>
             {
                 AddContact(contact);
@@ -156,8 +129,9 @@ namespace ClausaComm.Forms
         private void ChangeControlsEnabled(bool enabled)
         {
             foreach (Control control in Controls)
-                if (!(control is TitleBar))
-                    control.Enabled = enabled;
+            {
+                control.Enabled = enabled;
+            }
         }
 
         private void ShowPopup(Form popup)
