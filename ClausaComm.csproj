@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <OutputType>Exe</OutputType>
+    <OutputType>WinExe</OutputType>
     <PublishReadyToRun>false</PublishReadyToRun>
     <UseWindowsForms>true</UseWindowsForms>
     <Authors>Matěj Pešl &lt;matejpesl1@gmail.com&gt;</Authors>
@@ -13,7 +13,7 @@
     <StartupObject>ClausaComm.Program</StartupObject>
     <Platforms>AnyCPU</Platforms>
     <ApplicationIcon>program_icon.ico</ApplicationIcon>
-    <TargetFramework>net6.0-windows</TargetFramework>
+    <TargetFramework>net5.0-windows</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
