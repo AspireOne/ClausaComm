@@ -31,10 +31,16 @@ namespace ClausaComm.Components
             InitializeComponent();
             DateTimeOffset date = DateTimeOffset.FromUnixTimeMilliseconds(message.Time);
             ChatMessageName.Text = contact.Name;
-            ChatMessageTime.Text = date.ToString();
+            ChatMessageTime.Text = date.ToString("dd/MM/yyyy HH:mm");
             ChatMessageText.Text = message.Text;
             lock (contact.ProfilePic)
                 ChatMessagePicture.Image = contact.ProfilePic;
+
+            contact.ProfilePicChange += (_, pic) =>
+            {
+                lock (contact.ProfilePic)
+                    ChatMessagePicture.Image = pic;
+            };
 
             Contact = contact;
             Message = message;
