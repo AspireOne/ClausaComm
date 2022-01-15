@@ -177,6 +177,7 @@ namespace ClausaComm.Components
             HashSet<ChatMessage> messages;
             if (!CachedChats.TryGetValue(contact, out messages))
             {
+                CachedChats.Add(contact, new HashSet<ChatMessage>());
                 MessagesXml.GetMessages(contact.Id).Reverse().ForEach(message => AddMessage(contact, message, false, false));
                 CachedChats.TryGetValue(contact, out messages);
             }
