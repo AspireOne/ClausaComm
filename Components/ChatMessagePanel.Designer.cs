@@ -64,7 +64,7 @@ namespace ClausaComm.Components
             this.ChatMessageTime.Padding = new System.Windows.Forms.Padding(0, 5, 0, 0);
             this.ChatMessageTime.Size = new System.Drawing.Size(94, 19);
             this.ChatMessageTime.TabIndex = 1;
-            this.ChatMessageTime.Text = "12.6.2009 16:05";
+            this.ChatMessageTime.Text = "------------";
             this.ChatMessageTime.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
             // 
             // ChatMessageName
@@ -77,7 +77,7 @@ namespace ClausaComm.Components
             this.ChatMessageName.Name = "ChatMessageName";
             this.ChatMessageName.Size = new System.Drawing.Size(84, 21);
             this.ChatMessageName.TabIndex = 0;
-            this.ChatMessageName.Text = "Matěj Pešl";
+            this.ChatMessageName.Text = "-------";
             this.ChatMessageName.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // ChatMessagePicture
@@ -105,7 +105,7 @@ namespace ClausaComm.Components
             this.ChatMessageText.ReadOnly = true;
             this.ChatMessageText.Size = new System.Drawing.Size(547, 21);
             this.ChatMessageText.TabIndex = 0;
-            this.ChatMessageText.Text = "gdfgd";
+            this.ChatMessageText.Text = "";
             // 
             // ChatMessagePanel
             // 
