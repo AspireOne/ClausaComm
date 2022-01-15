@@ -68,7 +68,7 @@ namespace ClausaComm.Components
 
             Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             AutoSize = true;
-            BackColor = Color.FromArgb(31, 31, 33);
+            BackColor = Constants.UiConstants.NotificationPanelColor;
             BorderStyle = BorderStyle.None;
             Controls.Add(ContentPanel);
             Controls.Add(TitlePanel);

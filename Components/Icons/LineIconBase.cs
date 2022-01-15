@@ -17,7 +17,7 @@ namespace ClausaComm.Components.Icons
             get => CircleBrush.Color;
             set
             {
-                CircleBrush.Color = Constants.UIConstants.ReturnNewOrDefaultColor(IconBase.DefaultIconColor, value);
+                CircleBrush.Color = Constants.UiConstants.ReturnNewOrDefaultColor(IconBase.DefaultIconColor, value);
                 Invalidate();
             }
         }
@@ -27,7 +27,7 @@ namespace ClausaComm.Components.Icons
             get => HoverCircleBrush.Color;
             set
             {
-                HoverCircleBrush.Color = Constants.UIConstants.ReturnNewOrDefaultColor(Constants.UIConstants.ElementOnHoverColor, value);
+                HoverCircleBrush.Color = Constants.UiConstants.ReturnNewOrDefaultColor(Constants.UiConstants.ElementOnHoverColor, value);
                 Invalidate();
             }
         }
@@ -37,13 +37,13 @@ namespace ClausaComm.Components.Icons
             get => ClickCircleBrush.Color;
             set
             {
-                ClickCircleBrush.Color = Constants.UIConstants.ReturnNewOrDefaultColor(Constants.UIConstants.ElementOnClickColor, value);
+                ClickCircleBrush.Color = Constants.UiConstants.ReturnNewOrDefaultColor(Constants.UiConstants.ElementOnClickColor, value);
                 Invalidate();
             }
         }
 
-        protected SolidBrush HoverCircleBrush = new(Constants.UIConstants.ElementOnHoverColor);
-        protected SolidBrush ClickCircleBrush = new(Constants.UIConstants.ElementOnClickColor);
+        protected SolidBrush HoverCircleBrush = new(Constants.UiConstants.ElementOnHoverColor);
+        protected SolidBrush ClickCircleBrush = new(Constants.UiConstants.ElementOnClickColor);
         protected SolidBrush CircleBrush = new(IconBase.DefaultIconColor);
 
         protected SolidBrush CurrentCircleBrush
@@ -83,7 +83,7 @@ namespace ClausaComm.Components.Icons
             get => IconAppearance.Color;
             set
             {
-                IconAppearance.Color = Constants.UIConstants.ReturnNewOrDefaultColor(DefaultIconColor, value);
+                IconAppearance.Color = Constants.UiConstants.ReturnNewOrDefaultColor(DefaultIconColor, value);
                 Invalidate();
             }
         }
@@ -93,7 +93,7 @@ namespace ClausaComm.Components.Icons
             get => HoverIconAppearance.Color;
             set
             {
-                HoverIconAppearance.Color = Constants.UIConstants.ReturnNewOrDefaultColor(DefaultIconHoverColor, value);
+                HoverIconAppearance.Color = Constants.UiConstants.ReturnNewOrDefaultColor(DefaultIconHoverColor, value);
                 Invalidate();
             }
         }
@@ -103,14 +103,14 @@ namespace ClausaComm.Components.Icons
             get => ClickIconAppearance.Color;
             set
             {
-                ClickIconAppearance.Color = Constants.UIConstants.ReturnNewOrDefaultColor(Constants.UIConstants.ElementOnClickColor, value);
+                ClickIconAppearance.Color = Constants.UiConstants.ReturnNewOrDefaultColor(Constants.UiConstants.ElementOnClickColor, value);
                 Invalidate();
             }
         }
 
         protected Pen IconAppearance { get; set; } = new(Color.Gray, DefaultLineWidth);
         protected Pen HoverIconAppearance { get; set; } = new(Color.Gray, DefaultLineWidth);
-        protected Pen ClickIconAppearance { get; set; } = new(Constants.UIConstants.ElementOnClickColor, DefaultLineWidth);
+        protected Pen ClickIconAppearance { get; set; } = new(Constants.UiConstants.ElementOnClickColor, DefaultLineWidth);
 
         /// <summary> Will return pen according to current circumstances. If hovering - hovering pen. If not - normal pen. if clicking - click pen. </summary>
 

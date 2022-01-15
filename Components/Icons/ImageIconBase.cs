@@ -14,8 +14,8 @@ namespace ClausaComm.Components.Icons
 
         #region backing fields
         private Color _iconColor = DefaultIconColor;
-        private Color _hoverIconColor = Constants.UIConstants.ElementOnHoverColor;
-        private Color _clickIconColor = Constants.UIConstants.ElementOnClickColor;
+        private Color _hoverIconColor = Constants.UiConstants.ElementOnHoverColor;
+        private Color _clickIconColor = Constants.UiConstants.ElementOnClickColor;
         #endregion
 
         #region accesors
@@ -24,7 +24,7 @@ namespace ClausaComm.Components.Icons
             get => _iconColor;
             set
             {
-                _iconColor = Constants.UIConstants.ReturnNewOrDefaultColor(DefaultIconColor, value);
+                _iconColor = Constants.UiConstants.ReturnNewOrDefaultColor(DefaultIconColor, value);
                 Image = ImageUtils.AlterColor(Image, value);
                 Invalidate();
             }
@@ -35,7 +35,7 @@ namespace ClausaComm.Components.Icons
             get => _hoverIconColor;
             set
             {
-                _hoverIconColor = Constants.UIConstants.ReturnNewOrDefaultColor(Constants.UIConstants.ElementOnHoverColor, value);
+                _hoverIconColor = Constants.UiConstants.ReturnNewOrDefaultColor(Constants.UiConstants.ElementOnHoverColor, value);
                 Invalidate();
             }
         }
@@ -45,7 +45,7 @@ namespace ClausaComm.Components.Icons
             set
             {
                 Invalidate();
-                _clickIconColor = Constants.UIConstants.ReturnNewOrDefaultColor(Constants.UIConstants.ElementOnClickColor, value);
+                _clickIconColor = Constants.UiConstants.ReturnNewOrDefaultColor(Constants.UiConstants.ElementOnClickColor, value);
             }
         }
 
