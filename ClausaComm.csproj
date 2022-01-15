@@ -7,13 +7,16 @@
     <UseWindowsForms>true</UseWindowsForms>
     <Authors>Matěj Pešl &lt;matejpesl1@gmail.com&gt;</Authors>
     <Version>0.0.1</Version>
-    <Description>LAN chat</Description>
+    <Description>LAN chatting app</Description>
     <Copyright>Copyright © 2021 Matěj Pešl, Some Rights Reserved.</Copyright>
     <Nullable>annotations</Nullable>
     <StartupObject>ClausaComm.Program</StartupObject>
     <Platforms>AnyCPU</Platforms>
     <ApplicationIcon>program_icon.ico</ApplicationIcon>
-    <TargetFramework>net5.0-windows</TargetFramework>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <PackageVersion>1.0.0</PackageVersion>
+    <PackageProjectUrl>https://github.com/AspireOne/clausacomm</PackageProjectUrl>
+    <LangVersion>10</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
