@@ -11,17 +11,18 @@ namespace ClausaComm.Components.ContactData
     {
         #region selected panel
 
-        private readonly Pen ContactSelectedLinePenAppearance = new(Constants.UIConstants.SecondaryColor, 2);
+        private readonly Pen ContactSelectedLinePenAppearance = new(Constants.UiConstants.SecondaryColor, 2);
         private readonly Color SelectedPanelBackgroundColor = Color.FromArgb(10, 255, 255, 255); /*Constants.UIConstants.SecondaryColor.R, Constants.UIConstants.SecondaryColor.G, Constants.UIConstants.SecondaryColor.B*/
 
         private static event EventHandler SelectedPanelChange;
 
         private static ContactPanel _currentlySelectedPanel;
 
-        private static ContactPanel CurrentlySelectedPanel
+        // TODO: Move this up to PanelOfContctPanels.
+        public static ContactPanel CurrentlySelectedPanel
         {
             get => _currentlySelectedPanel;
-            set
+            private set
             {
                 _currentlySelectedPanel = value;
                 SelectedPanelChange?.Invoke(value, EventArgs.Empty);
@@ -42,7 +43,7 @@ namespace ClausaComm.Components.ContactData
         private bool Selected;
         private readonly bool IsUserPanel;
 
-        private static readonly Color FlashPeakColor = Color.FromArgb(80, Constants.UIConstants.SecondaryColor.R, Constants.UIConstants.SecondaryColor.G, Constants.UIConstants.SecondaryColor.B);
+        private static readonly Color FlashPeakColor = Color.FromArgb(80, Constants.UiConstants.SecondaryColor.R, Constants.UiConstants.SecondaryColor.G, Constants.UiConstants.SecondaryColor.B);
 
         public readonly Contact Contact;
         /*make public ?*/
@@ -151,7 +152,7 @@ namespace ClausaComm.Components.ContactData
             g.DrawLine(ContactSelectedLinePenAppearance, verticalLineStart, verticalLineStop);
         }
 
-        public void FlashPanel()
+        public void Flash()
         {
             if (!Flasher.Timer.Enabled)
                 Flasher.Timer.Start();
