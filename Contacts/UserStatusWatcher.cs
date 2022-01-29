@@ -11,7 +11,7 @@ namespace ClausaComm.Contacts
         private readonly Contact User;
         private static bool Created;
         private static readonly int NecessaryIdleTimeMillis = (int)TimeSpan.FromMinutes(10).TotalMilliseconds;
-        private static readonly int TimerIntervalMillis = (int)TimeSpan.FromSeconds(15).TotalMilliseconds;
+        private static readonly int TimerIntervalMillis = (int)TimeSpan.FromSeconds(5).TotalMilliseconds;
         private readonly Timer Timer;
         public bool Running { get; private set; }
 
