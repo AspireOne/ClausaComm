@@ -1,11 +1,13 @@
-﻿using ClausaComm.Contacts;
+﻿using System;
+using ClausaComm.Contacts;
 
 namespace ClausaComm.Network_Communication.Objects
 {
-    internal readonly struct RemoteStatusUpdate : ISendable
+    [Serializable]
+    public readonly struct RemoteStatusUpdate : ISendable
     {
         RemoteObject.ObjectType ISendable.ObjectType => RemoteObject.ObjectType.StatusUpdate;
-        public readonly Contact.Status Status;
+        public Contact.Status Status { get; init; }
 
         public RemoteStatusUpdate(Contact.Status status) => Status = status;
     }

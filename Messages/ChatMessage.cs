@@ -1,22 +1,25 @@
 ﻿using ClausaComm.Network_Communication.Objects;
 using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using ClausaComm.Extensions;
+using Newtonsoft.Json;
 
 namespace ClausaComm.Messages
 {
-    public struct ChatMessage : ISendable
+    [Serializable]
+    public readonly struct ChatMessage : ISendable
     {
         public enum Ways { In, Out }
+        public const int MaxTextLength = 6000;
         public RemoteObject.ObjectType ObjectType => RemoteObject.ObjectType.ChatMessage;
 
-        public readonly long Time;
-        public readonly Ways Way;
-        public readonly string Text;
+        public long Time { get; private init; }
+        public Ways Way { get; init; }
+        public string Text { get; init; }
         //public readonly MessageFile File;
-        public readonly string Id;
-        public const int MaxTextLength = 6000;
+        public string Id { get; private init; }
 
         public ChatMessage(string text, Ways way = Ways.Out)
         {
@@ -29,15 +32,18 @@ namespace ClausaComm.Messages
             Way = way;
         }
 
+        [JsonConstructor]
         private ChatMessage(string text, Ways way, string id, long time) : this(text, way)
         {
             Time = time;
             Id = id;
         }
 
-        public override bool Equals(object? obj) => obj is ChatMessage message && message.Id == Id;
+        public static ChatMessage ReconstructMessage(string text, Ways way, string id, long time) => new(text, way, id, time);
+        
         public override int GetHashCode() => Time.GetHashCode();
-
-        public static ChatMessage ReconstructMessage(string text, Ways way, string id, long time) => new ChatMessage(text, way, id, time);
+        public override bool Equals(object? obj) => obj is ChatMessage message && message.Id == Id;
+        public static bool operator ==(ChatMessage left, ChatMessage right) => left.Equals(right);
+        public static bool operator !=(ChatMessage left, ChatMessage right) => !(left == right);
     }
 }

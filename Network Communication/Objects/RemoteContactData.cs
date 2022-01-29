@@ -11,8 +11,9 @@ namespace ClausaComm.Network_Communication.Objects
         RemoteObject.ObjectType ISendable.ObjectType => RemoteObject.ObjectType.ContactData;
 
         // Convert it so that it's serializable.
-        public readonly string? Base64ProfilePic;
-        public readonly string? Name;
+        // Must have a getter and a setter (resp. init) because otherwise deserialization doesn't work (JSON.NET).
+        public string? Base64ProfilePic { get; private init; }
+        public string? Name { get; init; }
 
         public RemoteContactData(string? name = null, Image? profilePic = null)
         {
