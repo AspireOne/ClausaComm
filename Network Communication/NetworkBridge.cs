@@ -5,9 +5,11 @@ using System.Drawing;
 using System.Linq;
 using System.Net;
 using System.Threading;
+using System.Windows.Forms;
 using ClausaComm.Contacts;
 using ClausaComm.Exceptions;
 using ClausaComm.Extensions;
+using ClausaComm.Forms;
 using ClausaComm.Messages;
 using ClausaComm.Network_Communication.Networking;
 using ClausaComm.Network_Communication.Objects;
@@ -26,22 +28,21 @@ namespace ClausaComm.Network_Communication
         
         /// <param name="allContacts">A collection with all the existing contacts</param>
         /// <param name="addContactMethod">A method for adding new contacts that might be sent from the network.</param>
-        public NetworkBridge(HashSet<Contact> allContacts, Action<Contact> addContactMethod, Action<ChatMessage, Contact> messageReceivedMethod)
+        public NetworkBridge(HashSet<Contact> allContacts, Action<Contact> addContactMethod, Action<ChatMessage, Contact> messageReceivedMethod, Control uiThread)
         {
             if (InstanceCreated)
                 throw new MultipleInstancesException(nameof(NetworkBridge));
 
             AllContacts = allContacts;
-            AddContactMethod = addContactMethod;
-            MessageReceivedMethod = messageReceivedMethod;
-            
-            NetworkManager.OnReceive += (message, endpoint) => HandleIncomingData(message, endpoint.Address.ToString());
-            NetworkManager.OnConnect += endpoint => HandleNewConnection(endpoint.Address);
-            NetworkManager.OnDisconnect += endpoint => AllContacts
-                .First(contact => contact.Ip == endpoint.Address.ToString())
-                .CurrentStatus = Contact.Status.Offline;
-            
-            InstanceCreated = true;
+            AddContactMethod = uiThread.Invoke(() => addContactMethod);
+            MessageReceivedMethod = uiThread.Invoke(() => messageReceivedMethod);
+
+            NetworkManager.OnReceive += (message, endpoint) => uiThread.Invoke(() => HandleIncomingData(message, endpoint.Address.ToString()));
+            NetworkManager.OnConnect += endpoint => uiThread.Invoke(() => HandleNewConnection(endpoint.Address));
+            NetworkManager.OnDisconnect += endpoint => uiThread.Invoke(() =>
+                AllContacts.First(contact => contact.Ip == endpoint.Address.ToString()).CurrentStatus = Contact.Status.Offline);
+
+                InstanceCreated = true;
             
             // TODO for tomorrow: wrap allContactData remoteObject type in a GreetingMessage or something - we need
             // TODO to identify first messages and react to them (add contact if doesn't exist, update the contact's data...)
@@ -96,7 +97,7 @@ namespace ClausaComm.Network_Communication
 
         private void HandleIncomingData(RemoteObject obj, string ip) // TODO: Change all "string ip" to IPAddresses
         {
-            Debug.WriteLine($"Received data from {ip}");
+            Debug.WriteLine($"Received data from {ip} (type: {obj.Data.ObjectType})");
 
             Contact? contact = RetrieveOrCreateContact(obj, ip);
 
@@ -106,10 +107,8 @@ namespace ClausaComm.Network_Communication
                 return;
             }
             
-            Debug.WriteLine(contact);
-            
             contact.Id ??= obj.ContactId;
-            
+
             // TODO: Handle IP collision
             if (contact.Ip != ip)
                 contact.Ip = ip;
@@ -117,6 +116,8 @@ namespace ClausaComm.Network_Communication
             if (contact.CurrentStatus == Contact.Status.Offline)
                 contact.CurrentStatus = Contact.Status.Online;
 
+            Debug.WriteLine(contact);
+            
             switch (obj.Data.ObjectType)
             {
                 case RemoteObject.ObjectType.ContactData:
@@ -221,7 +222,6 @@ namespace ClausaComm.Network_Communication
             // somewhere else? Save it elsewhere.
             message = ChatMessage.ReconstructMessage(message.Text, ChatMessage.Ways.In, message.Id, message.Time);
             MessageReceivedMethod(message, sender);
-            // TODO: Handle the message, save it, convert message.MessageFile to RemoteMessageFile etc.
         }
 
         /// <summary> Updates {contact}'s status to match that in the {statusUpdate} object.</summary>
