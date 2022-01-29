@@ -23,7 +23,7 @@ namespace ClausaComm.Components
         private ChatTextBox _textbox;
         private const int InitialMessages = 15;
         //private const int MaxMessages = 15;
-        private readonly Dictionary<Contact, HashSet<ChatMessage>> CachedChats = new();
+        private readonly Dictionary<Contact, MessageCollection> CachedChats = new();
 
         public delegate void SendPressedHandler(ChatMessage message, Contact contact);
 
@@ -111,25 +111,28 @@ namespace ClausaComm.Components
             ChatPanel.Parent = this;
         }
 
-        private void AddMessage(Contact contact, ChatMessage message, bool focus = true, bool addToChat = true)
+        private void AddMessage(Contact contact, ChatMessage message, bool loading = false, bool addToChat = true)
         {
             if (!CachedChats.TryGetValue(contact, out var messages))
-                CachedChats.Add(contact, messages = new HashSet<ChatMessage>());
-
-            // No need to worry about accidentally adding it twice, because it is a HashSet.
-            messages.Add(message);
+                CachedChats.Add(contact, messages = new MessageCollection());
             
+            messages.Add(message);
+
             if (ReferenceEquals(Contact, contact) && addToChat)
                 AddMessageToChat();
 
             void AddMessageToChat()
             {
-                var panel = new ChatMessagePanel(message, contact);
+                var panel = new ChatMessagePanel(message, message.Way == ChatMessage.Ways.Out ? Contact.UserContact : contact);
                 panel.Dock = DockStyle.Top;
                 panel.Parent = ChatPanel;
                 ChatPanel.Controls.Add(panel);
-                if (focus)
-                    ChatPanel.ScrollControlIntoView(panel);
+
+                if (!loading)
+                {
+                    ChatPanel.Controls.SetChildIndex(panel, 0);
+                    ChatPanel.ScrollControlIntoView(panel);   
+                }
             }
         }
 
@@ -174,16 +177,15 @@ namespace ClausaComm.Components
                 return;
             
             // The XML takes it from the oldest.
-            HashSet<ChatMessage> messages;
+            MessageCollection messages;
             if (!CachedChats.TryGetValue(contact, out messages))
             {
-                CachedChats.Add(contact, new HashSet<ChatMessage>());
-                MessagesXml.GetMessages(contact.Id).Reverse().ForEach(message => AddMessage(contact, message, false, false));
+                MessagesXml.GetMessages(contact.Id).Reverse().ForEach(message => AddMessage(contact, message, true, false));
                 CachedChats.TryGetValue(contact, out messages);
             }
-            
-            int i = 0;
-            messages.TakeWhile(_ => ++i < InitialMessages).ForEach(message => AddMessage(contact, message, false));
+            // TODO: Time is one hour late.
+
+            messages.GetAmount(InitialMessages).ForEach(message => AddMessage(contact, message, true, true));
 
             if (ChatPanel.Controls.Count > 1)
                 ChatPanel.ScrollControlIntoView(ChatPanel.Controls[0]);
@@ -192,15 +194,19 @@ namespace ClausaComm.Components
         private void HandleSendPressed()
         {
             if (Contact.Id is null)
+            {
+                Debug.WriteLine("Send pressed but contact id is null");
+                return;
+            }
+
+            string textTrimmed = Textbox.Text.Trim(' ', '\r', '\n');
+            Textbox.Text = "";
+            if (textTrimmed == "")
                 return;
             
-            if (Textbox.Text != "")
-            {
-                ChatMessage msg = new(Textbox.Text);
-                AddMessage(Contact, msg);
-                OnSendPressed?.Invoke(msg, Contact);
-            }
-            Textbox.Text = "";
+            ChatMessage msg = new(textTrimmed);
+            AddMessage(Contact, msg);
+            OnSendPressed?.Invoke(msg, Contact);
         }
 
         private void ChangeContactSpecificElementsVisibility(bool visible)
@@ -210,8 +216,6 @@ namespace ClausaComm.Components
             if (Textbox is not null)
                 Textbox.Visible = visible;
         }
-
-        public ChatScreen(Contact contact) : this() => Contact = contact;
 
         public ChatScreen(IContainer container) : this() => container.Add(this);
     }
