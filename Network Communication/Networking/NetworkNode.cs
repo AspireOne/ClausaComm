@@ -14,7 +14,10 @@ namespace ClausaComm.Network_Communication.Networking
     {
         public delegate void ReceiveHandler(RemoteObject message, IPEndPoint endpoint);
         public delegate void ConnectionChangeHandler(IPEndPoint endpoint);
+        // TODO: Change the implementation so that > 10mb (pictures, files etc.) fit.
         private static readonly byte[] ReadBuffer = new byte[10485760]; // One buffer for all connections? Damn, let's see how this goes.
+        // End Of Data byte - signalises the end of data.
+        private const byte EodByte = 255; //0xFF
         public bool Running { get; protected set; }
         public ReceiveHandler? OnReceive;
         public ConnectionChangeHandler? OnDisconnect;
@@ -35,7 +38,7 @@ namespace ClausaComm.Network_Communication.Networking
                 lock (client.GetStream())
                 {
                     Debug.WriteLine($"{nameof(NetworkNode)} sending {Encoding.UTF8.GetString(bytes)}");
-                    var data = bytes.Concat(new byte[] { 255 }).ToArray();
+                    byte[] data = bytes.Concat(new byte[] { EodByte }).ToArray();
                     client.GetStream().Write(data, 0, data.Length);
                 }
             }
@@ -91,7 +94,7 @@ namespace ClausaComm.Network_Communication.Networking
                                 continue;
                             }
                             
-                            if (nextByte == 255) //0xFF
+                            if (nextByte == EodByte)
                             {
                                 Debug.WriteLine($"{nameof(NetworkNode)}: Reached the end of data. Bytes read: {readBytesAmount} {remoteHost}");
                                 break;
@@ -110,7 +113,7 @@ namespace ClausaComm.Network_Communication.Networking
                     Debug.WriteLine($"{nameof(NetworkNode)}: Succesfully read data from a stream (endpoint: {remoteHost}).");
                     byte[] readBytes = new byte[readBytesAmount];
                     Array.Copy(ReadBuffer, readBytes, readBytesAmount);
-                    Debug.WriteLine("the gotten data: " + Encoding.UTF8.GetString(RemoteObject.Deserialize(readBytes).SerializeToUtf8Bytes()));
+                    Debug.WriteLine("the gotten data: " + Encoding.UTF8.GetString(RemoteObject.Deserialize(readBytes).SerializeToUtf8Bytes())); // TODO: Remove this.
                     OnReceive?.Invoke(RemoteObject.Deserialize(readBytes), remoteHost);
                 }
                 
