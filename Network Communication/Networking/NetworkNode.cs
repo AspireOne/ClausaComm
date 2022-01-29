@@ -78,7 +78,7 @@ namespace ClausaComm.Network_Communication.Networking
                 lock (ReadBuffer)
                 {
                     ReadBuffer[0] = firstByte;
-                    int bytesRead = 1;
+                    int readBytesAmount = 1;
                     try
                     {
                         while (true)
@@ -93,11 +93,11 @@ namespace ClausaComm.Network_Communication.Networking
                             
                             if (nextByte == 255) //0xFF
                             {
-                                Debug.WriteLine($"{nameof(NetworkNode)}: Reached the end of data. Bytes read: {bytesRead} {remoteHost}");
+                                Debug.WriteLine($"{nameof(NetworkNode)}: Reached the end of data. Bytes read: {readBytesAmount} {remoteHost}");
                                 break;
                             }
 
-                            ReadBuffer[bytesRead++] = (byte)nextByte;
+                            ReadBuffer[readBytesAmount++] = (byte)nextByte;
                         }
                     }
                     catch (Exception e)
@@ -108,8 +108,9 @@ namespace ClausaComm.Network_Communication.Networking
                     }
                     
                     Debug.WriteLine($"{nameof(NetworkNode)}: Succesfully read data from a stream (endpoint: {remoteHost}).");
-                    byte[] readBytes = new byte[bytesRead];
-                    Array.Copy(ReadBuffer, readBytes, bytesRead);
+                    byte[] readBytes = new byte[readBytesAmount];
+                    Array.Copy(ReadBuffer, readBytes, readBytesAmount);
+                    Debug.WriteLine("the gotten data: " + Encoding.UTF8.GetString(RemoteObject.Deserialize(readBytes).SerializeToUtf8Bytes()));
                     OnReceive?.Invoke(RemoteObject.Deserialize(readBytes), remoteHost);
                 }
                 
