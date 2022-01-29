@@ -28,7 +28,7 @@ namespace ClausaComm.Forms
             InitializeProgram();
             UserStatusWatcher = new(Contact.UserContact);
             UserStatusWatcher.Run();
-            NetworkBridge = new(Contacts, AddContact, OnMessageReceived);
+            NetworkBridge = new(Contacts, AddContact, OnMessageReceived, this);
             NetworkBridge.Run();
         }
 
@@ -88,7 +88,7 @@ namespace ClausaComm.Forms
                 panel.Flash();
             
             MessagesXml.SaveMessage(message, contact.Id);
-            Invoke(new Action(() => ChatScreen.HandleMessageReceived(contact, message)));
+            Invoke(() => ChatScreen.HandleMessageReceived(contact, message));
         }
 
         private void AddContact(Contact contactToAdd)

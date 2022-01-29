@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using ClausaComm.Components;
 using ClausaComm.Forms;
-using ClausaComm.Messages;
 
 namespace ClausaComm
 {
@@ -60,7 +59,7 @@ namespace ClausaComm
                 Content = $"Version {newVersion} is now available!"
             };
 
-            mainForm.Invoke(new MethodInvoker(delegate { mainForm.NotificationPanel.ShowNotification(notifArgs); }));
+            mainForm.Invoke(() => mainForm.NotificationPanel.ShowNotification(notifArgs));
         }
 
         private static void FinalizeTasksBeforeProgramExit(bool restart)
