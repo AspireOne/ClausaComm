@@ -37,6 +37,13 @@ namespace ClausaComm.Utils
             return tmp;
         }
 
+        public static bool AreImagesSame(Image left, Image right)
+        {
+            return Equals(left, right) ||
+                   ReferenceEquals(left, right) ||
+                   string.Equals(ImageToBase64String(left), ImageToBase64String(right));
+        }
+
         public static Image ForEveryPixel(this Image img, Func<Color, Color> func)
         {
             if (img is null)

@@ -97,23 +97,21 @@ namespace ClausaComm.Contacts
             get => _profileImage;
             set
             {
-                if (ProfilePic.Equals(value) || ReferenceEquals(value, ProfilePic))
+                if (value is null || ImageUtils.AreImagesSame(ProfilePic, value))
                     return;
 
-                if (value is null || value.Equals(Resources.default_pfp) || ReferenceEquals(value, Resources.default_pfp))
+                _profileImage = value;
+                HasDefaultProfilePic = false;
+                if (Save)
+                    SaveProfilePicture();
+                
+                /*if (value is null || value.Equals(Resources.default_pfp) || ReferenceEquals(value, Resources.default_pfp))
                 {
                     _profileImage = Resources.default_pfp;
                     HasDefaultProfilePic = true;
                     if (Save)
                         DeleteProfilePicture();
-                }
-                else
-                {
-                    _profileImage = value;
-                    HasDefaultProfilePic = false;
-                    if (Save)
-                        SaveProfilePicture();
-                }
+                }*/
 
                 ProfilePicChange?.Invoke(this, _profileImage);
             }
