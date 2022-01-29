@@ -5,6 +5,8 @@ using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 using ClausaComm.Contacts;
+using ClausaComm.Messages;
+using Microsoft.VisualBasic.ApplicationServices;
 using Newtonsoft.Json;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 
@@ -18,28 +20,29 @@ namespace ClausaComm.Network_Communication.Objects
             TypeNameHandling = TypeNameHandling.Auto,
             Formatting = Formatting.Indented,
         };
-        
-        public enum ObjectType
-        {
-            ChatMessage,
-            ContactData,
-            StatusUpdate
-        }
-
-        public readonly ISendable Data;
-        public readonly string ContactId;
-
+        public enum ObjectType { ChatMessage, ContactData, StatusUpdate }
+        public ISendable Data { get; init; }
+        public string ContactId { get; init; }
 
         public RemoteObject(ISendable data)
         {
             Data = data;
             ContactId = Contact.UserContact.Id;
         }
-
+        
+        [JsonConstructor]
+        private RemoteObject(ISendable data, string contactId)
+        {
+            ContactId = contactId;
+            Data = data;
+        }
+        
         public byte[] SerializeToUtf8Bytes() => Encoding.UTF8.GetBytes(Serialize());
         public string Serialize() => JsonConvert.SerializeObject(this, typeof(RemoteObject), SerializerSettings);
 
         public static RemoteObject Deserialize(byte[] obj) => Deserialize(Encoding.UTF8.GetString(obj));
         public static RemoteObject Deserialize(string obj) => JsonConvert.DeserializeObject<RemoteObject>(obj, SerializerSettings);
+        
+        public override string ToString() => $"ContactId: {ContactId} | Data ObjectType: {Data.ObjectType}";
     }
 }
