@@ -36,6 +36,7 @@ namespace ClausaComm.Components
             lock (contact.ProfilePic)
                 ChatMessagePicture.Image = contact.ProfilePic;
 
+            contact.NameChange += (_, name) => ChatMessageName.Text = name;
             contact.ProfilePicChange += (_, pic) =>
             {
                 lock (contact.ProfilePic)
