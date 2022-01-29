@@ -27,7 +27,7 @@ namespace ClausaComm.Network_Communication.Networking
         {
             if (!client.Connected)
             {
-                Debug.WriteLine($"{nameof(NetworkNode)}: Send method was invoked but the client is not connected.");
+                Debug.WriteLine($"{nameof(NetworkNode)}: Send method was invoked to {(IPEndPoint)client.Client.RemoteEndPoint} but the client is not connected.");
                 return false;
             }
             
@@ -113,7 +113,8 @@ namespace ClausaComm.Network_Communication.Networking
                     Debug.WriteLine($"{nameof(NetworkNode)}: Succesfully read data from a stream (endpoint: {remoteHost}).");
                     byte[] readBytes = new byte[readBytesAmount];
                     Array.Copy(ReadBuffer, readBytes, readBytesAmount);
-                    Debug.WriteLine("the gotten data: " + Encoding.UTF8.GetString(RemoteObject.Deserialize(readBytes).SerializeToUtf8Bytes())); // TODO: Remove this.
+                    string data = Encoding.UTF8.GetString(RemoteObject.Deserialize(readBytes).SerializeToUtf8Bytes()); // todo remove this
+                    Debug.WriteLine("the gotten data: " + (data.Length > 500 ? data[..500] : data)); // TODO: Remove this.
                     OnReceive?.Invoke(RemoteObject.Deserialize(readBytes), remoteHost);
                 }
                 
