@@ -61,14 +61,14 @@ namespace ClausaComm.Network_Communication.Networking
             while (true)
             {
                 TcpClient client = Listener.AcceptTcpClient();
-                OnConnect?.Invoke((IPEndPoint)client.Client.RemoteEndPoint);
                 lock (Connections) 
                     Connections.Add(client);
-
+                
                 ThreadUtils.RunThread(() =>
                 {
                     var connectionEndpoint = (IPEndPoint)client.Client.RemoteEndPoint;
                     Debug.WriteLine($"Server got new connection. IP: {connectionEndpoint}");
+                    OnConnect?.Invoke((IPEndPoint)client.Client.RemoteEndPoint);
                     StartReading(client);
                     Debug.WriteLine($"Node disconnected from server. IP: {connectionEndpoint}");
                     lock (Connections)
@@ -84,9 +84,9 @@ namespace ClausaComm.Network_Communication.Networking
         {
             TcpClient? client;
             lock (Connections)
-                client = Connections.Find(c => ((IPEndPoint)c.Client.RemoteEndPoint).ToString() == endpoint.ToString());
-            
-            Debug.WriteLine($"Server's Send method was invoked. Active connection to the desired endpoint found: {client is not null}");
+                client = Connections.Find(c => ((IPEndPoint)c.Client.RemoteEndPoint).Address.Equals(endpoint.Address));
+
+            Debug.WriteLine($"Server's Send method was invoked (ip: {endpoint.ToString()}). Active connection to the desired endpoint found: {client is not null}");
             bool success = client is not null && Send(client, bytes);
             Debug.WriteLine($"Server's Send succesfull: {success}");
             return success;
