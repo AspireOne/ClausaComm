@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Drawing;
 using ClausaComm.Contacts;
 using ClausaComm.Utils;
+using Newtonsoft.Json;
 
 namespace ClausaComm.Network_Communication.Objects
 {
@@ -19,6 +21,13 @@ namespace ClausaComm.Network_Communication.Objects
         {
             Name = name;
             Base64ProfilePic = ImageUtils.ImageToBase64String(profilePic);
+        }
+        
+        [JsonConstructor]
+        private RemoteContactData(string name, string base64ProfilePic)
+        {
+            Name = name;
+            Base64ProfilePic = base64ProfilePic;
         }
 
         public RemoteContactData(Contact contact) : this(contact.Name, contact.ProfilePic) { }
