@@ -18,7 +18,11 @@ namespace ClausaComm.Network_Communication.Objects
         private static readonly JsonSerializerSettings SerializerSettings = new()
         {
             TypeNameHandling = TypeNameHandling.Auto,
+            #if DEBUG
             Formatting = Formatting.Indented,
+            #else
+            Formatting = Formatting.None,
+            #endif
         };
         public enum ObjectType { ChatMessage, ContactData, StatusUpdate }
         public ISendable Data { get; init; }
