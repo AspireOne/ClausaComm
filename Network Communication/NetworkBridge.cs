@@ -37,6 +37,7 @@ namespace ClausaComm.Network_Communication
             AddContactMethod = uiThread.Invoke(() => addContactMethod);
             MessageReceivedMethod = uiThread.Invoke(() => messageReceivedMethod);
 
+            // TODO: Don't run it all on the ui thread!
             NetworkManager.OnReceive += (message, endpoint) => uiThread.Invoke(() => HandleIncomingData(message, endpoint.Address));
             NetworkManager.OnConnect += endpoint => uiThread.Invoke(() => HandleNewConnection(endpoint.Address));
             NetworkManager.OnDisconnect += endpoint => uiThread.Invoke(() =>
