@@ -46,13 +46,13 @@ namespace ClausaComm.Components
         {
             Name = "ChatPanel",
             Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right,
-            ForeColor = Color.FromArgb(210, 210, 210),
+            //ForeColor = Constants.UiConstants.ChatTextColor, // Not needed because it's defined in ChatMessagePanel.
+            BackColor = Constants.UiConstants.ChatBackColor,
             Location = new Point(248, 293),
             Dock = DockStyle.Fill,
             HorizontalScroll = { Enabled = false, Visible = false, Maximum = 0 },
             VerticalScroll = {Enabled = true},
             AutoScroll = true,
-            BackColor = Constants.UiConstants.ChatColor
         };
 
         public SendIcon SendIcon

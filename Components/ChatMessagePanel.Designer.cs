@@ -98,7 +98,7 @@ namespace ClausaComm.Components
             this.ChatMessageText.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.ChatMessageText.Cursor = System.Windows.Forms.Cursors.IBeam;
             this.ChatMessageText.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ChatMessageText.ForeColor = Color.FromArgb(230, 230, 230);
+            this.ChatMessageText.ForeColor =Constants.UiConstants.ChatTextColor;
             this.ChatMessageText.Location = new System.Drawing.Point(51, 20);
             this.ChatMessageText.Multiline = true;
             this.ChatMessageText.Name = "ChatMessageText";

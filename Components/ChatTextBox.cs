@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.Windows.Forms;
 using ClausaComm.Messages;
 
@@ -58,11 +59,12 @@ namespace ClausaComm.Components
         }
 
         #endregion properties
-
-        // TODO: Try to add border / adjust vertical alignment and/or try to change placeholder text's position
+        
         public ChatTextBox()
         {
             MaxLength = ChatMessage.MaxTextLength - 2;
+            ForeColor = Constants.UiConstants.ChatTextBoxTextColor;
+            BackColor = Constants.UiConstants.ChatTextBoxBackColor;
         }
 
         [System.Runtime.InteropServices.DllImport("gdi32.dll", EntryPoint = "CreateRoundRectRgn")]
@@ -79,7 +81,7 @@ namespace ClausaComm.Components
         protected override void OnResize(EventArgs e)
         {
             base.OnResize(e);
-            Region = System.Drawing.Region.FromHrgn(CreateRoundRectRgn(RectLeft, RectTop, Width, Height, RectHeight, RectWidth));
+            Region = Region.FromHrgn(CreateRoundRectRgn(RectLeft, RectTop, Width, Height, RectHeight, RectWidth));
         }
     }
 }

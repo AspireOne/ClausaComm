@@ -184,7 +184,7 @@ namespace ClausaComm.Forms
             this.ChatTextBoxContainer.Name = "ChatTextBoxContainer";
             this.ChatTextBoxContainer.Size = new System.Drawing.Size(882, 75);
             this.ChatTextBoxContainer.TabIndex = 2;
-            this.ChatTextBoxContainer.BackColor = Constants.UiConstants.ChatColor;
+            this.ChatTextBoxContainer.BackColor = Constants.UiConstants.ChatBackColor;
             // 
             // chatTextBox1
             // 
@@ -203,7 +203,7 @@ namespace ClausaComm.Forms
             this.ChatTextBox1.Padding = new Padding(3);
             this.ChatTextBox1.TabIndex = 3;
             this.ChatTextBox1.Visible = false;
-            this.ChatTextBox1.BackColor = Constants.UiConstants.ChatTextBoxColor;
+            this.ChatTextBox1.BackColor = Constants.UiConstants.ChatTextBoxBackColor;
             // 
             // SendIcon1
             // 
