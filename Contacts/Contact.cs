@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Net;
 using ClausaComm.Properties;
 using ClausaComm.Utils;
 
@@ -28,7 +29,7 @@ namespace ClausaComm.Contacts
         private Status _status = Status.Offline;
         private Image _profileImage = Resources.default_pfp;
         private string _name = "Unknown";
-        private string _ip;
+        private IPAddress _ip;
         private bool _save;
         private static Contact _userContact;
         private string? _id;
@@ -77,17 +78,14 @@ namespace ClausaComm.Contacts
             }
         }
 
-        public string Ip
+        public IPAddress Ip
         {
             get => _ip;
             set
             {
                 if (value is null)
                     throw new ArgumentNullException(nameof(value), "The supplied IP was null.");
-
-                if (!IpUtils.IsIpCorrect(value))
-                    throw new InvalidIpException($"The supplied IP ({value}) was incorrect.");
-
+                
                 _ip = value;
             }
         }
@@ -126,7 +124,7 @@ namespace ClausaComm.Contacts
                     return;
 
                 if (value.Length > NameLength.max)
-                    value = value.Substring(0, NameLength.max);
+                    value = value[..NameLength.max];
                 else if (value.Length < NameLength.min)
                     for (int i = 0; i < NameLength.min - value.Length; ++i)
                         value += "_";
@@ -147,7 +145,7 @@ namespace ClausaComm.Contacts
                 if (Save == value)
                     return;
 
-                if ((_save = value))
+                if (_save = value)
                 {
                     Xml.Save(out bool alreadyExists);
 
@@ -169,7 +167,7 @@ namespace ClausaComm.Contacts
 
         // Note: the contact doesn't have to have an ID! The user can add the contact via IP, and at that point,
         // the contact's data (including ID) are not initialized yet.
-        public Contact(string ip)
+        public Contact(IPAddress ip)
         {
             Ip = ip ?? throw new ArgumentNullException(nameof(ip), "Ip of a contact must not be null");
             Xml = new XmlFile(this);
@@ -179,7 +177,7 @@ namespace ClausaComm.Contacts
 
         public override string ToString() => $"Name: {Name} | ID: {Id} | IsUser: {IsUser} | Save: {Save} | IP: {Ip}";
 
-        public override int GetHashCode() => int.Parse(string.Concat(Ip.Where(c => c != '.').Skip(3)));
+        public override int GetHashCode() => int.Parse(string.Concat(Ip.ToString().Where(c => c != '.').Skip(3)));
 
         private void DeleteProfilePicture() => File.Delete(ProfilePicPath);
 

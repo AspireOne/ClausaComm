@@ -37,10 +37,10 @@ namespace ClausaComm.Network_Communication
             AddContactMethod = uiThread.Invoke(() => addContactMethod);
             MessageReceivedMethod = uiThread.Invoke(() => messageReceivedMethod);
 
-            NetworkManager.OnReceive += (message, endpoint) => uiThread.Invoke(() => HandleIncomingData(message, endpoint.Address.ToString()));
+            NetworkManager.OnReceive += (message, endpoint) => uiThread.Invoke(() => HandleIncomingData(message, endpoint.Address));
             NetworkManager.OnConnect += endpoint => uiThread.Invoke(() => HandleNewConnection(endpoint.Address));
             NetworkManager.OnDisconnect += endpoint => uiThread.Invoke(() =>
-                AllContacts.First(contact => contact.Ip == endpoint.Address.ToString()).CurrentStatus = Contact.Status.Offline);
+                AllContacts.First(contact => contact.Ip.Equals(endpoint.Address)).CurrentStatus = Contact.Status.Offline);
 
                 InstanceCreated = true;
             
@@ -82,7 +82,7 @@ namespace ClausaComm.Network_Communication
         {
             ThreadUtils.RunThread(() =>
             {
-                bool connected = NetworkManager.CreateConnection(IPAddress.Parse(contact.Ip));
+                bool connected = NetworkManager.CreateConnection(contact.Ip);
                 if (!connected)
                     Logger.Log($"{nameof(NetworkBridge)}: Could not connect to {contact.Ip}");
             });
@@ -95,7 +95,7 @@ namespace ClausaComm.Network_Communication
             NetworkManager.Send(ip, new RemoteObject(contactData).SerializeToUtf8Bytes());
         }
 
-        private void HandleIncomingData(RemoteObject obj, string ip) // TODO: Change all "string ip" to IPAddresses
+        private void HandleIncomingData(RemoteObject obj, IPAddress ip) // TODO: Change all "string ip" to IPAddresses
         {
             Logger.Log($"Received data from {ip} (type: {obj.Data.ObjectType})");
 
@@ -110,7 +110,7 @@ namespace ClausaComm.Network_Communication
             contact.Id ??= obj.ContactId;
 
             // TODO: Handle IP collision
-            if (contact.Ip != ip)
+            if (!contact.Ip.Equals(ip))
                 contact.Ip = ip;
 
             if (contact.CurrentStatus == Contact.Status.Offline)
@@ -149,7 +149,7 @@ namespace ClausaComm.Network_Communication
         /// Else if the object received is an object with contact data, creates it and returns it.<br/>
         /// Else returns null.
         /// </summary>
-        private Contact? RetrieveOrCreateContact(RemoteObject obj, string ip)
+        private Contact? RetrieveOrCreateContact(RemoteObject obj, IPAddress ip)
         {
             // If AllContacts contains a contact with the sender's ID, return that contact.
             
@@ -162,7 +162,7 @@ namespace ClausaComm.Network_Communication
             // is null (contact added by the user via IP but not initialized yet), return that contact.
             // The caller method will assign the ID.
 
-            contact = AllContacts.FirstOrDefault(c => c.Ip == ip && c.Id is null);
+            contact = AllContacts.FirstOrDefault(c => c.Ip.Equals(ip) && c.Id is null);
 
             if (contact is not null)
                 return contact;
@@ -213,7 +213,7 @@ namespace ClausaComm.Network_Communication
         /// <summary> Sends the object to all not-offline contacts.</summary>
         private void SendToAll(RemoteObject obj)
         {
-            AllContacts.NotOffline().ForEach(contact => NetworkManager.Send(IPAddress.Parse(contact.Ip), obj.SerializeToUtf8Bytes()));
+            AllContacts.NotOffline().ForEach(contact => NetworkManager.Send(contact.Ip, obj.SerializeToUtf8Bytes()));
         }
 
         private void HandleMessageReceived(ChatMessage message, Contact sender)

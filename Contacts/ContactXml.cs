@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
+using System.Net;
 using System.Xml.Linq;
 using ClausaComm.Utils;
 
@@ -44,7 +45,7 @@ namespace ClausaComm.Contacts
 
             void IXmlFile.Save(out bool exists)
             {
-                if (Doc.ToString().Contains(Contact.Id ?? Contact.Ip))
+                if (Doc.ToString().Contains(Contact.Id ?? Contact.Ip.ToString()))
                 {
                     exists = true;
                     return;
@@ -110,7 +111,7 @@ namespace ClausaComm.Contacts
                     string ip = node.Element(InfoXmlRepresentation[XmlSavedInfo.Ip])?.Value;
 
                     if (ip is not null)
-                        return ip == Contact.Ip;
+                        return IPAddress.Parse(ip).Equals(Contact.Ip);
 
                     throw new("A contact saved to XML had neither ID or IP.");
                 });
@@ -118,19 +119,19 @@ namespace ClausaComm.Contacts
 
             private static IEnumerable<Contact> GetContacts()
             {
-                string localIp = IpUtils.RefreshLocalIp();
+                IPAddress localIp = IpUtils.RefreshLocalIp();
 
                 foreach (var node in GetContactNodes())
                 {
                     bool isUser = bool.Parse(node.Element(InfoXmlRepresentation[XmlSavedInfo.IsUser]).Value);
-                    string ip = node.Element(InfoXmlRepresentation[XmlSavedInfo.Ip])?.Value;
-                    string id = node.Element(InfoXmlRepresentation[XmlSavedInfo.Id])?.Value;
+                    string? ip = node.Element(InfoXmlRepresentation[XmlSavedInfo.Ip])?.Value;
+                    string? id = node.Element(InfoXmlRepresentation[XmlSavedInfo.Id])?.Value;
                     string name = node.Element(InfoXmlRepresentation[XmlSavedInfo.Name]).Value;
-
-                    yield return ReconstructContact(isUser: isUser, ip: ip, id: id, name: name);
+                    
+                    yield return ReconstructContact(isUser: isUser, ip: isUser ? null : IPAddress.Parse(ip), id: id, name: name);
                 }
                 
-                Contact ReconstructContact(bool isUser, string ip, string id, string name)
+                Contact ReconstructContact(bool isUser, IPAddress ip, string id, string name)
                 {
                     var contact = new Contact(isUser ? localIp : ip) { _name = name, _save = false, Id = id, IsUser = isUser };
                     TryGetProfilePicture(contact.ProfilePicPath, out Image profileImage);

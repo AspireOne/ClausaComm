@@ -74,7 +74,7 @@ namespace ClausaComm.Forms
             PanelOfContactPanels.SelectFirstPanel();
             ChatScreen.OnSendPressed += (message, contact) =>
             {
-                bool sent = NetworkBridge.SendMessage(message, IPAddress.Parse(contact.Ip));
+                bool sent = NetworkBridge.SendMessage(message, contact.Ip);
                 if (sent)
                 {
                     MessagesXml.SaveMessage(message, contact.Id);

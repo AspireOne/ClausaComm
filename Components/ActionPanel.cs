@@ -142,7 +142,7 @@ namespace ClausaComm.Components
                 }
                 else
                 {
-                    IpLbl.Text = value.Ip;
+                    IpLbl.Text = value.Ip.ToString();
                     ChangeContactSpecificElementsVisibility(true);
                     ChangeSaveIconStateAccordingly();
                 }

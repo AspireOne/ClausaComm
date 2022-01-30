@@ -33,7 +33,7 @@ namespace ClausaComm.Forms
             NameBox.Textbox.MaxLength = Contact.NameLength.max;
             NameBox.Textbox.TextChanged += (_, _) => OnNameBoxTextChange();
 
-            IpBox.Textbox.Text = User.Ip;
+            IpBox.Textbox.Text = User.Ip.ToString();
             IpBox.Textbox.ReadOnly = true;
 
             ProfilePictureBox.Image = User.ProfilePic;
