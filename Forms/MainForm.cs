@@ -9,9 +9,11 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net;
 using System.Text;
+using System.Threading;
 using ClausaComm.Contacts;
 using ClausaComm.Messages;
 using ClausaComm.Network_Communication;
+using ClausaComm.Utils;
 
 namespace ClausaComm.Forms
 {
@@ -129,16 +131,19 @@ namespace ClausaComm.Forms
         private void ChangeControlsEnabled(bool enabled)
         {
             foreach (Control control in Controls)
-            {
                 control.Enabled = enabled;
-            }
         }
 
         private void ShowPopup(Form popup)
         {
-            ChangeControlsEnabled(false);
-            popup.ShowDialog();
-            ChangeControlsEnabled(true);
+            //ChangeControlsEnabled(false);
+            // A workaround for a probable bug in Control event signaling in WF.
+            ThreadUtils.RunThread(() =>
+            {
+                Thread.Sleep(10);
+                Invoke(popup.ShowDialog);
+            });
+            //ChangeControlsEnabled(true);
         }
 
         protected override void OnKeyPress(KeyPressEventArgs e)
