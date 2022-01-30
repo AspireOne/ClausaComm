@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
@@ -34,6 +35,13 @@ namespace ClausaComm.Utils
                 GraphicsUnit.Pixel);
 
             return tmp;
+        }
+
+        public static bool AreImagesSame(Image left, Image right)
+        {
+            return Equals(left, right) ||
+                   ReferenceEquals(left, right) ||
+                   string.Equals(ImageToBase64String(left), ImageToBase64String(right));
         }
 
         public static Image ForEveryPixel(this Image img, Func<Color, Color> func)
@@ -116,19 +124,30 @@ namespace ClausaComm.Utils
             }
             catch (OutOfMemoryException)
             {
+                // We do not have to print the exception because this error will only be thrown under expected conditions.
+                return false;
+            }
+            catch (FileNotFoundException e)
+            {
+                Debug.WriteLine("A handled exception was thrown when trying to check if a file is an image - the file does not exist.");
+                Debug.WriteLine(e);
                 return false;
             }
         }
 
-        public static string ImageToBase64String(Image img)
+        public static string? ImageToBase64String(Image? img)
         {
             if (img is null)
                 return null;
 
-            using (MemoryStream ms = new())
+            // Otherwise it throws "object is already in use elsewhere".
+            lock (img)
             {
-                img.Save(ms, ImageFormat.Png);
-                return Convert.ToBase64String(ms.ToArray());
+                using (MemoryStream ms = new())
+                {
+                    img.Save(ms, ImageFormat.Png);
+                    return Convert.ToBase64String(ms.ToArray());
+                }   
             }
         }
 

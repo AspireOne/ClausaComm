@@ -3,9 +3,13 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
+using System.Net;
+using System.Threading;
+using System.Windows.Forms;
 using ClausaComm.Contacts;
 using ClausaComm.Exceptions;
 using ClausaComm.Extensions;
+using ClausaComm.Forms;
 using ClausaComm.Messages;
 using ClausaComm.Network_Communication.Networking;
 using ClausaComm.Network_Communication.Objects;
@@ -13,84 +17,108 @@ using ClausaComm.Utils;
 
 namespace ClausaComm.Network_Communication
 {
+    // Singleton.
     public class NetworkBridge
     {
-        private readonly HashSet<RemoteObject> UncomfirmedData = new();
-        private readonly Server Server;
-        private readonly Client Client;
-        private readonly ContactStatusWatcher StatusWatcher;
-        private readonly PingSender PingSender;
         public bool Running { get; private set; }
         private readonly HashSet<Contact> AllContacts;
         private readonly Action<Contact> AddContactMethod;
-        private static bool Created;
-
-        public NetworkBridge(HashSet<Contact> allContacts, Action<Contact> addContactMethod)
+        private readonly Action<ChatMessage, Contact> MessageReceivedMethod;
+        private static bool InstanceCreated;
+        
+        /// <param name="allContacts">A collection with all the existing contacts</param>
+        /// <param name="addContactMethod">A method for adding new contacts that might be sent from the network.</param>
+        public NetworkBridge(HashSet<Contact> allContacts, Action<Contact> addContactMethod, Action<ChatMessage, Contact> messageReceivedMethod, Control uiThread)
         {
-            if (Created)
+            if (InstanceCreated)
                 throw new MultipleInstancesException(nameof(NetworkBridge));
 
             AllContacts = allContacts;
-            AddContactMethod = addContactMethod;
+            AddContactMethod = uiThread.Invoke(() => addContactMethod);
+            MessageReceivedMethod = uiThread.Invoke(() => messageReceivedMethod);
 
-            Client = new();
-            StatusWatcher = new(allContacts);
-            PingSender = new((ip, obj) => Client.Send(ip, obj), allContacts);
-            Server = new(HandleIncomingData);
+            NetworkManager.OnReceive += (message, endpoint) => uiThread.Invoke(() => HandleIncomingData(message, endpoint.Address.ToString()));
+            NetworkManager.OnConnect += endpoint => uiThread.Invoke(() => HandleNewConnection(endpoint.Address));
+            NetworkManager.OnDisconnect += endpoint => uiThread.Invoke(() =>
+                AllContacts.First(contact => contact.Ip == endpoint.Address.ToString()).CurrentStatus = Contact.Status.Offline);
 
-            Created = true;
+                InstanceCreated = true;
+            
+            // TODO for tomorrow: wrap allContactData remoteObject type in a GreetingMessage or something - we need
+            // TODO to identify first messages and react to them (add contact if doesn't exist, update the contact's data...)
+            // edit: There's no reason we'd need to know that it's the first message. Both parties send an object with
+            // all the contact's data right when they connect, so it'll be immediately updated (and will be no matter
+            // if it's the first message or not).
+            // Leaving the TODO here in case I missed something and it actually IS needed.
+            
+            // TODO somehow solve idle status
         }
 
+        /// <summary>Runs the network connects to all contacts. Non-blocking.</summary>
         public void Run()
         {
             if (Running)
                 return;
 
             Running = true;
-            Server.Run();
-            Client.Run();
-            PingSender.Run();
-            StatusWatcher.Run();
+            ThreadUtils.RunThread(() => NetworkManager.Run(HandleServerRunning));
 
-            SubscribeToUserEvents();
-
-            RemoteContactData contactData = new(Contact.UserContact);
-            FullContactDataRequest request = new();
-
-            RemoteObject contactDataObj = new(contactData);
-            RemoteObject requestObj = new(request);
-            foreach (var contact in AllContacts)
+            void HandleServerRunning(bool running)
             {
-                Client.Send(contact.Ip, contactDataObj);
-                Client.Send(contact.Ip, requestObj);
+                if (!running)
+                {
+                    Debug.WriteLine($"{nameof(NetworkBridge)}: Server did not start - NOT trying to connect to contacts.");
+                    return;
+                }
+
+                Debug.WriteLine($"{nameof(NetworkBridge)}: Recursively trying to connect to all contacts.");
+                AllContacts.ForEach(Connect);
+                
+                SubscribeToUserEvents();
             }
         }
 
-        public void HandleIncomingData(RemoteObject obj, string ip)
+        public static void Connect(Contact contact)
         {
-            Debug.WriteLine($"Received data from {ip}");
-            // If the data demand to be confirmed, send back a confirmation.
-            if (obj.Data.Confirm)
-                SendBackConfirmation(obj.ObjectId, ip);
-
-            Contact contact = RetrieveContact(obj, ip);
-            if (contact?.Id is null)
+            ThreadUtils.RunThread(() =>
             {
-                // If the ID is not assigned to the contact, take it from the remoteObject and assign it.
-                if (contact is not null)
-                    contact.Id = obj.ContactId;
+                bool connected = NetworkManager.CreateConnection(IPAddress.Parse(contact.Ip));
+                if (!connected)
+                    Debug.WriteLine($"{nameof(NetworkBridge)}: Could not connect to {contact.Ip}");
+            });
+        }
 
-                Client.Send(ip, new RemoteObject(new FullContactDataRequest()));
+        // Send all user data on connection (both ongoing and ingoing).
+        private static void HandleNewConnection(IPAddress ip)
+        {
+            RemoteContactData contactData = new(Contact.UserContact);
+            NetworkManager.Send(ip, new RemoteObject(contactData).SerializeToUtf8Bytes());
+        }
+
+        private void HandleIncomingData(RemoteObject obj, string ip) // TODO: Change all "string ip" to IPAddresses
+        {
+            Debug.WriteLine($"Received data from {ip} (type: {obj.Data.ObjectType})");
+
+            Contact? contact = RetrieveOrCreateContact(obj, ip);
+
+            if (contact is null)
+            {
+                Debug.WriteLine($"Could not get or create contact. Returning. ip: {ip}");
                 return;
             }
+            
+            contact.Id ??= obj.ContactId;
 
-            // If the contact's ID matches but the IP is different, update it.
+            // TODO: Handle IP collision
             if (contact.Ip != ip)
                 contact.Ip = ip;
 
-            StatusWatcher.HandleActivityReceived(contact);
+            if (contact.CurrentStatus == Contact.Status.Offline)
+                contact.CurrentStatus = Contact.Status.Online;
 
-            switch (obj.Data.ObjType)
+            Debug.WriteLine(contact);
+            
+            switch (obj.Data.ObjectType)
             {
                 case RemoteObject.ObjectType.ContactData:
                     UpdateContactData((RemoteContactData)obj.Data, contact);
@@ -100,20 +128,8 @@ namespace ClausaComm.Network_Communication
                     UpdateContactStatus((RemoteStatusUpdate)obj.Data, contact);
                     break;
 
-                case RemoteObject.ObjectType.Message:
-                    HandleMessageReceived((Message)obj.Data, contact);
-                    break;
-
-                case RemoteObject.ObjectType.Ping:
-                    // Ignored (because the ping is already registered/recognized before this code).
-                    break;
-
-                case RemoteObject.ObjectType.FullContactDataRequest:
-                    SendFullContactData(ip);
-                    break;
-
-                case RemoteObject.ObjectType.DataReceiveConfirmation:
-                    UncomfirmedData.RemoveWhere(o => o.ObjectId == ((ReceptionConfirmation)obj.Data).ConfirmedDataId);
+                case RemoteObject.ObjectType.ChatMessage:
+                    HandleMessageReceived((ChatMessage)obj.Data, contact);
                     break;
 
                 default:
@@ -121,8 +137,10 @@ namespace ClausaComm.Network_Communication
             }
         }
 
-        public void SendMessage()
+        public bool SendMessage(ChatMessage message, IPAddress ip)
         {
+            RemoteObject obj = new RemoteObject(message);
+            return NetworkManager.Send(ip, obj.SerializeToUtf8Bytes());
         }
 
         /// <summary>
@@ -131,10 +149,10 @@ namespace ClausaComm.Network_Communication
         /// Else if the object received is an object with contact data, creates it and returns it.<br/>
         /// Else returns null.
         /// </summary>
-        private Contact RetrieveContact(RemoteObject obj, string ip)
+        private Contact? RetrieveOrCreateContact(RemoteObject obj, string ip)
         {
             // If AllContacts contains a contact with the sender's ID, return that contact.
-
+            
             Contact contact = AllContacts.FirstOrDefault(c => c.Id == obj.ContactId);
 
             if (contact is not null)
@@ -142,7 +160,7 @@ namespace ClausaComm.Network_Communication
 
             // else if AllContacts contains a contact with the sender's IP AND the contact's ID
             // is null (contact added by the user via IP but not initialized yet), return that contact.
-            // The parent method will assign an ID and request other data.
+            // The caller method will assign the ID.
 
             contact = AllContacts.FirstOrDefault(c => c.Ip == ip && c.Id is null);
 
@@ -153,18 +171,15 @@ namespace ClausaComm.Network_Communication
 
             // If the sender has sent all needed data to create it (ContactData object), create it and return it.
             // The parent method will assign the data to the contact.
+            // Else return null.
+            
+            if (obj.Data.ObjectType != RemoteObject.ObjectType.ContactData)
+                return null;
+            
+            contact = new Contact(ip);
+            AddContactMethod.Invoke(contact);
+            return contact;
 
-            if (obj.Data.ObjType == RemoteObject.ObjectType.ContactData)
-            {
-                contact = new(ip);
-
-                AddContactMethod.Invoke(contact);
-                return contact;
-            }
-
-            // Else return null (and the parent method will send a request to the sender to send back the data).
-
-            return null;
         }
 
         /// <summary> Subscribes to user's data changes and sends them to all contacts as soon as they occur.</summary>
@@ -198,48 +213,33 @@ namespace ClausaComm.Network_Communication
         /// <summary> Sends the object to all not-offline contacts.</summary>
         private void SendToAll(RemoteObject obj)
         {
-            AllContacts.NotOffline().ForEach(contact => Client.Send(contact.Ip, obj));
+            AllContacts.NotOffline().ForEach(contact => NetworkManager.Send(IPAddress.Parse(contact.Ip), obj.SerializeToUtf8Bytes()));
         }
 
-        /// <summary> Sends a confirmation to {ip} about receiving object {objectId}</summary>
-        private void SendBackConfirmation(string objectId, string ip)
+        private void HandleMessageReceived(ChatMessage message, Contact sender)
         {
-            ReceptionConfirmation confirmationData = new(objectId);
-            RemoteObject confirmationObj = new(confirmationData);
-            Client.Send(ip, confirmationObj);
-        }
-
-        private void HandleMessageReceived(Message message, Contact sender)
-        {
-            // TODO: Handle the message, convert message.MessageFile to RemoteMessageFile etc.
-        }
-
-        /// <summary> Sends an object with all user's data to {ip}.</summary>
-        private void SendFullContactData(string ip)
-        {
-            RemoteContactData data = new(Contact.UserContact);
-            RemoteObject obj = new(data);
-            Client.Send(ip, obj);
+            // TODO: Is it a good idea to save the ingoing message here, when outgoing messages are saved
+            // somewhere else? Save it elsewhere.
+            message = ChatMessage.ReconstructMessage(message.Text, ChatMessage.Ways.In, message.Id, message.Time);
+            MessageReceivedMethod(message, sender);
         }
 
         /// <summary> Updates {contact}'s status to match that in the {statusUpdate} object.</summary>
         private static void UpdateContactStatus(RemoteStatusUpdate statusUpdate, Contact contact)
         {
-            if (contact.CurrentStatus != statusUpdate.Status)
-                contact.CurrentStatus = statusUpdate.Status;
+            contact.CurrentStatus = statusUpdate.Status;
         }
 
         /// <summary> Updates {contact}'s data to match those in the {data} object.</summary>
         private static void UpdateContactData(RemoteContactData data, Contact contact)
         {
-            if (contact.Name != data.Name)
+            if (data.Name is not null) 
                 contact.Name = data.Name;
 
             if (data.Base64ProfilePic is not null)
             {
                 Image img = ImageUtils.ImageFromBase64String(data.Base64ProfilePic);
-                if (contact.ProfilePic != img)
-                    contact.ProfilePic = img;
+                contact.ProfilePic = img;
             }
         }
     }

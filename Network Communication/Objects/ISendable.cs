@@ -2,7 +2,6 @@
 {
     public interface ISendable
     {
-        public RemoteObject.ObjectType ObjType { get; }
-        public bool Confirm { get; }
+        public RemoteObject.ObjectType ObjectType { get; }
     }
 }

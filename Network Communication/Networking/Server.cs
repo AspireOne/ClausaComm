@@ -1,35 +1,95 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
-using ClausaComm.Network_Communication.Objects;
-using LiteNetLib;
+using System.Threading;
+using System.Transactions;
+using ClausaComm.Exceptions;
+using ClausaComm.Utils;
 
 namespace ClausaComm.Network_Communication.Networking
 {
-    // TODO: Maybe make static?
-    // TODO: Remove LiteNetLib and implement it yourself.
-    // The SERVER takes care ONLY of RECEIVING.
-    class Server : InterCommunication
+    // Singleton.
+    internal class Server : NetworkNode
     {
-        private readonly byte[] Buffer = new byte[8192];
-        private readonly Action<RemoteObject, string> OnReceiveCallback;
+        private static bool InstanceCreated;
+        public const int Port = 5000;
+        private readonly List<TcpClient> Connections = new();
+        private TcpListener? Listener;
 
-        public Server(Action<RemoteObject, string> onReceiveCallback)
+        public Server()
         {
-            OnReceiveCallback = onReceiveCallback;
-
-            Listener.NetworkReceiveUnconnectedEvent += (IPEndPoint remoteEndPoint, NetPacketReader reader, UnconnectedMessageType messageType) =>
-            {
-                reader.GetBytes(Buffer, reader.AvailableBytes);
-                RemoteObject obj = RemoteObject.Deserialize(Buffer);
-                // If the IP is Ipv6, try to use remoteEndPoint.Address.MapToIpv4();
-                if (remoteEndPoint.Address.AddressFamily == AddressFamily.InterNetworkV6)
-                {
-                    throw new Exception("The received address is IPv6. The code to handle this was not written yet, because" +
-                        " you thought, that it won't be in IPv6. So better fix it.");
-                }
-                OnReceiveCallback(obj, remoteEndPoint.Address.ToString());
-            };
+            if (InstanceCreated)
+                throw new MultipleInstancesException("Only one instance of Server can be created");
+            InstanceCreated = true;
         }
-    }
+        
+        public bool ConnectionExists(IPAddress ip)
+        {
+            lock (Connections)
+                return Connections.Exists(c => ((IPEndPoint)c.Client.RemoteEndPoint).Address.Equals(ip));
+        }
+
+        /// <summary>Will start listening and handling incoming connections. Blocking.</summary>
+        /// <returns>False if there was an error during (or before) listening. Otherwise true.</returns>
+        public void Run(Action<bool> runningCallback)
+        {
+            Debug.WriteLine($"Server's Run method was called. Is already running: {Running}");
+            
+            if (Running)
+                runningCallback.Invoke(false);
+
+            Running = true;
+            Listener = new TcpListener(IPAddress.Any, Port);
+
+            try
+            {
+                Listener.Start();
+            }
+            catch (SocketException e)
+            {
+                Debug.WriteLine($"There was an error during starting a Server socket listening (TcpListener.Start) (err code: {e.ErrorCode})");
+                Debug.WriteLine(e);
+                Running = false;
+                runningCallback.Invoke(false);
+            }
+            
+            Debug.WriteLine($"Server listening on port {Port} (any IP)...");
+            runningCallback.Invoke(true);
+
+            while (true)
+            {
+                TcpClient client = Listener.AcceptTcpClient();
+                lock (Connections) 
+                    Connections.Add(client);
+                
+                ThreadUtils.RunThread(() =>
+                {
+                    var connectionEndpoint = (IPEndPoint)client.Client.RemoteEndPoint;
+                    Debug.WriteLine($"Server got new connection. IP: {connectionEndpoint}");
+                    OnConnect?.Invoke((IPEndPoint)client.Client.RemoteEndPoint);
+                    StartReading(client);
+                    Debug.WriteLine($"Node disconnected from server. IP: {connectionEndpoint}");
+                    lock (Connections)
+                        Connections.Remove(client);
+                });
+            }
+        
+            Listener.Stop();
+            Running = false;
+        }
+
+        public bool Send(IPEndPoint endpoint, byte[] bytes)
+        {
+            TcpClient? client;
+            lock (Connections)
+                client = Connections.Find(c => ((IPEndPoint)c.Client.RemoteEndPoint).Address.Equals(endpoint.Address));
+
+            Debug.WriteLine($"Server's Send method was invoked (ip: {endpoint.ToString()}). Active connection to the desired endpoint found: {client is not null}");
+            bool success = client is not null && Send(client, bytes);
+            Debug.WriteLine($"Server's Send succesfull: {success}");
+            return success;
+        }
+    }   
 }

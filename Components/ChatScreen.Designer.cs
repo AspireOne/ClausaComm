@@ -1,7 +1,7 @@
 ﻿
 namespace ClausaComm.Components
 {
-    partial class MessageContainer
+    partial class ChatScreen
     {
         /// <summary>
         /// Required designer variable.

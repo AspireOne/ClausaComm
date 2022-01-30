@@ -31,7 +31,7 @@ namespace ClausaComm.Contacts
         private string _ip;
         private bool _save;
         private static Contact _userContact;
-        private string _id;
+        private string? _id;
 
         #endregion backing fields
 
@@ -41,11 +41,12 @@ namespace ClausaComm.Contacts
             XmlFile.Contacts.FirstOrDefault(contact => contact.IsUser)
             ?? new Contact(IpUtils.LocalIp) { Id = IdGenerator.GenerateId(8), IsUser = true, Save = true };
 
+        // TODO: Rework the whole IsUser thing (save just UserId: id and remove he IsUser property)
         public bool IsUser { get; private init; }
         public string ProfilePicPath => Path.Combine(ProgramDirectory.ProfilePicsDirPath, $"{Id}.png");
         private bool HasDefaultProfilePic { get; set; } = true;
 
-        public string Id
+        public string? Id
         {
             get => _id;
             set
@@ -96,23 +97,21 @@ namespace ClausaComm.Contacts
             get => _profileImage;
             set
             {
-                if (ProfilePic.Equals(value) || ReferenceEquals(value, ProfilePic))
+                if (value is null || ImageUtils.AreImagesSame(ProfilePic, value))
                     return;
 
-                if (value is null || value.Equals(Resources.default_pfp) || ReferenceEquals(value, Resources.default_pfp))
+                _profileImage = value;
+                HasDefaultProfilePic = false;
+                if (Save)
+                    SaveProfilePicture();
+                
+                /*if (value is null || value.Equals(Resources.default_pfp) || ReferenceEquals(value, Resources.default_pfp))
                 {
                     _profileImage = Resources.default_pfp;
                     HasDefaultProfilePic = true;
                     if (Save)
                         DeleteProfilePicture();
-                }
-                else
-                {
-                    _profileImage = value;
-                    HasDefaultProfilePic = false;
-                    if (Save)
-                        SaveProfilePicture();
-                }
+                }*/
 
                 ProfilePicChange?.Invoke(this, _profileImage);
             }
@@ -193,7 +192,7 @@ namespace ClausaComm.Contacts
                 // Cloning because otherwise the program doesn't let of the image's handle for some reason.
                 image = (Image)fromFile.Clone();
             }
-            catch (Exception e) when (e is FileNotFoundException || e is ArgumentException)
+            catch (Exception e) when (e is FileNotFoundException or ArgumentException)
             {
                 image = null;
             }

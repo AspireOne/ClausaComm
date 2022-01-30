@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -11,7 +12,7 @@ namespace ClausaComm
 {
     public static class Program
     {
-        public const string Version = "0.0.3";
+        public const string Version = "1.0.0";
 
         public static readonly string ThisProgramPath = Path.Combine(Directory.GetCurrentDirectory(),
             Process.GetCurrentProcess().MainModule.FileName);
@@ -36,14 +37,14 @@ namespace ClausaComm
             Close();
         }
 
+        // TODO: Check all thread.new and consider switching it for task.run
         private static void CheckAndDownloadNewVersionAsync(MainForm mainForm)
         {
             _ = Task.Run(() =>
             {
                 (bool newVersionAvailable, string newVersion) = UpdateManager.IsNewVersionAvailable().Result;
                 if (newVersionAvailable)
-                    UpdateManager.DownloadNewVersionBinaryAsync(completedHandler: (_, _) =>
-                        ShowUpdateNotification(mainForm, newVersion));
+                    UpdateManager.DownloadNewVersionBinaryAsync(completedHandler: (_, _) => ShowUpdateNotification(mainForm, newVersion));
             });
         }
 
@@ -58,7 +59,7 @@ namespace ClausaComm
                 Content = $"Version {newVersion} is now available!"
             };
 
-            mainForm.Invoke(new MethodInvoker(delegate { mainForm.NotificationPanel.ShowNotification(notifArgs); }));
+            mainForm.Invoke(() => mainForm.NotificationPanel.ShowNotification(notifArgs));
         }
 
         private static void FinalizeTasksBeforeProgramExit(bool restart)
@@ -76,9 +77,6 @@ namespace ClausaComm
         }
 
         private static bool IsAnotherInstanceRunning()
-        {
-            return Process.GetProcessesByName(
-                Path.GetFileNameWithoutExtension(Assembly.GetEntryAssembly().Location)).Length > 1;
-        }
+            => Process.GetProcessesByName(Path.GetFileNameWithoutExtension(Assembly.GetEntryAssembly()?.Location)).Length > 1;
     }
 }

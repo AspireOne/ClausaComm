@@ -18,18 +18,12 @@ namespace ClausaComm.Components
 
         private NotifyIcon _notifyIcon;
 
-        public NotifyIcon PinNotifyIcon
+        protected readonly NotifyIcon PinNotifyIcon = new()
         {
-            get => _notifyIcon;
-            set
-            {
-                if (ReferenceEquals(_notifyIcon, value))
-                    return;
-
-                _notifyIcon = value;
-                value.Click += (_, _) => UnpinForm();
-            }
-        }
+            Text = "Click to open ClausaComm",
+            Icon = Properties.Resources.program_icon,
+            Visible = false
+        };
 
 
         #region title bar elements initialization
@@ -151,6 +145,7 @@ namespace ClausaComm.Components
         {
             InitializeComponent();
             InitializeComponentFurther();
+            PinNotifyIcon.Click += (_, _) => UnpinForm();
         }
 
         private void InitializeComponentFurther()
@@ -161,20 +156,17 @@ namespace ClausaComm.Components
             Controls.Add(MinimizeButton);
             Controls.Add(MaximizeButton);
             Controls.Add(CloseButton);
-            Location = new Point(0, 0);
+            
             Name = "TitleBar";
             MinimumSize = new Size(0, BarHeight);
             MaximumSize = new Size(int.MaxValue, BarHeight);
-            Dock = DockStyle.Top;
-            TabIndex = 1;
-            BackColor = Color.FromArgb(28, 28, 28);
+            BackColor = Constants.UiConstants.TitleBarColor;
 
             MouseDown += Drag;
             TitleText.MouseDown += Drag;
             ProgramIconBox.MouseDown += Drag;
             Pin.Click += (_, _) =>
             {
-                Debug.WriteLine("Pin clicked");
                 if (Form?.Pinnable == true)
                     PinForm();
             };

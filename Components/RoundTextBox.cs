@@ -26,7 +26,7 @@ namespace ClausaComm.Components
             get => _onHoverBorderColor;
             set
             {
-                _onHoverBorderColor = Constants.UIConstants.ReturnNewOrDefaultColor(Constants.UIConstants.ElementOnHoverColor, value);
+                _onHoverBorderColor = Constants.UiConstants.ReturnNewOrDefaultColor(Constants.UiConstants.ElementOnHoverColor, value);
                 Invalidate();
             }
         }
@@ -71,7 +71,7 @@ namespace ClausaComm.Components
         private GraphicsPath InnerRect;
         private readonly Color Br;
         private Color _borderColor = Color.Transparent;
-        private Color _onHoverBorderColor = Constants.UIConstants.ElementOnHoverColor;
+        private Color _onHoverBorderColor = Constants.UiConstants.ElementOnHoverColor;
         private int _borderSize = 10;
 
 

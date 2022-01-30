@@ -1,12 +1,13 @@
-﻿
+﻿using System.ComponentModel;
+
 namespace ClausaComm.Components
 {
-    partial class ChatPanel
+    partial class SelectableTextBox
     {
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.IContainer components = null;
+        private IContainer components = null;
 
         /// <summary> 
         /// Clean up any resources being used.
@@ -18,6 +19,7 @@ namespace ClausaComm.Components
             {
                 components.Dispose();
             }
+
             base.Dispose(disposing);
         }
 

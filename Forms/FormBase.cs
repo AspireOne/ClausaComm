@@ -1,18 +1,22 @@
 ﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
+using ClausaComm.Components;
 
 namespace ClausaComm.Forms
 {
-    public /*abstract*/ class FormBase : Form
+    public class FormBase : Form
     {
-        //TODO: Make drag region larger
         protected static readonly Padding DraggableWindowBorderSize = new(3, 3, 3, 3);
+        protected static readonly Padding NonDraggableWindowBorderSize = new(3, 3, 3, 3);
 
-        protected static readonly Padding NonDraggableWindowBorderSize = new(0, 0, 0, 0);
-
+        protected readonly TitleBar TitleBar = new()
+        {
+            Dock = DockStyle.Top,
+            Location = new Point(0, 0),
+            Title = "ClausaComm"
+        };
         public event EventHandler<bool> ResizableChanged;
-
         public event EventHandler<bool> PinnableChanged;
 
         private bool _resizable = false;
@@ -59,10 +63,19 @@ namespace ClausaComm.Forms
             }
         }
 
-        public FormBase()
+        protected void InitTitleBar(FormBase form, string title = "ClausaComm")
         {
+            TitleBar.Form = form;
+            TitleBar.Title = title;
+            form.Controls.Add(TitleBar);
+        }
+
+        protected FormBase()
+        {
+            DoubleBuffered = true;
             Padding = Resizable ? DraggableWindowBorderSize : NonDraggableWindowBorderSize;
             MaximizedBounds = Screen.FromHandle(Handle).WorkingArea;
+            BackColor = Constants.UiConstants.TitleBarColor; 
 
             /*
             DraggableSpace = new(false)

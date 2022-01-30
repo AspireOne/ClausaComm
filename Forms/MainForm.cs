@@ -6,7 +6,11 @@ using ClausaComm.Extensions;
 using ClausaComm.Components.ContactData;
 using ClausaComm.Components;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Net;
+using System.Text;
 using ClausaComm.Contacts;
+using ClausaComm.Messages;
 using ClausaComm.Network_Communication;
 
 namespace ClausaComm.Forms
@@ -14,7 +18,7 @@ namespace ClausaComm.Forms
     public partial class MainForm : FormBase
     {
         public readonly HashSet<Contact> Contacts = new();
-        private readonly NetworkBridge Network;
+        private readonly NetworkBridge NetworkBridge;
         private readonly UserStatusWatcher UserStatusWatcher;
 
         public MainForm()
@@ -24,29 +28,20 @@ namespace ClausaComm.Forms
             InitializeProgram();
             UserStatusWatcher = new(Contact.UserContact);
             UserStatusWatcher.Run();
-            Network = new(Contacts, AddContact);
-            Network.Run();
+            NetworkBridge = new(Contacts, AddContact, OnMessageReceived, this);
+            NetworkBridge.Run();
         }
 
         private void InitializeComponentFurther()
         {
             SetStyle(ControlStyles.ResizeRedraw, true);
+            InitTitleBar(this);
 
             // ChatPanel
             ActionPanel1.MainForm = this;
-            ChatPanel1.ActionPanel = ActionPanel1;
-            ChatPanel1.SendIcon = SendIcon1;
-            ChatPanel1.Textbox = chatTextBox1;
-
-            //TitleBar
-            TitleBar.Form = this;
-            TitleBar.BackColor = ChatPanel1.BackColor;
-            TitleBar.PinNotifyIcon = new NotifyIcon
-            {
-                Text = "Click to open ClausaComm",
-                Icon = Properties.Resources.program_icon,
-                Visible = false
-            };
+            ChatScreen.ActionPanel = ActionPanel1;
+            ChatScreen.SendIcon = SendIcon1;
+            ChatScreen.Textbox = ChatTextBox1;
 
             AddContactIcon.Click += AddContactPictureBox_Click;
             ContactSearchBox.TextChanged += ContactSearchBox_TextChanged;
@@ -54,6 +49,7 @@ namespace ClausaComm.Forms
 
             // This form
             Resizable = true;
+            // Affects the borders.
             BackColor = TitleBar.BackColor;
             Pinnable = true;
             Padding = DraggableWindowBorderSize;
@@ -61,71 +57,81 @@ namespace ClausaComm.Forms
 
         private void InitializeProgram()
         {
-            Contact.XmlFile.Contacts.ForEach(AddContact);
-            AddContact(Contact.UserContact);
-
-            PanelOfContactPanels.SimulateClickOnFirstPanel();
+            bool userAdded = false;
+            Contact.XmlFile.Contacts.ForEach(contact =>
+            {
+                AddContact(contact);
+                if (contact.IsUser)
+                    userAdded = true;
+            });
+            
+            // For the first startup.
+            if (!userAdded)
+                AddContact(Contact.UserContact);
+            
+            PanelOfContactPanels.SelectFirstPanel();
+            ChatScreen.OnSendPressed += (message, contact) =>
+            {
+                bool sent = NetworkBridge.SendMessage(message, IPAddress.Parse(contact.Ip));
+                if (sent)
+                {
+                    MessagesXml.SaveMessage(message, contact.Id);
+                    ChatScreen.HandleMessageDelivered(contact, message);
+                }
+            };
         }
 
-        public void AddContact(Contact contactToAdd)
+        private void OnMessageReceived(ChatMessage message, Contact contact)
+        {
+            ContactPanel panel = PanelOfContactPanels.Panels.First(panel => ReferenceEquals(panel.Contact, contact));
+            if (!ReferenceEquals(ContactPanel.CurrentlySelectedPanel, panel))
+                panel.Flash();
+            
+            MessagesXml.SaveMessage(message, contact.Id);
+            Invoke(() => ChatScreen.HandleMessageReceived(contact, message));
+        }
+
+        private void AddContact(Contact contactToAdd)
         {
             Contacts.Add(contactToAdd);
 
             if (contactToAdd is null)
                 throw new ArgumentNullException(nameof(contactToAdd));
 
-            void ClickActionIfUser() => ShowPopup(new EditInfoPopup(contactToAdd));
+            void ClickActionIfUser(Contact contact) => ShowPopup(new EditInfoPopup(contactToAdd));
             void ClickActionIfContact(Contact contact) => ChangeChatContact(contact);
-
+            
+            _ = new ContactPanel(contactToAdd, PanelOfContactPanels) { OnClickAction = ClickActionIfContact };
+    
             if (contactToAdd.IsUser)
-                _ = new ContactPanel(contactToAdd, OwnProfilePanel) { OnClickAction = ClickActionIfUser };
-            else
-                _ = new ContactPanel(contactToAdd, PanelOfContactPanels) { OnClickActionContact = ClickActionIfContact };
+                _ = new ContactPanel(contactToAdd, OwnProfilePanel, true) { OnClickAction = ClickActionIfUser };
 
-            PanelOfContactPanels.SimulateClickOnFirstPanel();
+            PanelOfContactPanels.SelectFirstPanel();
         }
 
         private void ContactSearchBox_TextChanged(object sender, EventArgs e)
         {
             PanelOfContactPanels.Panels.ForEach(panel => panel.Visible =
                 string.IsNullOrWhiteSpace(ContactSearchBox.Text)
-                || panel.Contact.Name
-                    .Split(' ')
+                || panel.Contact.Name.Split(' ')
                     .Any(name => name.Contains(ContactSearchBox.Text, StringComparison.OrdinalIgnoreCase)));
         }
 
         private void AddContactPictureBox_Click(object sender, EventArgs e)
         {
-#if DEBUG
-            // Creating contacts for debugging purposes.
-
-            if (PanelOfContactPanels.Panels.Count() < 2)
+            ShowPopup(new AddContactPopup(contact =>
             {
-                AddContact(new("92.16.1.71") { Name = "Mistr Yoda [Debug]", Id = "d18ss7f8" });
-                AddContact(new("19.168.0.52") { Name = "Descartes [Debug]", Id = "PALDNGHV" });
-                AddContact(new("14.118.8.13") { Name = "Socrates [Debug]", Id = "LCMIDNC" });
-                AddContact(new("132.18.4.94") { Name = "Kant [Debug]", Id = "DFSDGDsq" });
-            }
-
-            // Personalizing the first debug contact for testing purposes.
-
-            if (PanelOfContactPanels.Panels.Any())
-            {
-                PanelOfContactPanels.Panels.ElementAt(0).Contact.ProfilePic = Image.FromFile(@"C:\Users\matej\Pictures\profilovky a obrázky\mitu192.png");
-                PanelOfContactPanels.Panels.ElementAt(0).Contact.CurrentStatus = Contact.Status.Online;
-                PanelOfContactPanels.Panels.ElementAt(0).Contact.Name = "Ej ej ejj";
-                PanelOfContactPanels.Panels.ElementAt(0).FlashPanel();
-            }
-#endif
-
-            ShowPopup(new AddContactPopup(AddContact, this));
+                AddContact(contact);
+                NetworkBridge.Connect(contact);
+            }, this));
         }
 
         private void ChangeControlsEnabled(bool enabled)
         {
             foreach (Control control in Controls)
-                if (!(control is TitleBar))
-                    control.Enabled = enabled;
+            {
+                control.Enabled = enabled;
+            }
         }
 
         private void ShowPopup(Form popup)
@@ -144,7 +150,7 @@ namespace ClausaComm.Forms
 
         private void ChangeChatContact(Contact contact)
         {
-            ChatPanel1.Contact = contact;
+            ChatScreen.SetContact(contact);
         }
 
         private void ChatPanel1_Paint(object sender, PaintEventArgs e)

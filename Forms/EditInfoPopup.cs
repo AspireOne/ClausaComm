@@ -22,7 +22,6 @@ namespace ClausaComm.Forms
         public EditInfoPopup(Contact user)
         {
             User = user;
-
             InitializeComponent();
             InitializeComponentFurther();
         }
@@ -41,16 +40,9 @@ namespace ClausaComm.Forms
 
             SaveButton.Paint += (_, _) => OnSaveButtonPaint();
             SaveButton.MouseDown += (_, _) => OnSaveButtonClick();
-            SaveButton.LineColorOnHover = Constants.UIConstants.ElementOnHoverColor;
+            SaveButton.LineColorOnHover = Constants.UiConstants.ElementOnHoverColor;
 
-            TitleBar.Form = this;
-            TitleBar.Title = "Edit your info";
-        }
-
-
-        private void HeaderLabel_Click(object sender, EventArgs e)
-        {
-
+            InitTitleBar(this, "Edit your info");
         }
 
         private void OnNameBoxTextChange()

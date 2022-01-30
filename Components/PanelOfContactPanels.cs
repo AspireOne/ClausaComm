@@ -26,7 +26,7 @@ namespace ClausaComm.Components
                 Controls.Remove(panel);
         }
 
-        public void SimulateClickOnFirstPanel()
+        public void SelectFirstPanel()
         {
             if (Panels.Any())
                 InvokeOnClick(Panels.Last(), EventArgs.Empty);

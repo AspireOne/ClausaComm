@@ -1,40 +1,52 @@
 ﻿using System;
-using System.Text.Json;
+using System.Configuration;
+using System.Diagnostics;
+using System.IO;
+using System.Text;
+using System.Text.RegularExpressions;
 using ClausaComm.Contacts;
+using ClausaComm.Messages;
+using Microsoft.VisualBasic.ApplicationServices;
+using Newtonsoft.Json;
+using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace ClausaComm.Network_Communication.Objects
 {
     [Serializable]
     public readonly struct RemoteObject
     {
-        public enum ObjectType { Message, ContactData, StatusUpdate, Ping, FullContactDataRequest, DataReceiveConfirmation }
-
-        private static readonly JsonSerializerOptions SerializerOptions = new()
+        private static readonly JsonSerializerSettings SerializerSettings = new()
         {
-            IncludeFields = true,
-            MaxDepth = 64,
-            PropertyNamingPolicy = null
+            TypeNameHandling = TypeNameHandling.Auto,
+            #if DEBUG
+            Formatting = Formatting.Indented,
+            #else
+            Formatting = Formatting.None,
+            #endif
         };
-
-        public readonly ISendable Data;
-        public readonly string ContactId;
-        public readonly string ObjectId;
-
+        public enum ObjectType { ChatMessage, ContactData, StatusUpdate }
+        public ISendable Data { get; init; }
+        public string ContactId { get; init; }
 
         public RemoteObject(ISendable data)
         {
             Data = data;
             ContactId = Contact.UserContact.Id;
-            // We don't need the ID to be too long - the id will be needed usually just for a few seconds.
-            ObjectId = IdGenerator.GenerateId(4);
         }
+        
+        [JsonConstructor]
+        private RemoteObject(ISendable data, string contactId)
+        {
+            ContactId = contactId;
+            Data = data;
+        }
+        
+        public byte[] SerializeToUtf8Bytes() => Encoding.UTF8.GetBytes(Serialize());
+        public string Serialize() => JsonConvert.SerializeObject(this, typeof(RemoteObject), SerializerSettings);
 
-        public string Serialize() => JsonSerializer.Serialize(this, SerializerOptions);
-
-        public byte[] SerializeToUtf8Bytes() => JsonSerializer.SerializeToUtf8Bytes(this, typeof(RemoteObject), SerializerOptions);
-
-        public static RemoteObject Deserialize(byte[] obj) => JsonSerializer.Deserialize<RemoteObject>(obj, SerializerOptions);
-
-        public static RemoteObject Deserialize(string obj) => JsonSerializer.Deserialize<RemoteObject>(obj, SerializerOptions);
+        public static RemoteObject Deserialize(byte[] obj) => Deserialize(Encoding.UTF8.GetString(obj));
+        public static RemoteObject Deserialize(string obj) => JsonConvert.DeserializeObject<RemoteObject>(obj, SerializerSettings);
+        
+        public override string ToString() => $"ContactId: {ContactId} | Data ObjectType: {Data.ObjectType}";
     }
 }
