@@ -19,6 +19,6 @@ namespace ClausaComm.Utils
             };
         }
 
-        public static string GetDelay(int secs) => "ping 127.0.0.1 -n " + (secs + 1) + " > nul";
+        public static string GetDelay(int secs) => $"ping 127.0.0.1 -n {secs + 1} > nul";
     }
 }
