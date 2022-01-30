@@ -23,16 +23,18 @@ namespace ClausaComm.Components
                 return;
             
             BackColor = Parent.BackColor;
-            Parent.BackColorChanged += (_, ev) => this.BackColor = Parent.BackColor;
+            Parent.BackColorChanged += (_, _) => BackColor = Parent.BackColor;
         }
 
         public ChatMessagePanel(ChatMessage message, Contact contact)
         {
             InitializeComponent();
-            DateTimeOffset date = DateTimeOffset.FromUnixTimeMilliseconds(message.Time);
+            // Adding 3_600_000 milliseconds because the time is one hour late for some reason.
+            DateTimeOffset date = DateTimeOffset.FromUnixTimeMilliseconds(message.Time + 3_600_000);
             ChatMessageName.Text = contact.Name;
             ChatMessageTime.Text = date.ToString("dd/MM/yyyy HH:mm");
             ChatMessageText.Text = message.Text;
+
             lock (contact.ProfilePic)
                 ChatMessagePicture.Image = contact.ProfilePic;
 
