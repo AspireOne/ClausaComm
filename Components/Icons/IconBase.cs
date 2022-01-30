@@ -14,21 +14,21 @@ namespace ClausaComm.Components.Icons
             get => base.Image;
             set => base.Image = value;
         }
-        public bool UnderlineOnHover { get; set; } = false;
+        public bool UnderlineOnHover { get; set; }
         public Pen UnderlineAppearance { get; set; } = new(Brushes.White, 3);
 
-        protected bool IsHovering { get; private set; } = false;
-        protected bool IsMouseDown { get; private set; } = false;
+        protected bool IsHovering { get; private set; }
+        protected bool IsMouseDown { get; private set; }
 
-        public bool ColorIconOnHover { get; set; } = false;
-        public bool ColorIconOnClick { get; set; } = false;
+        public bool ColorIconOnHover { get; set; }
+        public bool ColorIconOnClick { get; set; }
 
-        public bool ColorBoxOnHover { get; set; } = false;
+        public bool ColorBoxOnHover { get; set; }
         public SolidBrush BoxOnHoverBrush { get; set; } = new(Color.Transparent);
 
         public static readonly Color DefaultIconColor = Color.White;
         /*
-        public string Info { get; set; } = "debug, delete this TODO";
+        public string Info { get; set; } = "debug, delete this;
         private static readonly Icon InfoIcon = Properties.Resources.info_icon1;
         private const byte InfoIconSize = 12;
         private const byte InfoIconY = 0;

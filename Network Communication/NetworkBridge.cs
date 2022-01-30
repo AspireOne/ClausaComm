@@ -42,16 +42,7 @@ namespace ClausaComm.Network_Communication
             NetworkManager.OnDisconnect += endpoint => uiThread.Invoke(() =>
                 AllContacts.First(contact => contact.Ip.Equals(endpoint.Address)).CurrentStatus = Contact.Status.Offline);
 
-                InstanceCreated = true;
-            
-            // TODO for tomorrow: wrap allContactData remoteObject type in a GreetingMessage or something - we need
-            // TODO to identify first messages and react to them (add contact if doesn't exist, update the contact's data...)
-            // edit: There's no reason we'd need to know that it's the first message. Both parties send an object with
-            // all the contact's data right when they connect, so it'll be immediately updated (and will be no matter
-            // if it's the first message or not).
-            // Leaving the TODO here in case I missed something and it actually IS needed.
-            
-            // TODO somehow solve idle status
+            InstanceCreated = true;
         }
 
         /// <summary>Runs the network connects to all contacts. Non-blocking.</summary>
@@ -95,7 +86,7 @@ namespace ClausaComm.Network_Communication
             NetworkManager.Send(ip, new RemoteObject(contactData).SerializeToUtf8Bytes());
         }
 
-        private void HandleIncomingData(RemoteObject obj, IPAddress ip) // TODO: Change all "string ip" to IPAddresses
+        private void HandleIncomingData(RemoteObject obj, IPAddress ip)
         {
             Logger.Log($"Received data from {ip} (type: {obj.Data.ObjectType})");
 

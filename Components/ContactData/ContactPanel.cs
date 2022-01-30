@@ -17,8 +17,7 @@ namespace ClausaComm.Components.ContactData
         private static event EventHandler SelectedPanelChange;
 
         private static ContactPanel _currentlySelectedPanel;
-
-        // TODO: Move this up to PanelOfContctPanels.
+        
         public static ContactPanel CurrentlySelectedPanel
         {
             get => _currentlySelectedPanel;
@@ -189,7 +188,6 @@ namespace ClausaComm.Components.ContactData
                 {
                     IncreaseFlash = true;
                     Timer.Stop();
-                    //TODO: Remove this quick fix and make the flash take into account base color.
                     Panel.ChangeBackgroundColor(Panel.Selected ? Panel.SelectedPanelBackgroundColor : Color.Transparent);
                 }
             }

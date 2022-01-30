@@ -17,7 +17,7 @@ namespace ClausaComm.Forms
             Multiselect = false,
             CheckPathExists = true,
             DereferenceLinks = true,
-            Filter = "Image Files |*.jpg;*.jpeg;*.png;*.bmp;*.gif;*.exif;*.tiff;*.svg;" // TODO: test svg & tiff - may not work
+            Filter = "Image Files |*.jpg;*.jpeg;*.png;*.bmp;*.gif;*.exif;*.tiff;*.svg;"
         };
 
         public EditInfoPopup(Contact user)
