@@ -41,7 +41,9 @@ namespace ClausaComm.Messages
         }
 
         public static ChatMessage ReconstructMessage(string text, Ways way, string id, long time) => new(text, way, id, time);
-        
+
+        public override string ToString() => $"Way: {Way} | Id: {Id} | Time: {Time} | Text: {Text}";
+
         public override int GetHashCode() => Time.GetHashCode();
         // "Way" check is there because when the user is chatting with themselves, the messages will have the exact
         // same properties (including time, id...) and the only difference will be their way "out / in".
