@@ -67,11 +67,11 @@ namespace ClausaComm.Network_Communication
             {
                 if (!running)
                 {
-                    Debug.WriteLine($"{nameof(NetworkBridge)}: Server did not start - NOT trying to connect to contacts.");
+                    Logger.Log($"{nameof(NetworkBridge)}: Server did not start - NOT trying to connect to contacts.");
                     return;
                 }
 
-                Debug.WriteLine($"{nameof(NetworkBridge)}: Recursively trying to connect to all contacts.");
+                Logger.Log($"{nameof(NetworkBridge)}: Recursively trying to connect to all contacts.");
                 AllContacts.ForEach(Connect);
                 
                 SubscribeToUserEvents();
@@ -84,7 +84,7 @@ namespace ClausaComm.Network_Communication
             {
                 bool connected = NetworkManager.CreateConnection(IPAddress.Parse(contact.Ip));
                 if (!connected)
-                    Debug.WriteLine($"{nameof(NetworkBridge)}: Could not connect to {contact.Ip}");
+                    Logger.Log($"{nameof(NetworkBridge)}: Could not connect to {contact.Ip}");
             });
         }
 
@@ -97,13 +97,13 @@ namespace ClausaComm.Network_Communication
 
         private void HandleIncomingData(RemoteObject obj, string ip) // TODO: Change all "string ip" to IPAddresses
         {
-            Debug.WriteLine($"Received data from {ip} (type: {obj.Data.ObjectType})");
+            Logger.Log($"Received data from {ip} (type: {obj.Data.ObjectType})");
 
             Contact? contact = RetrieveOrCreateContact(obj, ip);
 
             if (contact is null)
             {
-                Debug.WriteLine($"Could not get or create contact. Returning. ip: {ip}");
+                Logger.Log($"Could not get or create contact. Returning. ip: {ip}");
                 return;
             }
             
@@ -116,7 +116,7 @@ namespace ClausaComm.Network_Communication
             if (contact.CurrentStatus == Contact.Status.Offline)
                 contact.CurrentStatus = Contact.Status.Online;
 
-            Debug.WriteLine(contact);
+            Logger.Log(contact);
             
             switch (obj.Data.ObjectType)
             {

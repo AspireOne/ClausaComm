@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using ClausaComm.Components;
 using ClausaComm.Forms;
+using ClausaComm.Utils;
 
 namespace ClausaComm
 {
@@ -70,7 +71,7 @@ namespace ClausaComm
 
         public static void Close(bool restart = false)
         {
-            Debug.WriteLine("closing program");
+            Logger.Log("closing program");
             FinalizeTasksBeforeProgramExit(restart);
             Application.Exit();
             Environment.Exit(0);

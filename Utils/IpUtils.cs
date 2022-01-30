@@ -37,8 +37,8 @@ namespace ClausaComm.Utils
             }
             catch (Exception e)
             {
-                Debug.WriteLine("A handled error occured while refreshing local IP.");
-                Debug.WriteLine(e);
+                Logger.Log("A handled error occured while refreshing local IP.");
+                Logger.Log(e);
                 LocalIp = null;
             }
 

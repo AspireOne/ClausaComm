@@ -196,7 +196,7 @@ namespace ClausaComm.Components
         {
             if (Contact.Id is null)
             {
-                Debug.WriteLine("Send pressed but contact id is null");
+                Logger.Log("Send pressed but contact id is null");
                 return;
             }
 

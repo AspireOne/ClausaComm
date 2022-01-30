@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading;
 using System.Transactions;
 using ClausaComm.Network_Communication.Objects;
+using ClausaComm.Utils;
 
 namespace ClausaComm.Network_Communication.Networking
 {
@@ -26,7 +27,7 @@ namespace ClausaComm.Network_Communication.Networking
         /// <returns>True if successfully connected and not already running; false otherwise.</returns>
         public virtual bool Run()
         {
-            Debug.WriteLine($"{nameof(Client)}: Run method called. Already running: {Running} (endpoint: {TargetEndpoint})");
+            Logger.Log($"{nameof(Client)}: Run method called. Already running: {Running} (endpoint: {TargetEndpoint})");
             if (Running)
                 return false;
             
@@ -38,23 +39,23 @@ namespace ClausaComm.Network_Communication.Networking
             }
             catch (Exception e)
             {
-                Debug.WriteLine($"{nameof(Client)}: There was a handled error during trying to connect a TcpClient (endpoint: {TargetEndpoint})");
-                Debug.WriteLine(e);
+                Logger.Log($"{nameof(Client)}: There was a handled error during trying to connect a TcpClient (endpoint: {TargetEndpoint})");
+                Logger.Log(e);
                 Running = false;
                 return false;
             }
             
             if (!UnderlyingClient.Connected)
             {
-                Debug.WriteLine($"{nameof(Client)}: Could not connect. (endpoint: {TargetEndpoint})");
+                Logger.Log($"{nameof(Client)}: Could not connect. (endpoint: {TargetEndpoint})");
                 Running = false;
                 return false;
             }
             
-            Debug.WriteLine($"{nameof(Client)}: Connected (endpoint: {TargetEndpoint})");
+            Logger.Log($"{nameof(Client)}: Connected (endpoint: {TargetEndpoint})");
             OnConnect?.Invoke(TargetEndpoint);
             StartReading(UnderlyingClient);
-            Debug.WriteLine($"{nameof(Client)}: Stopped reading. (endpoint: {TargetEndpoint})");
+            Logger.Log($"{nameof(Client)}: Stopped reading. (endpoint: {TargetEndpoint})");
             Running = false;
             return true;
         }

@@ -35,7 +35,7 @@ namespace ClausaComm.Network_Communication.Networking
         /// <returns>False if there was an error during (or before) listening. Otherwise true.</returns>
         public void Run(Action<bool> runningCallback)
         {
-            Debug.WriteLine($"Server's Run method was called. Is already running: {Running}");
+            Logger.Log($"Server's Run method was called. Is already running: {Running}");
             
             if (Running)
                 runningCallback.Invoke(false);
@@ -49,13 +49,13 @@ namespace ClausaComm.Network_Communication.Networking
             }
             catch (SocketException e)
             {
-                Debug.WriteLine($"There was an error during starting a Server socket listening (TcpListener.Start) (err code: {e.ErrorCode})");
-                Debug.WriteLine(e);
+                Logger.Log($"There was an error during starting a Server socket listening (TcpListener.Start) (err code: {e.ErrorCode})");
+                Logger.Log(e);
                 Running = false;
                 runningCallback.Invoke(false);
             }
             
-            Debug.WriteLine($"Server listening on port {Port} (any IP)...");
+            Logger.Log($"Server listening on port {Port} (any IP)...");
             runningCallback.Invoke(true);
 
             while (true)
@@ -67,10 +67,10 @@ namespace ClausaComm.Network_Communication.Networking
                 ThreadUtils.RunThread(() =>
                 {
                     var connectionEndpoint = (IPEndPoint)client.Client.RemoteEndPoint;
-                    Debug.WriteLine($"Server got new connection. IP: {connectionEndpoint}");
+                    Logger.Log($"Server got new connection. IP: {connectionEndpoint}");
                     OnConnect?.Invoke((IPEndPoint)client.Client.RemoteEndPoint);
                     StartReading(client);
-                    Debug.WriteLine($"Node disconnected from server. IP: {connectionEndpoint}");
+                    Logger.Log($"Node disconnected from server. IP: {connectionEndpoint}");
                     lock (Connections)
                         Connections.Remove(client);
                 });
@@ -86,9 +86,9 @@ namespace ClausaComm.Network_Communication.Networking
             lock (Connections)
                 client = Connections.Find(c => ((IPEndPoint)c.Client.RemoteEndPoint).Address.Equals(endpoint.Address));
 
-            Debug.WriteLine($"Server's Send method was invoked (ip: {endpoint.ToString()}). Active connection to the desired endpoint found: {client is not null}");
+            Logger.Log($"Server's Send method was invoked (ip: {endpoint.ToString()}). Active connection to the desired endpoint found: {client is not null}");
             bool success = client is not null && Send(client, bytes);
-            Debug.WriteLine($"Server's Send succesfull: {success}");
+            Logger.Log($"Server's Send succesfull: {success}");
             return success;
         }
     }   

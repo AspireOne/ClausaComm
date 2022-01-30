@@ -138,7 +138,7 @@ namespace ClausaComm.Contacts
                     contact.ProfilePic = profileImage;
                     contact._save = true;
 
-                    Debug.WriteLine("Found contact from xml. Data: " + contact);
+                    Logger.Log("Found contact from xml. Data: " + contact);
                     return contact;
                 }
             }

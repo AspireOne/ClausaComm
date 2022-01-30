@@ -7,6 +7,7 @@ using System.Linq;
 using System.Windows.Forms;
 using ClausaComm.Components.Icons;
 using ClausaComm.Forms;
+using ClausaComm.Utils;
 
 namespace ClausaComm.Components
 {
@@ -206,7 +207,7 @@ namespace ClausaComm.Components
             if (Visible)
             {
                 NotificationQueue.Enqueue(args);
-                Debug.WriteLine("Returning notification");
+                Logger.Log("Returning notification");
                 return;
             }
 

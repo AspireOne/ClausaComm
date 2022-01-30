@@ -30,14 +30,14 @@ namespace ClausaComm
         {
             string[] availableVersions = await FetchAvailableVersions();
 
-            Debug.WriteLine("Available versions: ");
-            Array.ForEach(availableVersions, x => Debug.WriteLine(x));
+            Logger.Log("Available versions: ");
+            Array.ForEach(availableVersions, x => Logger.Log(x));
 
             string highestVer = GetHighestVersion(availableVersions);
-            Debug.WriteLine("\nhighest version: " + highestVer);
+            Logger.Log("\nhighest version: " + highestVer);
 
             bool highestIsHigherThanCurr = highestVer.IsHigherThan(Program.Version);
-            Debug.WriteLine("\nHighest available is higher than current: " + highestIsHigherThanCurr);
+            Logger.Log("\nHighest available is higher than current: " + highestIsHigherThanCurr);
 
             return (highestIsHigherThanCurr, highestIsHigherThanCurr ? highestVer : null);
         }
@@ -61,8 +61,8 @@ namespace ClausaComm
             }
             catch (WebException e)
             {
-                Debug.WriteLine("A handled error occured while trying to download new update binary.");
-                Debug.WriteLine(e);
+                Logger.Log("A handled error occured while trying to download new update binary.");
+                Logger.Log(e);
                 errorHandler?.Invoke();
             }
         }

@@ -129,8 +129,8 @@ namespace ClausaComm.Utils
             }
             catch (FileNotFoundException e)
             {
-                Debug.WriteLine("A handled exception was thrown when trying to check if a file is an image - the file does not exist.");
-                Debug.WriteLine(e);
+                Logger.Log("A handled exception was thrown when trying to check if a file is an image - the file does not exist.");
+                Logger.Log(e);
                 return false;
             }
         }

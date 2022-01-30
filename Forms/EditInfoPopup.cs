@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Windows.Forms;
 using ClausaComm.Contacts;
+using ClausaComm.Utils;
 
 namespace ClausaComm.Forms
 {
@@ -76,7 +77,7 @@ namespace ClausaComm.Forms
             }
             catch (Exception ex) when (ex is System.IO.FileNotFoundException or ArgumentException or OutOfMemoryException)
             {
-                System.Diagnostics.Debug.WriteLine(ex.ToString());
+                Logger.Log(ex.ToString());
             }
 
             if (newImage is not null)
