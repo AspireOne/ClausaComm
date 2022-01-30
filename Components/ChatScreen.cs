@@ -127,6 +127,8 @@ namespace ClausaComm.Components
                 panel.Dock = DockStyle.Top;
                 panel.Parent = ChatPanel;
                 ChatPanel.Controls.Add(panel);
+                if (loading || message.Way == ChatMessage.Ways.In) 
+                    panel.MarkDelivered();
 
                 if (!loading)
                 {
@@ -141,13 +143,13 @@ namespace ClausaComm.Components
         // This is to change the message's status from "sending" or "not sent" to "sent".
         public void HandleMessageDelivered(Contact contact, ChatMessage message)
         {
-            for (int i = Controls.Count - 1; i >= 0; --i)
+            // Iterates backwards, so that the first (latest) message is likely to be the one.
+            for (int i = ChatPanel.Controls.Count - 1; i >= 0; --i)
             {
-                // TODO: Maybe remove the first check.
-                if (Controls[i].Name != "ChatPanel" || Controls[i] is not ChatMessagePanel panel || panel.Message.Id == message.Id)
+                if (ChatPanel.Controls[i] is not ChatMessagePanel panel || panel.Message != message)
                     continue;
                 
-                panel.Delivered = true;
+                panel.MarkDelivered();
                 break;
             }
         }
@@ -184,7 +186,6 @@ namespace ClausaComm.Components
                 if (!CachedChats.TryGetValue(contact, out messages))
                     return;
             }
-            // TODO: Time is one hour late.
 
             messages.GetAmount(InitialMessages).ForEach(message => AddMessage(contact, message, true, true));
 

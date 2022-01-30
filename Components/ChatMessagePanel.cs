@@ -1,21 +1,18 @@
 using System;
+using System.Drawing;
 using System.Windows.Forms;
 using ClausaComm.Contacts;
 using ClausaComm.Messages;
+using ClausaComm.Utils;
 
 namespace ClausaComm.Components
 {
     public partial class ChatMessagePanel : UserControl
     {
-        // TODO: Change the color of the message to gray or something based on this.
-        public bool Delivered { get; set; }
+        public bool Delivered { get; private set; }
         public readonly Contact Contact;
         public readonly ChatMessage Message;
-        public ChatMessagePanel()
-        {
-            InitializeComponent();
-        }
-        
+
         protected override void OnParentChanged(EventArgs e)
         {
             base.OnParentChanged(e);
@@ -24,6 +21,12 @@ namespace ClausaComm.Components
             
             BackColor = Parent.BackColor;
             Parent.BackColorChanged += (_, _) => BackColor = Parent.BackColor;
+        }
+
+        public void MarkDelivered()
+        {
+            Delivered = true;
+            ChatMessageText.ForeColor = Constants.UiConstants.ChatTextColor;
         }
 
         public ChatMessagePanel(ChatMessage message, Contact contact)

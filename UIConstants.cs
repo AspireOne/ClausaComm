@@ -19,6 +19,7 @@ namespace ClausaComm
 
             public static readonly Color ChatBackColor = Color.FromArgb(49, 49, 52);
             public static readonly Color ChatTextColor = Color.FromArgb(220, 220, 220);
+            public static readonly Color ChatTextColorUndelivered = Color.FromArgb(120, 120, 120);
             
             public static readonly Color ChatTextBoxBackColor = Color.FromArgb(62, 62, 64);
             public static readonly Color ChatTextBoxTextColor = Color.FromArgb(190, 190, 190);
