@@ -2,6 +2,7 @@
 using System;
 using System.Drawing;
 using System.Linq;
+using System.Net;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using ClausaComm.Contacts;
@@ -56,9 +57,10 @@ namespace ClausaComm.Forms
         {
             if (AddButton.Cursor == AddButtonProps.AllowCursor)
             {
-                if (MainForm.Contacts.All(x => x.Ip != IpBox.Textbox.Text))
+                IPAddress ip = IPAddress.Parse(IpBox.Textbox.Text);
+                if (MainForm.Contacts.All(x => !x.Ip.Equals(ip)))
                 {
-                    var contact = new Contact(IpBox.Textbox.Text);
+                    var contact = new Contact(ip);
                     Callback(contact);
                 }
                 else
@@ -83,10 +85,7 @@ namespace ClausaComm.Forms
 
             int amountOfPeriods = ip.Count(x => x == '.');
 
-            if (ip.Split('.').Any(x => x.Length > 3) || amountOfPeriods > 3 || ip.Contains(".."))
-                RevertTextBox();
-
-            if (ip.Any(ch => ch != '.' && !char.IsDigit(ch)))
+            if (ip.Any(ch => ch != '.' && !char.IsDigit(ch)) || ip.Split('.').Any(x => x.Length > 3) || amountOfPeriods > 3 || ip.Contains("..") || ip.StartsWith('.'))
             {
                 RevertTextBox();
                 return;
@@ -103,7 +102,7 @@ namespace ClausaComm.Forms
             GetCaretPos(out Point p);
             // Returns +9 for each number and +4 for a period. We're finding the amount of periods and adding 6 for each of them, so
             // that they act like a number, in order to be able to count caret position properly. Yeah, ugly.
-            CaretPositionBefore = (p.X + (amountOfPeriods * 6)) / 9;
+            CaretPositionBefore = (p.X + amountOfPeriods * 6) / 9;
 
             bool ipCorrect = IpUtils.IsIpCorrect(ip);
             AddButton.Cursor = ipCorrect ? AddButtonProps.AllowCursor : AddButtonProps.DisallowCursor;
