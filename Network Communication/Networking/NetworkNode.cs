@@ -113,8 +113,13 @@ namespace ClausaComm.Network_Communication.Networking
                     Debug.WriteLine($"{nameof(NetworkNode)}: Succesfully read data from a stream (endpoint: {remoteHost}).");
                     byte[] readBytes = new byte[readBytesAmount];
                     Array.Copy(ReadBuffer, readBytes, readBytesAmount);
-                    string data = Encoding.UTF8.GetString(RemoteObject.Deserialize(readBytes).SerializeToUtf8Bytes()); // todo remove this
+                    string data = Encoding.UTF8.GetString(readBytes); // todo remove this
                     Debug.WriteLine("the gotten data: " + (data.Length > 500 ? data[..500] : data)); // TODO: Remove this.
+                    /*new Thread(() =>
+                    {
+                        Thread.Sleep(1000);
+                        OnReceive?.Invoke(RemoteObject.Deserialize(readBytes), remoteHost);
+                    }).Start();*/
                     OnReceive?.Invoke(RemoteObject.Deserialize(readBytes), remoteHost);
                 }
                 
