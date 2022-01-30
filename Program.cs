@@ -37,8 +37,7 @@ namespace ClausaComm
             Application.Run(mainForm);
             Close();
         }
-
-        // TODO: Check all thread.new and consider switching it for task.run
+        
         private static void CheckAndDownloadNewVersionAsync(MainForm mainForm)
         {
             _ = Task.Run(() =>

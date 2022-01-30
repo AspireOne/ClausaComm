@@ -218,8 +218,6 @@ namespace ClausaComm.Network_Communication
 
         private void HandleMessageReceived(ChatMessage message, Contact sender)
         {
-            // TODO: Is it a good idea to save the ingoing message here, when outgoing messages are saved
-            // somewhere else? Save it elsewhere.
             message = ChatMessage.ReconstructMessage(message.Text, ChatMessage.Ways.In, message.Id, message.Time);
             MessageReceivedMethod(message, sender);
         }
