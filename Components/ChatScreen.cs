@@ -181,7 +181,8 @@ namespace ClausaComm.Components
             if (!CachedChats.TryGetValue(contact, out messages))
             {
                 MessagesXml.GetMessages(contact.Id).Reverse().ForEach(message => AddMessage(contact, message, true, false));
-                CachedChats.TryGetValue(contact, out messages);
+                if (!CachedChats.TryGetValue(contact, out messages))
+                    return;
             }
             // TODO: Time is one hour late.
 
