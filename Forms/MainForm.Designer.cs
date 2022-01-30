@@ -1,6 +1,7 @@
 ﻿
 using System.Drawing;
 using System.Windows.Forms;
+using ClausaComm.Messages;
 
 namespace ClausaComm.Forms
 {
@@ -192,13 +193,12 @@ namespace ClausaComm.Forms
             | System.Windows.Forms.AnchorStyles.Right)));
             this.ChatTextBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.ChatTextBox1.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.ChatTextBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(190)))), ((int)(((byte)(190)))), ((int)(((byte)(190)))));
-            this.ChatTextBox1.MaxLength = 20000;
+            this.ChatTextBox1.MaxLength = ChatMessage.MaxTextLength;
             this.ChatTextBox1.Multiline = true;
             this.ChatTextBox1.Name = "ChatTextBox1";
             this.ChatTextBox1.PlaceholderText = " Write a message...";
             this.ChatTextBox1.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.ChatTextBox1.Location = new System.Drawing.Point(4, 3);
+            this.ChatTextBox1.Location = new System.Drawing.Point(4, 1);
             this.ChatTextBox1.Size = new System.Drawing.Size(820, 70);
             this.ChatTextBox1.Padding = new Padding(3);
             this.ChatTextBox1.TabIndex = 3;
