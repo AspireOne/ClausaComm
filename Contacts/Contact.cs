@@ -174,6 +174,8 @@ namespace ClausaComm.Contacts
         }
 
         public override bool Equals(object obj) => obj is Contact contact && contact.Id == Id && contact.Ip == Ip;
+        public static bool operator ==(Contact left, Contact right) => left.Id == right.Id && left.Ip.Equals(right.Ip);
+        public static bool operator !=(Contact left, Contact right) => left.Id != right.Id || !left.Ip.Equals(right.Ip);
 
         public override string ToString() => $"Name: {Name} | ID: {Id} | IsUser: {IsUser} | Save: {Save} | IP: {Ip}";
 

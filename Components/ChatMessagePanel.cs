@@ -9,7 +9,6 @@ namespace ClausaComm.Components
 {
     public partial class ChatMessagePanel : UserControl
     {
-        public bool Delivered { get; private set; }
         public readonly Contact Contact;
         public readonly ChatMessage Message;
 
@@ -23,10 +22,11 @@ namespace ClausaComm.Components
             Parent.BackColorChanged += (_, _) => BackColor = Parent.BackColor;
         }
 
-        public void MarkDelivered()
+        private void SetDelivered(bool delivered)
         {
-            Delivered = true;
-            ChatMessageText.ForeColor = Constants.UiConstants.ChatTextColor;
+            ChatMessageText.ForeColor = delivered
+                ? Constants.UiConstants.ChatTextColor
+                : Constants.UiConstants.ChatTextColorUndelivered;
         }
 
         public ChatMessagePanel(ChatMessage message, Contact contact)
@@ -50,6 +50,9 @@ namespace ClausaComm.Components
 
             Contact = contact;
             Message = message;
+            SetDelivered(message.Way == ChatMessage.Ways.In || message.Delivered);
+            if (message.Way == ChatMessage.Ways.Out)
+                message.DeliveredChanged += (_, delivered) => SetDelivered(delivered);
         }
     }
 }

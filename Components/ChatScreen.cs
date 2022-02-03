@@ -24,6 +24,7 @@ namespace ClausaComm.Components
         private const int InitialMessages = 15;
         //private const int MaxMessages = 15;
         private readonly Dictionary<Contact, MessageCollection> CachedChats = new();
+        private readonly Dictionary<Contact, string> CachedTextboxes = new();
 
         public delegate void SendPressedHandler(ChatMessage message, Contact contact);
 
@@ -127,8 +128,6 @@ namespace ClausaComm.Components
                 panel.Dock = DockStyle.Top;
                 panel.Parent = ChatPanel;
                 ChatPanel.Controls.Add(panel);
-                if (loading || message.Way == ChatMessage.Ways.In) 
-                    panel.MarkDelivered();
 
                 if (!loading)
                 {
@@ -143,22 +142,21 @@ namespace ClausaComm.Components
         // This is to change the message's status from "sending" or "not sent" to "sent".
         public void HandleMessageDelivered(Contact contact, ChatMessage message)
         {
-            // Iterates backwards, so that the first (latest) message is likely to be the one.
-            for (int i = ChatPanel.Controls.Count - 1; i >= 0; --i)
-            {
-                if (ChatPanel.Controls[i] is not ChatMessagePanel panel || panel.Message != message)
-                    continue;
-                
-                panel.MarkDelivered();
-                break;
+            CachedChats.TryGetValue(contact, out var messages); 
+            messages.GetAmount(0).First(msg => msg == message).Delivered = true;
             }
-        }
-        
+
         public void SetContact(Contact contact)
         {
             if (ReferenceEquals(Contact, contact))
                 return;
-            
+
+            if (Contact is not null)
+            {
+                CachedTextboxes[Contact] = Textbox.Text;
+                Textbox.Text = CachedTextboxes.TryGetValue(contact, out string text) ? text : "";   
+            }
+
             ChangeContactSpecificElementsVisibility(contact is not null);
             NoContactLabel.Visible = contact is null;
             Contact = contact;
@@ -179,8 +177,7 @@ namespace ClausaComm.Components
                 return;
             
             // The XML takes it from the oldest.
-            MessageCollection messages;
-            if (!CachedChats.TryGetValue(contact, out messages))
+            if (!CachedChats.TryGetValue(contact, out var messages))
             {
                 MessagesXml.GetMessages(contact.Id).Reverse().ForEach(message => AddMessage(contact, message, true, false));
                 if (!CachedChats.TryGetValue(contact, out messages))
@@ -205,8 +202,8 @@ namespace ClausaComm.Components
             Textbox.Text = "";
             if (textTrimmed == "")
                 return;
-            
-            ChatMessage msg = new(textTrimmed);
+
+            ChatMessage msg = new(textTrimmed) { Delivered = false };
             AddMessage(Contact, msg);
             OnSendPressed?.Invoke(msg, Contact);
         }

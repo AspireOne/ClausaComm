@@ -10,8 +10,9 @@ using Newtonsoft.Json;
 namespace ClausaComm.Messages
 {
     [Serializable]
-    public readonly struct ChatMessage : ISendable
+    public class ChatMessage : ISendable
     {
+        public event EventHandler<bool> DeliveredChanged;
         public enum Ways { In, Out }
         public const int MaxTextLength = 6000;
         public RemoteObject.ObjectType ObjectType => RemoteObject.ObjectType.ChatMessage;
@@ -21,6 +22,18 @@ namespace ClausaComm.Messages
         public string Text { get; init; }
         //public readonly MessageFile File;
         public string Id { get; private init; }
+        [JsonIgnore]
+        private bool _delivered;
+        [JsonIgnore]
+        public bool Delivered
+        {
+            get => _delivered;
+            set
+            {
+                _delivered = value;
+                DeliveredChanged?.Invoke(this, value);
+            }
+        }
 
         public ChatMessage(string text, Ways way = Ways.Out)
         {
@@ -28,7 +41,8 @@ namespace ClausaComm.Messages
                 throw new ArgumentException("The text is too long.", nameof(text));
             
             Time = DateTimeOffset.Now.ToUnixTimeMilliseconds();
-            Id = IdGenerator.GenerateId(5);
+            Id = IdGenerator.GenerateId(6);
+            Delivered = true;
             Text = text;
             Way = way;
         }
