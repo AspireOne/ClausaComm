@@ -131,7 +131,7 @@ namespace ClausaComm.Network_Communication
 
         public bool SendMessage(ChatMessage message, IPAddress ip)
         {
-            RemoteObject obj = new RemoteObject(message);
+            RemoteObject obj = new(message);
             return NetworkManager.Send(ip, obj.SerializeToUtf8Bytes());
         }
 

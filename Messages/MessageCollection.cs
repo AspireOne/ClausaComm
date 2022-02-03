@@ -32,7 +32,7 @@ public class MessageCollection
         Messages.Add(message);
     }
     
-    /// <param name="amount">The amount of messages to return (0 for all).</param>
+    /// <param name="amount">The amount of messages to return from the latest (0 for all).</param>
     /// <returns>First {amount} latest messages.</returns>
     public IEnumerable<ChatMessage> GetAmount(int amount)
     {
