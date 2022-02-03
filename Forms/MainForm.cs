@@ -74,8 +74,7 @@ namespace ClausaComm.Forms
             PanelOfContactPanels.SelectFirstPanel();
             ChatScreen.OnSendPressed += (message, contact) =>
             {
-                bool sent = NetworkBridge.SendMessage(message, contact.Ip);
-                if (sent)
+                if (NetworkBridge.SendMessage(message, contact.Ip))
                 {
                     MessagesXml.SaveMessage(message, contact.Id);
                     ChatScreen.HandleMessageDelivered(contact, message);
@@ -90,6 +89,9 @@ namespace ClausaComm.Forms
                 panel.Flash();
             
             MessagesXml.SaveMessage(message, contact.Id);
+            if (ChatScreen.Contact != contact) 
+                Sound.PlayNotificationSound();
+            
             Invoke(() => ChatScreen.HandleMessageReceived(contact, message));
         }
 
