@@ -8,7 +8,7 @@ namespace ClausaComm.Forms
     public class FormBase : Form
     {
         protected static readonly Padding DraggableWindowBorderSize = new(3, 3, 3, 3);
-        protected static readonly Padding NonDraggableWindowBorderSize = new(3, 3, 3, 3);
+        protected static readonly Padding NonDraggableWindowBorderSize = new(0, 0, 0, 0);
 
         protected readonly TitleBar TitleBar = new()
         {
