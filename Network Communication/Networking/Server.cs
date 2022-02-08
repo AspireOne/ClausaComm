@@ -53,6 +53,7 @@ namespace ClausaComm.Network_Communication.Networking
                 Logger.Log(e);
                 Running = false;
                 runningCallback.Invoke(false);
+                return;
             }
             
             Logger.Log($"Server listening on port {Port} (any IP)...");
