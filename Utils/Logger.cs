@@ -7,9 +7,12 @@ namespace ClausaComm.Utils;
 
 public static class Logger
 {
+    public static bool Disabled = false;
     public const int MaxTextLength = 500;
     public static void Log(string? str)
     {
+        if (Disabled)
+            return;
 #if !DEBUG
         return;
 #endif
@@ -23,6 +26,8 @@ public static class Logger
 
     public static void Log(Func<object> text, bool async = false)
     {
+        if (Disabled)
+            return;
 #if !DEBUG
         return;
 #endif
