@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net;
+using ClausaComm.Network_Communication.Objects;
 
 namespace ClausaComm.Network_Communication.Networking
 {
@@ -37,11 +38,11 @@ namespace ClausaComm.Network_Communication.Networking
         /// and if so, uses it's Send method overloaded from NetworkNode.
         /// </summary>
         /// <returns>True if a connection was found and message successfully sent. False otherwise.</returns>
-        public static bool Send(IPAddress ip, byte[] bytes)
+        public static bool Send(IPAddress ip, RemoteObject obj)
         {
             IPEndPoint endpoint = new(ip, Server.Port);
             Client client = GetConnectionOrNull(endpoint);
-            return client?.Send(bytes) ?? Server.Send(endpoint, bytes);
+            return client?.Send(obj) ?? Server.Send(endpoint, obj);
         }
 
         /// <summary>

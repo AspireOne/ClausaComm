@@ -84,7 +84,7 @@ namespace ClausaComm.Network_Communication
         private static void HandleNewConnection(IPAddress ip)
         {
             RemoteContactData contactData = new(Contact.UserContact);
-            NetworkManager.Send(ip, new RemoteObject(contactData).SerializeToUtf8Bytes());
+            NetworkManager.Send(ip, new RemoteObject(contactData));
         }
 
         private void HandleIncomingData(RemoteObject obj, IPAddress ip)
@@ -132,7 +132,7 @@ namespace ClausaComm.Network_Communication
         public bool SendMessage(ChatMessage message, IPAddress ip)
         {
             RemoteObject obj = new(message);
-            return NetworkManager.Send(ip, obj.SerializeToUtf8Bytes());
+            return NetworkManager.Send(ip, obj);
         }
 
         /// <summary>
@@ -205,7 +205,7 @@ namespace ClausaComm.Network_Communication
         /// <summary> Sends the object to all not-offline contacts.</summary>
         private void SendToAll(RemoteObject obj)
         {
-            AllContacts.NotOffline().ForEach(contact => NetworkManager.Send(contact.Ip, obj.SerializeToUtf8Bytes()));
+            AllContacts.NotOffline().ForEach(contact => NetworkManager.Send(contact.Ip, obj));
         }
 
         private void HandleMessageReceived(ChatMessage message, Contact sender)

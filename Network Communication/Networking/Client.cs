@@ -60,6 +60,6 @@ namespace ClausaComm.Network_Communication.Networking
             return true;
         }
 
-        public bool Send(byte[] bytes) => Send(UnderlyingClient, bytes);
+        public bool Send(RemoteObject obj) => Send(UnderlyingClient, obj);
     }
 }

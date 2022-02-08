@@ -6,6 +6,7 @@ using System.Net.Sockets;
 using System.Threading;
 using System.Transactions;
 using ClausaComm.Exceptions;
+using ClausaComm.Network_Communication.Objects;
 using ClausaComm.Utils;
 
 namespace ClausaComm.Network_Communication.Networking
@@ -81,14 +82,14 @@ namespace ClausaComm.Network_Communication.Networking
             Running = false;
         }
 
-        public bool Send(IPEndPoint endpoint, byte[] bytes)
+        public bool Send(IPEndPoint endpoint, RemoteObject obj)
         {
             TcpClient? client;
             lock (Connections)
                 client = Connections.Find(c => ((IPEndPoint)c.Client.RemoteEndPoint).Address.Equals(endpoint.Address));
 
             Logger.Log($"Server's Send method was invoked (ip: {endpoint.ToString()}). Active connection to the desired endpoint found: {client is not null}");
-            bool success = client is not null && Send(client, bytes);
+            bool success = client is not null && Send(client, obj);
             Logger.Log($"Server's Send succesfull: {success}");
             return success;
         }

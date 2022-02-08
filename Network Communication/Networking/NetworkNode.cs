@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Text.Unicode;
 using System.Threading;
 using ClausaComm.Extensions;
 using ClausaComm.Network_Communication.Objects;
@@ -26,7 +27,7 @@ namespace ClausaComm.Network_Communication.Networking
         public ConnectionChangeHandler? OnDisconnect;
         public ConnectionChangeHandler? OnConnect;
         
-        protected static bool Send(TcpClient client, byte[] bytes) // RemoteObject
+        protected static bool Send(TcpClient client, RemoteObject obj) // RemoteObject
         {
             if (!client.Connected)
             {
@@ -36,12 +37,14 @@ namespace ClausaComm.Network_Communication.Networking
             
             Logger.Log($"{nameof(NetworkNode)}: Send method invoked to endpoint {(IPEndPoint)client.Client.RemoteEndPoint}");
 
+            string dataStr = obj.Serialize();
+            byte[] dataBytes = Encoding.UTF8.GetBytes(dataStr);
             try
             {
                 lock (client.GetStream())
                 {
-                    Logger.Log(() => $"{nameof(NetworkNode)} sending {Encoding.UTF8.GetString(bytes)} ({bytes.Length} bytes)", true);
-                    byte[] data = bytes.Concat(new[] { EodByte }).ToArray();
+                    Logger.Log($"{nameof(NetworkNode)} sending ({dataBytes.Length} bytes): {dataStr}");
+                    byte[] data = dataBytes.Concat(new[] { EodByte }).ToArray();
                     client.GetStream().Write(data, 0, data.Length);
                 }
             }
