@@ -57,7 +57,7 @@ namespace ClausaComm.Components.Icons
             {
                 // Resizing the image manually before assigning it to PictureBox, because it will have higher quality.
                 OriginalImage = value;
-                Image resized = ImageUtils.HQResize(value, Width - (Padding.Left + Padding.Right), Height - (Padding.Top + Padding.Bottom));
+                Image resized = ImageUtils.Resize(value, Width - (Padding.Left + Padding.Right), Height - (Padding.Top + Padding.Bottom));
                 base.Image = resized;
             }
         }
@@ -74,7 +74,7 @@ namespace ClausaComm.Components.Icons
         {
             base.OnResize(e);
             // The default Image resizing has a shit quality, so we're doing it ourselves.
-            Image resized = ImageUtils.HQResize(OriginalImage, Width - (Padding.Left + Padding.Right), Height - (Padding.Top + Padding.Bottom));
+            Image resized = ImageUtils.Resize(OriginalImage, Width - (Padding.Left + Padding.Right), Height - (Padding.Top + Padding.Bottom));
             base.Image = resized;
         }
 

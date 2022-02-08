@@ -103,7 +103,7 @@ namespace ClausaComm.Contacts
                 if (Save)
                     SaveProfilePicture();
                 
-                /*if (value is null || value.Equals(Resources.default_pfp) || ReferenceEquals(value, Resources.default_pfp))
+                /*if (value is null || ImageUtils.AreImagesSame(Resources.default_pfp, value))
                 {
                     _profileImage = Resources.default_pfp;
                     HasDefaultProfilePic = true;

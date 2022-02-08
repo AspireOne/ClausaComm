@@ -74,6 +74,10 @@ namespace ClausaComm.Forms
             try
             {
                 newImage = Image.FromFile(SelectImageDialog.FileName);
+                /*int divisor = newImage.Width <= 300 ? 1 : newImage.Width / 300;
+                int newWidth = newImage.Width / divisor;
+                int newHeight = newImage.Height / divisor;
+                newImage = ImageUtils.Resize(newImage, newWidth, newHeight);*/
             }
             catch (Exception ex) when (ex is System.IO.FileNotFoundException or ArgumentException or OutOfMemoryException)
             {

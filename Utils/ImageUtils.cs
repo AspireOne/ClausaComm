@@ -9,7 +9,15 @@ namespace ClausaComm.Utils
 {
     internal static class ImageUtils
     {
-        public static Image ClipToCircle(Image img)
+        /// <summary>
+        /// Resize the image to the specified width and height.
+        /// </summary>
+        /// <param name="image">The image to resize.</param>
+        /// <param name="width">The width to resize to.</param>
+        /// <param name="height">The height to resize to.</param>
+        /// <returns>The resized image.</returns>
+
+        public static Bitmap ClipToCircle(Image img)
         {
             if (img is null)
                 return null;
@@ -20,7 +28,7 @@ namespace ClausaComm.Utils
             int radiusMultiplied = 2 * radius;
 
             Bitmap tmp = new(radiusMultiplied, radiusMultiplied);
-            using var g = Graphics.FromImage(tmp);
+            using Graphics g = Graphics.FromImage(tmp);
             g.SmoothingMode = SmoothingMode.HighQuality;
             g.TranslateTransform(tmp.Width / 2, tmp.Height / 2);
             using GraphicsPath gp = new();
@@ -33,15 +41,13 @@ namespace ClausaComm.Utils
                 new Rectangle(-radius, -radius, radiusMultiplied, radiusMultiplied),
                 new Rectangle(x - radius, y - radius, radiusMultiplied, radiusMultiplied),
                 GraphicsUnit.Pixel);
-
+            
             return tmp;
         }
 
         public static bool AreImagesSame(Image left, Image right)
         {
-            return Equals(left, right) ||
-                   ReferenceEquals(left, right) ||
-                   string.Equals(ImageToBase64String(left), ImageToBase64String(right));
+            return ReferenceEquals(left, right) || string.Equals(ImageToBase64String(left), ImageToBase64String(right));
         }
 
         public static Image ForEveryPixel(this Image img, Func<Color, Color> func)
@@ -87,7 +93,8 @@ namespace ClausaComm.Utils
             });
         }
 
-        public static Bitmap HQResize(Image image, int width, int height)
+        //https://stackoverflow.com/a/24199315/13284148
+        public static Bitmap Resize(Image image, int width, int height)
         {
             if (image is null)
                 return null;
@@ -105,9 +112,11 @@ namespace ClausaComm.Utils
                 graphics.SmoothingMode = SmoothingMode.HighQuality;
                 graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
 
-                using var wrapMode = new ImageAttributes();
-                wrapMode.SetWrapMode(WrapMode.TileFlipXY);
-                graphics.DrawImage(image, destRect, 0, 0, image.Width, image.Height, GraphicsUnit.Pixel, wrapMode);
+                using (var wrapMode = new ImageAttributes())
+                {
+                    wrapMode.SetWrapMode(WrapMode.TileFlipXY);
+                    graphics.DrawImage(image, destRect, 0, 0, image.Width,image.Height, GraphicsUnit.Pixel, wrapMode);
+                }
             }
 
             return destImage;
