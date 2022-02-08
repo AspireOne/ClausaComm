@@ -18,6 +18,7 @@ namespace ClausaComm.Messages
         public RemoteObject.ObjectType ObjectType => RemoteObject.ObjectType.ChatMessage;
 
         public long Time { get; private init; }
+        [JsonIgnore]
         public Ways Way { get; init; }
         public string Text { get; init; }
         //public readonly MessageFile File;
