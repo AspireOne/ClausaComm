@@ -6,6 +6,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using ClausaComm.Extensions;
 using ClausaComm.Network_Communication.Objects;
 using ClausaComm.Utils;
 
@@ -16,14 +17,15 @@ namespace ClausaComm.Network_Communication.Networking
         public delegate void ReceiveHandler(RemoteObject message, IPEndPoint endpoint);
         public delegate void ConnectionChangeHandler(IPEndPoint endpoint);
         // TODO: Change the implementation so that > 10mb (pictures, files etc.) fit.
-        private static readonly byte[] ReadBuffer = new byte[10485760]; // One buffer for all connections? Damn, let's see how this goes.
+        private static readonly byte[] ReadBuffer = new byte[10 * 1048576]; // x mb * bytes.
         // End Of Data byte - signalises the end of data.
-        private const byte EodByte = 255; //0xFF
+        private const byte EodByte = 255; // End Of Data Byte: 0xFF - forbidden by UTF-8.
+        private const byte EopdByte = 254; // End Of Partial Data Byte: 0xFE - forbidden by UTF-8.
         public bool Running { get; protected set; }
         public ReceiveHandler? OnReceive;
         public ConnectionChangeHandler? OnDisconnect;
         public ConnectionChangeHandler? OnConnect;
-
+        
         protected static bool Send(TcpClient client, byte[] bytes) // RemoteObject
         {
             if (!client.Connected)
@@ -38,8 +40,8 @@ namespace ClausaComm.Network_Communication.Networking
             {
                 lock (client.GetStream())
                 {
-                    Logger.Log($"{nameof(NetworkNode)} sending {Encoding.UTF8.GetString(bytes)}");
-                    byte[] data = bytes.Concat(new byte[] { EodByte }).ToArray();
+                    Logger.Log(() => $"{nameof(NetworkNode)} sending {Encoding.UTF8.GetString(bytes)} ({bytes.Length} bytes)", true);
+                    byte[] data = bytes.Concat(new[] { EodByte }).ToArray();
                     client.GetStream().Write(data, 0, data.Length);
                 }
             }
