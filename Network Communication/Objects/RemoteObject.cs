@@ -24,7 +24,7 @@ namespace ClausaComm.Network_Communication.Objects
             Formatting = Formatting.None,
             #endif
         };
-        public enum ObjectType { ChatMessage, ContactData, StatusUpdate }
+        public enum ObjectType { ChatMessage, File, ContactData, StatusUpdate }
         public ISendable Data { get; init; }
         public string ContactId { get; init; }
 

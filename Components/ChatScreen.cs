@@ -203,7 +203,7 @@ namespace ClausaComm.Components
             if (textTrimmed == "")
                 return;
 
-            ChatMessage msg = new(textTrimmed) { Delivered = false };
+            ChatMessage msg = new(textTrimmed) { Delivered = false, FilePath = @"C:\Users\matej\Desktop\filesizes\20mb.txt"};
             AddMessage(Contact, msg);
             OnSendPressed?.Invoke(msg, Contact);
         }

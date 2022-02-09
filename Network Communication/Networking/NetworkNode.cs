@@ -7,7 +7,9 @@ using System.Net.Sockets;
 using System.Text;
 using System.Text.Unicode;
 using System.Threading;
+using System.Windows.Forms;
 using ClausaComm.Extensions;
+using ClausaComm.Messages;
 using ClausaComm.Network_Communication.Objects;
 using ClausaComm.Utils;
 
@@ -17,11 +19,10 @@ namespace ClausaComm.Network_Communication.Networking
     {
         public delegate void ReceiveHandler(RemoteObject message, IPEndPoint endpoint);
         public delegate void ConnectionChangeHandler(IPEndPoint endpoint);
-        // TODO: Change the implementation so that > 10mb (pictures, files etc.) fit.
-        private static readonly byte[] ReadBuffer = new byte[10 * 1048576]; // x mb * bytes.
-        // End Of Data byte - signalises the end of data.
-        private const byte EodByte = 255; // End Of Data Byte: 0xFF - forbidden by UTF-8.
-        private const byte EopdByte = 254; // End Of Partial Data Byte: 0xFE - forbidden by UTF-8.
+        // TODO: Files over 20mb make the program hang, and ReadBuffer size seems to be the cause.
+        private static readonly byte[] ReadBuffer = new byte[10 * 1_048_576]; // x mb * bytes.
+        private static readonly byte DataLengthLength = 8;
+        private const int FileDataChunkSize = 1 * 1_548_576;
         public bool Running { get; protected set; }
         public ReceiveHandler? OnReceive;
         public ConnectionChangeHandler? OnDisconnect;
@@ -34,18 +35,24 @@ namespace ClausaComm.Network_Communication.Networking
                 Logger.Log($"{nameof(NetworkNode)}: Send method was invoked to {(IPEndPoint)client.Client.RemoteEndPoint} but the client is not connected.");
                 return false;
             }
-            
-            Logger.Log($"{nameof(NetworkNode)}: Send method invoked to endpoint {(IPEndPoint)client.Client.RemoteEndPoint}");
 
             string dataStr = obj.Serialize();
             byte[] dataBytes = Encoding.UTF8.GetBytes(dataStr);
+
+            byte[] finalData = BitConverter.GetBytes((long)dataBytes.Length).Concat(dataBytes).ToArray();
             try
             {
-                lock (client.GetStream())
+                NetworkStream ns = client.GetStream();
+                lock (ns)
                 {
-                    Logger.Log($"{nameof(NetworkNode)} sending ({dataBytes.Length} bytes): {dataStr}");
-                    byte[] data = dataBytes.Concat(new[] { EodByte }).ToArray();
-                    client.GetStream().Write(data, 0, data.Length);
+                    Logger.Log($"{nameof(NetworkNode)}: Sending {dataBytes.Length} bytes ({obj.Data.ObjectType.ToString()})");
+                    ns.Write(finalData, 0, finalData.Length);
+
+                    if (obj.Data.ObjectType != RemoteObject.ObjectType.File)
+                        return true;
+
+                    RemoteFile file = (RemoteFile)obj.Data;
+                    SendFile(ns, file);
                 }
             }
             catch (Exception e)
@@ -57,25 +64,44 @@ namespace ClausaComm.Network_Communication.Networking
             
             return true;
         }
+
+        private static void SendFile(NetworkStream ns, RemoteFile file)
+        {
+            using FileStream fs = File.OpenRead(file.FilePath);
+            byte[] dataLength = BitConverter.GetBytes(fs.Length);
+            ns.Write(dataLength, 0, dataLength.Length);
+            
+            byte[] buffer = new byte[FileDataChunkSize];
+            long remaining = fs.Length;
+            while (remaining != 0)
+            {
+                int bytesRead = fs.Read(buffer, 0, buffer.Length);
+                remaining -= bytesRead;
+                ns.Write(buffer, 0, bytesRead);
+            }
+            
+            fs.Flush();
+            fs.Dispose();
+        }
         
         protected void StartReading(TcpClient client)
         {
-            Logger.Log($"{nameof(NetworkNode)}: StartReading invoked (endpoint {(IPEndPoint)client.Client.RemoteEndPoint}). Connected: {client.Connected}");
+            Logger.Log($"{nameof(NetworkNode)}: StartReading invoked on [{(IPEndPoint)client.Client.RemoteEndPoint}]. Connected: {client.Connected}");
             if (!client.Connected)
                 return;
             
             // Save it here so that we can still retrieve it after the client disconnects (e.g. in OnDisconnect(IPEndPoint) event).
             var remoteHost = (IPEndPoint)client.Client.RemoteEndPoint;
+            NetworkStream ns = client.GetStream();
+            
             client.ReceiveBufferSize = ReadBuffer.Length; // Important!
-
-            NetworkStream stream = client.GetStream();
+            
+            byte[] lengthBuffer = new byte[DataLengthLength];
             while (true)
             {
                 // Using ReadByte to wait before bytes are available and only THEN lock the Buffer and
                 // write it all into it. Otherwise the buffer would have to be always locked.
-                Logger.Log($"{nameof(NetworkNode)}: Waiting for the first byte {remoteHost}");
-                byte firstByte;
-                try { firstByte = (byte)stream.ReadByte(); }
+                try { ns.Read(lengthBuffer, 0, lengthBuffer.Length); }
                 catch (Exception e)
                 {
                     Logger.Log($"{nameof(NetworkNode)}: An error occured while reading (/ waiting for) the first byte in a TcpClient's stream (endpoint: {remoteHost}).");
@@ -83,31 +109,22 @@ namespace ClausaComm.Network_Communication.Networking
                     break;
                 }
 
-                Logger.Log($"{nameof(NetworkNode)}: Reading everything in stream {remoteHost}");
                 lock (ReadBuffer)
                 {
-                    ReadBuffer[0] = firstByte;
-                    int readBytesAmount = 1;
                     try
                     {
-                        while (true)
+                        RemoteObject obj = ReadObject((int)BitConverter.ToInt64(lengthBuffer), client);
+                        if (obj.Data.ObjectType != RemoteObject.ObjectType.File)
                         {
-                            int nextByte = stream.ReadByte();
-                            
-                            if (nextByte == -1)
-                            {
-                                Logger.Log($"{nameof(NetworkNode)}: Reached end of stream (-1 returned) but didn't get the whole message yet. Waiting. {remoteHost}");
-                                continue;
-                            }
-                            
-                            if (nextByte == EodByte)
-                            {
-                                Logger.Log($"{nameof(NetworkNode)}: Reached the end of data. Bytes read: {readBytesAmount} {remoteHost}");
-                                break;
-                            }
-
-                            ReadBuffer[readBytesAmount++] = (byte)nextByte;
+                            OnReceive?.Invoke(obj, remoteHost);
+                            continue;
                         }
+                        
+                        var file = (RemoteFile)obj.Data;
+                        string path = Path.Combine(ProgramDirectory.FileSavePath, file.FileName);
+                        ns.Read(lengthBuffer, 0, lengthBuffer.Length);
+                        long dataLength = BitConverter.ToInt64(lengthBuffer);
+                        ReadFile(dataLength, path, ns);
                     }
                     catch (Exception e)
                     {
@@ -115,29 +132,47 @@ namespace ClausaComm.Network_Communication.Networking
                         Logger.Log(e);
                         break;
                     }
-                    
-                    Logger.Log($"{nameof(NetworkNode)}: Succesfully read data from a stream (endpoint: {remoteHost}).");
-                    byte[] readBytes = new byte[readBytesAmount];
-                    Array.Copy(ReadBuffer, readBytes, readBytesAmount);
-                    Logger.Log(() =>
-                    {
-                        string data = Encoding.UTF8.GetString(readBytes);
-                        return "the gotten data: " + data;
-                    }, true);
-                    /*new Thread(() =>
-                    {
-                        Thread.Sleep(1000);
-                        OnReceive?.Invoke(RemoteObject.Deserialize(readBytes), remoteHost);
-                    }).Start();*/
-                    OnReceive?.Invoke(RemoteObject.Deserialize(readBytes), remoteHost);
                 }
-                
-                Logger.Log($"{nameof(NetworkNode)}: Everything read {remoteHost}");
             }
             
             Logger.Log($"{nameof(NetworkNode)}: Stopping reading. (endpoint: {remoteHost}).");
             client.Close();
             OnDisconnect?.Invoke(remoteHost);
+        }
+
+        private static void ReadFile(long fileLength, string filepath, NetworkStream ns)
+        {
+            if (File.Exists(filepath))
+                File.Delete(filepath);
+            
+            using var fs = new FileStream(filepath, FileMode.OpenOrCreate, FileAccess.Write);
+            long remaining = fileLength;
+            
+            while (remaining != 0)
+            {
+                int bytesRead = ns.Read(ReadBuffer, 0, ReadBuffer.Length);
+                fs.Write(ReadBuffer, 0, bytesRead);
+                remaining -= bytesRead;
+            }
+            
+            fs.Flush();
+            fs.Dispose();
+        }
+
+        private static RemoteObject ReadObject(int objLength, TcpClient client)
+        {
+            NetworkStream stream = client.GetStream();
+            int remaining = objLength;
+            
+            while (remaining != 0)
+            {
+                int bytesRead = stream.Read(ReadBuffer, objLength - remaining, remaining);
+                remaining -= bytesRead;
+            }
+
+            byte[] objBytes = new byte[objLength];
+            Array.Copy(ReadBuffer, objBytes, objLength);
+            return RemoteObject.Deserialize(objBytes);
         }
     }
 }

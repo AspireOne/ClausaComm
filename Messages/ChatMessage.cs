@@ -1,6 +1,7 @@
 ﻿using ClausaComm.Network_Communication.Objects;
 using System;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using ClausaComm.Extensions;
@@ -23,8 +24,10 @@ namespace ClausaComm.Messages
         public string Text { get; init; }
         //public readonly MessageFile File;
         public string Id { get; private init; }
-        [JsonIgnore]
-        private bool _delivered;
+        
+        public string FilePath { get; set; }
+
+        [JsonIgnore] private bool _delivered;
         [JsonIgnore]
         public bool Delivered
         {
@@ -49,13 +52,14 @@ namespace ClausaComm.Messages
         }
 
         [JsonConstructor]
-        private ChatMessage(string text, Ways way, string id, long time) : this(text, way)
+        private ChatMessage(string text, Ways way, string id, long time, string filePath) : this(text, way)
         {
             Time = time;
+            FilePath = filePath;
             Id = id;
         }
 
-        public static ChatMessage ReconstructMessage(string text, Ways way, string id, long time) => new(text, way, id, time);
+        public static ChatMessage ReconstructMessage(string text, Ways way, string id, long time, string filePath) => new(text, way, id, time, filePath);
 
         public override string ToString() => $"Way: {Way} | Id: {Id} | Time: {Time} | Text: {Text}";
 

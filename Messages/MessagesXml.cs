@@ -15,6 +15,7 @@ namespace ClausaComm.Messages
         private const string OutNodeName = "out";
         private const string ContactNodeName = "contact";
         private const string IdAttrName = "id";
+        private const string FilePathAttrName = "file";
         private const string TimeAttrName = "time";
         
         public static void SaveMessage(ChatMessage message, string contactId)
@@ -34,6 +35,7 @@ namespace ClausaComm.Messages
                     new XElement(message.Way == ChatMessage.Ways.In ? InNodeName : OutNodeName, // First argument - name.
                         new XAttribute(IdAttrName, message.Id),
                         new XAttribute(TimeAttrName, message.Time),
+                        new XAttribute(FilePathAttrName, message.FilePath is null ? "" : message.FilePath),
                         message.Text // Value.
                         ));
                 Doc.Save(ProgramDirectory.MessagesPath);
@@ -54,10 +56,11 @@ namespace ClausaComm.Messages
                 
                 ChatMessage.Ways way = node.Name == InNodeName ? ChatMessage.Ways.In : ChatMessage.Ways.Out;
                 string id = node.Attribute(IdAttrName).Value;
-                string text = node.Value;
+                string filePath = node.Attribute(FilePathAttrName)?.Value;
                 long time = long.Parse(node.Attribute(TimeAttrName).Value);
+                string text = node.Value;
                 
-                ChatMessage message = ChatMessage.ReconstructMessage(text, way, id, time);
+                ChatMessage message = ChatMessage.ReconstructMessage(text, way, id, time, filePath);
                 yield return message;
             }
         }

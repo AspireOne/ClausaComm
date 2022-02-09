@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading;
@@ -108,8 +109,6 @@ namespace ClausaComm.Network_Communication
             if (contact.CurrentStatus == Contact.Status.Offline)
                 contact.CurrentStatus = Contact.Status.Online;
 
-            Logger.Log(contact);
-            
             switch (obj.Data.ObjectType)
             {
                 case RemoteObject.ObjectType.ContactData:
@@ -132,7 +131,12 @@ namespace ClausaComm.Network_Communication
         public bool SendMessage(ChatMessage message, IPAddress ip)
         {
             RemoteObject obj = new(message);
-            return NetworkManager.Send(ip, obj);
+            bool msgSendResult = NetworkManager.Send(ip, obj);
+
+            if (message.FilePath is not null)
+                NetworkManager.Send(ip, new RemoteObject(new RemoteFile(message.FilePath)));
+
+            return msgSendResult;
         }
 
         /// <summary>
@@ -210,7 +214,8 @@ namespace ClausaComm.Network_Communication
 
         private void HandleMessageReceived(ChatMessage message, Contact sender)
         {
-            message = ChatMessage.ReconstructMessage(message.Text, ChatMessage.Ways.In, message.Id, message.Time);
+            string filePath = message.FilePath is null ? null : Path.Combine(ProgramDirectory.FileSavePath, Path.GetFileName(message.FilePath));
+            message = ChatMessage.ReconstructMessage(message.Text, ChatMessage.Ways.In, message.Id, message.Time, filePath);
             MessageReceivedMethod(message, sender);
         }
 

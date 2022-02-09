@@ -6,6 +6,8 @@ namespace ClausaComm
 {
     public static class ProgramDirectory
     {
+        public static readonly string FileSavePath =
+            Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments);
         public static readonly string MainDirPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "ClausaComm");
         public static readonly string ProfilePicsDirPath = GetPath("ProfilePictures");
         public static readonly string MessagesPath = GetPath("messages.xml");
