@@ -15,10 +15,10 @@ namespace ClausaComm.Network_Communication.Networking
     {
         private static readonly List<Client> ClientConnections = new();
         private static readonly Server Server = new();
-        public static NetworkNode.ReceiveHandler? OnReceive;
-        public static NetworkNode.ConnectionChangeHandler? OnDisconnect;
+        public static event NetworkNode.ReceiveHandler? OnReceive;
+        public static event NetworkNode.ConnectionChangeHandler? OnDisconnect;
         /// <summary> This event is raised for both outgoing and ingoing connections.</summary>
-        public static NetworkNode.ConnectionChangeHandler? OnConnect;
+        public static event NetworkNode.ConnectionChangeHandler? OnConnect;
 
         static NetworkManager()
         {

@@ -28,9 +28,11 @@ namespace ClausaComm.Forms
             InitializeComponent();
             InitializeComponentFurther();
             InitializeProgram();
-            UserStatusWatcher = new(Contact.UserContact);
+            UserStatusWatcher = new UserStatusWatcher(Contact.UserContact);
             UserStatusWatcher.Run();
-            NetworkBridge = new(Contacts, AddContact, OnMessageReceived, this);
+            NetworkBridge = new NetworkBridge(Contacts, this);
+            NetworkBridge.MessageReceived += OnMessageReceived;
+            NetworkBridge.NewContactReceived += AddContact;
             NetworkBridge.Run();
         }
 
@@ -87,8 +89,9 @@ namespace ClausaComm.Forms
             ContactPanel panel = PanelOfContactPanels.Panels.First(panel => ReferenceEquals(panel.Contact, contact));
             if (!ReferenceEquals(ContactPanel.CurrentlySelectedPanel, panel))
                 panel.Flash();
-            
+
             MessagesXml.SaveMessage(message, contact.Id);
+            
             if (ChatScreen.Contact != contact) 
                 Sound.PlayNotificationSound();
             

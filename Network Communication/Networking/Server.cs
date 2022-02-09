@@ -70,7 +70,7 @@ namespace ClausaComm.Network_Communication.Networking
                 {
                     var connectionEndpoint = (IPEndPoint)client.Client.RemoteEndPoint;
                     Logger.Log($"Server got new connection. IP: {connectionEndpoint}");
-                    OnConnect?.Invoke((IPEndPoint)client.Client.RemoteEndPoint);
+                    RaiseConnect((IPEndPoint)client.Client.RemoteEndPoint);
                     StartReading(client);
                     Logger.Log($"Node disconnected from server. IP: {connectionEndpoint}");
                     lock (Connections)

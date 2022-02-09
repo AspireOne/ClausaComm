@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using ClausaComm.Contacts;
 using ClausaComm.Exceptions;
@@ -21,26 +22,27 @@ namespace ClausaComm.Network_Communication
     // Singleton.
     public class NetworkBridge
     {
+        public delegate void MessageReceivedEventHandler(ChatMessage message, Contact contact);
+        public delegate void NewContactEventHandler(Contact contact);
+        /// <summary>Invoked when a message is received from the network</summary>
+        public event MessageReceivedEventHandler MessageReceived;
+        /// <summary>Invoked when a new contact is sent from the network.</summary>
+        public event NewContactEventHandler NewContactReceived;
         public bool Running { get; private set; }
         private readonly HashSet<Contact> AllContacts;
-        private readonly Action<Contact> AddContactMethod;
-        private readonly Action<ChatMessage, Contact> MessageReceivedMethod;
         private static bool InstanceCreated;
         
         /// <param name="allContacts">A collection with all the existing contacts</param>
-        /// <param name="addContactMethod">A method for adding new contacts that might be sent from the network.</param>
-        public NetworkBridge(HashSet<Contact> allContacts, Action<Contact> addContactMethod, Action<ChatMessage, Contact> messageReceivedMethod, Control uiThread)
+        public NetworkBridge(HashSet<Contact> allContacts, Control uiThread)
         {
             if (InstanceCreated)
                 throw new MultipleInstancesException(nameof(NetworkBridge));
 
             AllContacts = allContacts;
-            AddContactMethod = uiThread.Invoke(() => addContactMethod);
-            MessageReceivedMethod = uiThread.Invoke(() => messageReceivedMethod);
 
             // TODO: Don't run it all on the ui thread!
             NetworkManager.OnReceive += (message, endpoint) => uiThread.Invoke(() => HandleIncomingData(message, endpoint.Address));
-            NetworkManager.OnConnect += endpoint => uiThread.Invoke(() => HandleNewConnection(endpoint.Address));
+            NetworkManager.OnConnect += endpoint => HandleNewConnection(endpoint.Address);
             NetworkManager.OnDisconnect += endpoint => uiThread.Invoke(() =>
                 AllContacts.First(contact => contact.Ip.Equals(endpoint.Address)).CurrentStatus = Contact.Status.Offline);
 
@@ -99,7 +101,7 @@ namespace ClausaComm.Network_Communication
                 Logger.Log($"Could not get or create contact. Returning. ip: {ip}");
                 return;
             }
-            
+
             contact.Id ??= obj.ContactId;
 
             // TODO: Handle IP collision
@@ -108,7 +110,7 @@ namespace ClausaComm.Network_Communication
 
             if (contact.CurrentStatus == Contact.Status.Offline)
                 contact.CurrentStatus = Contact.Status.Online;
-
+            
             switch (obj.Data.ObjectType)
             {
                 case RemoteObject.ObjectType.ContactData:
@@ -134,7 +136,7 @@ namespace ClausaComm.Network_Communication
             bool msgSendResult = NetworkManager.Send(ip, obj);
 
             if (message.FilePath is not null)
-                NetworkManager.Send(ip, new RemoteObject(new RemoteFile(message.FilePath)));
+                Task.Run(() => NetworkManager.Send(ip, new RemoteObject(new RemoteFile(message.FilePath))));
 
             return msgSendResult;
         }
@@ -173,7 +175,7 @@ namespace ClausaComm.Network_Communication
                 return null;
             
             contact = new Contact(ip);
-            AddContactMethod.Invoke(contact);
+            NewContactReceived?.Invoke(contact);
             return contact;
 
         }
@@ -207,23 +209,21 @@ namespace ClausaComm.Network_Communication
         }
 
         /// <summary> Sends the object to all not-offline contacts.</summary>
-        private void SendToAll(RemoteObject obj)
-        {
+        private void SendToAll(RemoteObject obj) =>
             AllContacts.NotOffline().ForEach(contact => NetworkManager.Send(contact.Ip, obj));
-        }
 
         private void HandleMessageReceived(ChatMessage message, Contact sender)
         {
-            string filePath = message.FilePath is null ? null : Path.Combine(ProgramDirectory.FileSavePath, Path.GetFileName(message.FilePath));
+            string filePath = string.IsNullOrEmpty(message.FilePath)
+                ? null
+                : Path.Combine(ProgramDirectory.FileSavePath, Path.GetFileName(message.FilePath));
             message = ChatMessage.ReconstructMessage(message.Text, ChatMessage.Ways.In, message.Id, message.Time, filePath);
-            MessageReceivedMethod(message, sender);
+            MessageReceived?.Invoke(message, sender);
         }
 
         /// <summary> Updates {contact}'s status to match that in the {statusUpdate} object.</summary>
         private static void UpdateContactStatus(RemoteStatusUpdate statusUpdate, Contact contact)
-        {
-            contact.CurrentStatus = statusUpdate.Status;
-        }
+            => contact.CurrentStatus = statusUpdate.Status;
 
         /// <summary> Updates {contact}'s data to match those in the {data} object.</summary>
         private static void UpdateContactData(RemoteContactData data, Contact contact)

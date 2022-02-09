@@ -25,7 +25,7 @@ namespace ClausaComm.Network_Communication.Networking
         /// Connects to the host and starts reading from the network. Blocking.
         /// </summary>
         /// <returns>True if successfully connected and not already running; false otherwise.</returns>
-        public virtual bool Run()
+        public bool Run()
         {
             Logger.Log($"{nameof(Client)}: Run method called. Already running: {Running} (endpoint: {TargetEndpoint})");
             if (Running)
@@ -53,9 +53,9 @@ namespace ClausaComm.Network_Communication.Networking
             }
             
             Logger.Log($"{nameof(Client)}: Connected (endpoint: {TargetEndpoint})");
-            OnConnect?.Invoke(TargetEndpoint);
+            RaiseConnect(TargetEndpoint);
             StartReading(UnderlyingClient);
-            Logger.Log($"{nameof(Client)}: Stopped reading. (endpoint: {TargetEndpoint})");
+            Logger.Log($"{nameof(Client)}: Disconnected (endpoint: {TargetEndpoint})");
             Running = false;
             return true;
         }

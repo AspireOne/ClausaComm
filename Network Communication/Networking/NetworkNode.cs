@@ -7,6 +7,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Text.Unicode;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using ClausaComm.Extensions;
 using ClausaComm.Messages;
@@ -20,14 +21,17 @@ namespace ClausaComm.Network_Communication.Networking
         public delegate void ReceiveHandler(RemoteObject message, IPEndPoint endpoint);
         public delegate void ConnectionChangeHandler(IPEndPoint endpoint);
         // TODO: Files over 20mb make the program hang, and ReadBuffer size seems to be the cause.
-        private static readonly byte[] ReadBuffer = new byte[10 * 1_048_576]; // x mb * bytes.
-        private static readonly byte DataLengthLength = 8;
+        private static readonly byte[] ReadBuffer = new byte[5 * 1_048_576]; // x mb * bytes.
+        private const byte DataLengthLength = 8;
         private const int FileDataChunkSize = 1 * 1_548_576;
         public bool Running { get; protected set; }
-        public ReceiveHandler? OnReceive;
-        public ConnectionChangeHandler? OnDisconnect;
-        public ConnectionChangeHandler? OnConnect;
+        public event ReceiveHandler? OnReceive;
+        public event ConnectionChangeHandler? OnDisconnect;
+        public event ConnectionChangeHandler? OnConnect;
         
+        // So that derived classes can raise the event.
+        protected void RaiseConnect(IPEndPoint endpoint) => OnConnect?.Invoke(endpoint);
+
         protected static bool Send(TcpClient client, RemoteObject obj) // RemoteObject
         {
             if (!client.Connected)
@@ -50,7 +54,7 @@ namespace ClausaComm.Network_Communication.Networking
 
                     if (obj.Data.ObjectType != RemoteObject.ObjectType.File)
                         return true;
-
+                    
                     RemoteFile file = (RemoteFile)obj.Data;
                     SendFile(ns, file);
                 }
@@ -70,7 +74,6 @@ namespace ClausaComm.Network_Communication.Networking
             using FileStream fs = File.OpenRead(file.FilePath);
             byte[] dataLength = BitConverter.GetBytes(fs.Length);
             ns.Write(dataLength, 0, dataLength.Length);
-            
             byte[] buffer = new byte[FileDataChunkSize];
             long remaining = fs.Length;
             while (remaining != 0)
@@ -95,13 +98,16 @@ namespace ClausaComm.Network_Communication.Networking
             NetworkStream ns = client.GetStream();
             
             client.ReceiveBufferSize = ReadBuffer.Length; // Important!
-            
+
             byte[] lengthBuffer = new byte[DataLengthLength];
             while (true)
             {
                 // Using ReadByte to wait before bytes are available and only THEN lock the Buffer and
                 // write it all into it. Otherwise the buffer would have to be always locked.
-                try { ns.Read(lengthBuffer, 0, lengthBuffer.Length); }
+                try
+                {
+                    ns.Read(lengthBuffer, 0, lengthBuffer.Length);
+                }
                 catch (Exception e)
                 {
                     Logger.Log($"{nameof(NetworkNode)}: An error occured while reading (/ waiting for) the first byte in a TcpClient's stream (endpoint: {remoteHost}).");
@@ -114,17 +120,21 @@ namespace ClausaComm.Network_Communication.Networking
                     try
                     {
                         RemoteObject obj = ReadObject((int)BitConverter.ToInt64(lengthBuffer), client);
+                        Logger.Log($"read object ({obj.Data.ObjectType}).");
                         if (obj.Data.ObjectType != RemoteObject.ObjectType.File)
                         {
-                            OnReceive?.Invoke(obj, remoteHost);
+                            Task.Run(() => OnReceive?.Invoke(obj, remoteHost));
                             continue;
                         }
                         
+                        Logger.Log($"Received a file, reading data length.");
                         var file = (RemoteFile)obj.Data;
                         string path = Path.Combine(ProgramDirectory.FileSavePath, file.FileName);
                         ns.Read(lengthBuffer, 0, lengthBuffer.Length);
                         long dataLength = BitConverter.ToInt64(lengthBuffer);
+                        Logger.Log($"Got data length, reading " + dataLength + " bytes of data.");
                         ReadFile(dataLength, path, ns);
+                        Logger.Log($"Data read.");
                     }
                     catch (Exception e)
                     {
@@ -142,6 +152,7 @@ namespace ClausaComm.Network_Communication.Networking
 
         private static void ReadFile(long fileLength, string filepath, NetworkStream ns)
         {
+            // TODO: Just rename.
             if (File.Exists(filepath))
                 File.Delete(filepath);
             
@@ -161,12 +172,12 @@ namespace ClausaComm.Network_Communication.Networking
 
         private static RemoteObject ReadObject(int objLength, TcpClient client)
         {
-            NetworkStream stream = client.GetStream();
+            NetworkStream ns = client.GetStream();
             int remaining = objLength;
             
             while (remaining != 0)
             {
-                int bytesRead = stream.Read(ReadBuffer, objLength - remaining, remaining);
+                int bytesRead = ns.Read(ReadBuffer, objLength - remaining, remaining);
                 remaining -= bytesRead;
             }
 
