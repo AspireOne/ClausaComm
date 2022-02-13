@@ -11,16 +11,16 @@ namespace ClausaComm.Network_Communication.Networking
     /// the Client under the hood. For each connection (A -> B) a Client is created and kept in an internal List.
     /// Server (B -> A) keeps it's own list of connections, which this API uses. 
     /// </summary>
-    internal static class NetworkManager
+    internal static class PeerManager
     {
         private static readonly List<Client> ClientConnections = new();
         private static readonly Server Server = new();
-        public static event NetworkNode.ReceiveHandler? OnReceive;
-        public static event NetworkNode.ConnectionChangeHandler? OnDisconnect;
+        public static event NetworkPeer.ReceiveHandler? OnReceive;
+        public static event NetworkPeer.ConnectionChangeHandler? OnDisconnect;
         /// <summary> This event is raised for both outgoing and ingoing connections.</summary>
-        public static event NetworkNode.ConnectionChangeHandler? OnConnect;
+        public static event NetworkPeer.ConnectionChangeHandler? OnConnect;
 
-        static NetworkManager()
+        static PeerManager()
         {
             Server.OnConnect += endpoint => OnConnect?.Invoke(endpoint);
             Server.OnDisconnect += endpoint => OnDisconnect?.Invoke(endpoint);

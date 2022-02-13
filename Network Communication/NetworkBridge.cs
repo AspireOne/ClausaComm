@@ -41,9 +41,9 @@ namespace ClausaComm.Network_Communication
             AllContacts = allContacts;
 
             // TODO: Don't run it all on the ui thread!
-            NetworkManager.OnReceive += (message, endpoint) => uiThread.Invoke(() => HandleIncomingData(message, endpoint.Address));
-            NetworkManager.OnConnect += endpoint => HandleNewConnection(endpoint.Address);
-            NetworkManager.OnDisconnect += endpoint => uiThread.Invoke(() =>
+            PeerManager.OnReceive += (message, endpoint) => uiThread.Invoke(() => HandleIncomingData(message, endpoint.Address));
+            PeerManager.OnConnect += endpoint => HandleNewConnection(endpoint.Address);
+            PeerManager.OnDisconnect += endpoint => uiThread.Invoke(() =>
                 AllContacts.First(contact => contact.Ip.Equals(endpoint.Address)).CurrentStatus = Contact.Status.Offline);
 
             InstanceCreated = true;
@@ -56,7 +56,7 @@ namespace ClausaComm.Network_Communication
                 return;
 
             Running = true;
-            ThreadUtils.RunThread(() => NetworkManager.Run(HandleServerRunning));
+            ThreadUtils.RunThread(() => PeerManager.Run(HandleServerRunning));
 
             void HandleServerRunning(bool running)
             {
@@ -67,19 +67,20 @@ namespace ClausaComm.Network_Communication
                 }
 
                 Logger.Log($"{nameof(NetworkBridge)}: Recursively trying to connect to all contacts.");
-                AllContacts.ForEach(Connect);
+                AllContacts.ForEach(contact => Connect(contact));
                 
                 SubscribeToUserEvents();
             }
         }
 
-        public static void Connect(Contact contact)
+        public static void Connect(Contact contact, Action<bool>? callback = null)
         {
             ThreadUtils.RunThread(() =>
             {
-                bool connected = NetworkManager.CreateConnection(contact.Ip);
+                bool connected = PeerManager.CreateConnection(contact.Ip);
                 if (!connected)
                     Logger.Log($"{nameof(NetworkBridge)}: Could not connect to {contact.Ip}");
+                callback?.Invoke(connected);
             });
         }
 
@@ -87,7 +88,7 @@ namespace ClausaComm.Network_Communication
         private static void HandleNewConnection(IPAddress ip)
         {
             RemoteContactData contactData = new(Contact.UserContact);
-            NetworkManager.Send(ip, new RemoteObject(contactData));
+            PeerManager.Send(ip, new RemoteObject(contactData));
         }
 
         private void HandleIncomingData(RemoteObject obj, IPAddress ip)
@@ -133,10 +134,10 @@ namespace ClausaComm.Network_Communication
         public bool SendMessage(ChatMessage message, IPAddress ip)
         {
             RemoteObject obj = new(message);
-            bool msgSendResult = NetworkManager.Send(ip, obj);
+            bool msgSendResult = PeerManager.Send(ip, obj);
 
             if (message.FilePath is not null)
-                NetworkManager.Send(ip, new RemoteObject(new RemoteFile(message.FilePath)));
+                PeerManager.Send(ip, new RemoteObject(new RemoteFile(message.FilePath)));
 
             return msgSendResult;
         }
@@ -210,7 +211,7 @@ namespace ClausaComm.Network_Communication
 
         /// <summary> Sends the object to all not-offline contacts.</summary>
         private void SendToAll(RemoteObject obj) =>
-            AllContacts.NotOffline().ForEach(contact => NetworkManager.Send(contact.Ip, obj));
+            AllContacts.NotOffline().ForEach(contact => PeerManager.Send(contact.Ip, obj));
 
         private void HandleMessageReceived(ChatMessage message, Contact sender)
         {

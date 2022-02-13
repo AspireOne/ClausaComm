@@ -12,7 +12,7 @@ using ClausaComm.Utils;
 namespace ClausaComm.Network_Communication.Networking
 {
     // Singleton.
-    internal class Server : NetworkNode
+    internal class Server : NetworkPeer
     {
         private static bool InstanceCreated;
         public const int Port = 5000;

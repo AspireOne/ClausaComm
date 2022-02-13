@@ -11,7 +11,7 @@ using ClausaComm.Utils;
 
 namespace ClausaComm.Network_Communication.Networking
 {
-    internal class Client : NetworkNode
+    internal class Client : NetworkPeer
     {
         private readonly TcpClient UnderlyingClient = new();
         public readonly IPEndPoint TargetEndpoint;

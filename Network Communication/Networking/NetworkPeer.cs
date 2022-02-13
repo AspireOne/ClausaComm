@@ -16,7 +16,7 @@ using ClausaComm.Utils;
 
 namespace ClausaComm.Network_Communication.Networking
 {
-    internal abstract class NetworkNode
+    internal abstract class NetworkPeer
     {
         private static readonly object WriteLock = new();
         public delegate void ReceiveHandler(RemoteObject message, IPEndPoint endpoint);
@@ -36,7 +36,7 @@ namespace ClausaComm.Network_Communication.Networking
         {
             if (!client.Connected)
             {
-                Logger.Log($"{nameof(NetworkNode)}: Send method was invoked to {(IPEndPoint)client.Client.RemoteEndPoint} but the client is not connected.");
+                Logger.Log($"{nameof(NetworkPeer)}: Send method was invoked to {(IPEndPoint)client.Client.RemoteEndPoint} but the client is not connected.");
                 return false;
             }
 
@@ -49,10 +49,10 @@ namespace ClausaComm.Network_Communication.Networking
                 NetworkStream ns = client.GetStream();
                 lock (WriteLock)
                 {
-                    Logger.Log($"{nameof(NetworkNode)}: Sending {dataBytes.Length} bytes of {obj.Data.ObjectType.ToString()}.");
+                    Logger.Log($"{nameof(NetworkPeer)}: Sending {dataBytes.Length} bytes of {obj.Data.ObjectType.ToString()}.");
                     ns.Write(dataLength, 0, dataLength.Length);
                     ns.Write(dataBytes, 0, dataBytes.Length);
-                    Logger.Log($"{nameof(NetworkNode)}: {obj.Data.ObjectType.ToString()} Sent.");
+                    Logger.Log($"{nameof(NetworkPeer)}: {obj.Data.ObjectType.ToString()} Sent.");
                     if (obj.Data.ObjectType != RemoteObject.ObjectType.File)
                         return true;
                     
@@ -62,7 +62,7 @@ namespace ClausaComm.Network_Communication.Networking
             }
             catch (Exception e)
             {
-                Logger.Log($"{nameof(NetworkNode)}: A handled error occured while sending a message (writing to a stream) of a TcpClient.");
+                Logger.Log($"{nameof(NetworkPeer)}: A handled error occured while sending a message (writing to a stream) of a TcpClient.");
                 Logger.Log(e);
                 return false;
             }
@@ -92,7 +92,7 @@ namespace ClausaComm.Network_Communication.Networking
         
         protected void StartReading(TcpClient client)
         {
-            Logger.Log($"{nameof(NetworkNode)}: StartReading invoked on [{(IPEndPoint)client.Client.RemoteEndPoint}]. Connected: {client.Connected}");
+            Logger.Log($"{nameof(NetworkPeer)}: StartReading invoked on [{(IPEndPoint)client.Client.RemoteEndPoint}]. Connected: {client.Connected}");
             if (!client.Connected)
                 return;
             
@@ -113,7 +113,7 @@ namespace ClausaComm.Network_Communication.Networking
                 }
                 catch (Exception e)
                 {
-                    Logger.Log($"{nameof(NetworkNode)}: An error occured while reading (/ waiting for) the first byte in a TcpClient's stream (endpoint: {remoteHost}).");
+                    Logger.Log($"{nameof(NetworkPeer)}: An error occured while reading (/ waiting for) the first byte in a TcpClient's stream (endpoint: {remoteHost}).");
                     Logger.Log(e);
                     break;
                 }
@@ -141,14 +141,14 @@ namespace ClausaComm.Network_Communication.Networking
                     }
                     catch (Exception e)
                     {
-                        Logger.Log($"{nameof(NetworkNode)}: An error occured while reading TcpClient's stream (endpoint: {remoteHost}).");
+                        Logger.Log($"{nameof(NetworkPeer)}: An error occured while reading TcpClient's stream (endpoint: {remoteHost}).");
                         Logger.Log(e);
                         break;
                     }
                 }
             }
             
-            Logger.Log($"{nameof(NetworkNode)}: Stopping reading. (endpoint: {remoteHost}).");
+            Logger.Log($"{nameof(NetworkPeer)}: Stopping reading. (endpoint: {remoteHost}).");
             client.Close();
             OnDisconnect?.Invoke(remoteHost);
         }
