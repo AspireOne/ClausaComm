@@ -108,8 +108,22 @@ namespace ClausaComm.Components
         public ChatScreen()
         {
             InitializeComponent();
+            AllowDrop = true;
             NoContactLabel.Parent = this;
             ChatPanel.Parent = this;
+
+            DragEnter += (_, e) =>
+            {
+                if (e.Data.GetDataPresent(DataFormats.FileDrop))
+                    e.Effect = DragDropEffects.Copy;
+            };
+            
+            DragDrop += (_, e) =>
+            {
+                string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+                foreach (string file in files)
+                    SendMessage("", file);
+            };
         }
 
         private void AddMessage(Contact contact, ChatMessage message, bool loading = false, bool addToChat = true)
@@ -206,7 +220,12 @@ namespace ClausaComm.Components
             if (textTrimmed == "")
                 return;
 
-            ChatMessage msg = new(textTrimmed) { Delivered = false };
+            SendMessage(textTrimmed);
+        }
+
+        private void SendMessage(string text, string? filePath = null)
+        {
+            ChatMessage msg = new(text) { Delivered = false, FilePath = filePath };
             AddMessage(Contact, msg);
             OnSendPressed?.Invoke(msg, Contact);
         }
