@@ -22,7 +22,7 @@ namespace ClausaComm.Components
         private SendIcon _sendIcon;
         private ChatTextBox _textbox;
         private const int InitialMessages = 15;
-        //private const int MaxMessages = 15;
+        private const int MaxMessages = 20;
         private readonly Dictionary<Contact, MessageCollection> CachedChats = new();
         private readonly Dictionary<Contact, string> CachedTextboxes = new();
 
@@ -129,10 +129,13 @@ namespace ClausaComm.Components
                 panel.Parent = ChatPanel;
                 ChatPanel.Controls.Add(panel);
 
+                // TODO: Get rid of this = get rid of flickering.
                 if (!loading)
                 {
                     ChatPanel.Controls.SetChildIndex(panel, 0);
-                    ChatPanel.ScrollControlIntoView(panel);   
+                    if (ChatPanel.Controls.Count > MaxMessages)
+                        ChatPanel.Controls.RemoveAt(ChatPanel.Controls.Count - 1);
+                    ChatPanel.ScrollControlIntoView(panel);
                 }
             }
         }
