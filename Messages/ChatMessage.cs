@@ -22,10 +22,9 @@ namespace ClausaComm.Messages
         [JsonIgnore]
         public Ways Way { get; init; }
         public string Text { get; init; }
-        //public readonly MessageFile File;
         public string Id { get; private init; }
         
-        public string FilePath { get; set; }
+        public string? FilePath { get; set; }
 
         [JsonIgnore] private bool _delivered;
         [JsonIgnore]
@@ -52,14 +51,14 @@ namespace ClausaComm.Messages
         }
 
         [JsonConstructor]
-        private ChatMessage(string text, Ways way, string id, long time, string filePath) : this(text, way)
+        private ChatMessage(string text, Ways way, string id, long time, string? filePath) : this(text, way)
         {
             Time = time;
             FilePath = filePath;
             Id = id;
         }
 
-        public static ChatMessage ReconstructMessage(string text, Ways way, string id, long time, string filePath) => new(text, way, id, time, filePath);
+        public static ChatMessage ReconstructMessage(string text, Ways way, string id, long time, string? filePath) => new(text, way, id, time, filePath);
 
         public override string ToString() => $"Way: {Way} | Id: {Id} | Time: {Time} | Text: {Text}";
 
