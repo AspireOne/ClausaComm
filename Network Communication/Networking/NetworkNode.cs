@@ -18,12 +18,12 @@ namespace ClausaComm.Network_Communication.Networking
 {
     internal abstract class NetworkNode
     {
+        private static readonly object WriteLock = new();
         public delegate void ReceiveHandler(RemoteObject message, IPEndPoint endpoint);
         public delegate void ConnectionChangeHandler(IPEndPoint endpoint);
-        // TODO: Files over 20mb make the program hang, and ReadBuffer size seems to be the cause.
         private static readonly byte[] ReadBuffer = new byte[5 * 1_048_576]; // x mb * bytes.
         private const byte DataLengthLength = 8;
-        private const int FileDataChunkSize = 1 * 1_548_576;
+        private const int FileBufferSize = 5 * 1_048_576;
         public bool Running { get; protected set; }
         public event ReceiveHandler? OnReceive;
         public event ConnectionChangeHandler? OnDisconnect;
@@ -42,16 +42,17 @@ namespace ClausaComm.Network_Communication.Networking
 
             string dataStr = obj.Serialize();
             byte[] dataBytes = Encoding.UTF8.GetBytes(dataStr);
-
-            byte[] finalData = BitConverter.GetBytes((long)dataBytes.Length).Concat(dataBytes).ToArray();
+            byte[] dataLength = BitConverter.GetBytes((long)dataBytes.Length);
+            
             try
             {
                 NetworkStream ns = client.GetStream();
-                lock (ns)
+                lock (WriteLock)
                 {
-                    Logger.Log($"{nameof(NetworkNode)}: Sending {dataBytes.Length} bytes ({obj.Data.ObjectType.ToString()})");
-                    ns.Write(finalData, 0, finalData.Length);
-
+                    Logger.Log($"{nameof(NetworkNode)}: Sending {dataBytes.Length} bytes of {obj.Data.ObjectType.ToString()}.");
+                    ns.Write(dataLength, 0, dataLength.Length);
+                    ns.Write(dataBytes, 0, dataBytes.Length);
+                    Logger.Log($"{nameof(NetworkNode)}: {obj.Data.ObjectType.ToString()} Sent.");
                     if (obj.Data.ObjectType != RemoteObject.ObjectType.File)
                         return true;
                     
@@ -74,8 +75,10 @@ namespace ClausaComm.Network_Communication.Networking
             using FileStream fs = File.OpenRead(file.FilePath);
             byte[] dataLength = BitConverter.GetBytes(fs.Length);
             ns.Write(dataLength, 0, dataLength.Length);
-            byte[] buffer = new byte[FileDataChunkSize];
+            
+            byte[] buffer = new byte[FileBufferSize];
             long remaining = fs.Length;
+            
             while (remaining != 0)
             {
                 int bytesRead = fs.Read(buffer, 0, buffer.Length);
