@@ -10,6 +10,7 @@ using System.Diagnostics;
 using System.Net;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using ClausaComm.Contacts;
 using ClausaComm.Messages;
 using ClausaComm.Network_Communication;
@@ -76,11 +77,14 @@ namespace ClausaComm.Forms
             PanelOfContactPanels.SelectFirstPanel();
             ChatScreen.OnSendPressed += (message, contact) =>
             {
-                if (NetworkBridge.SendMessage(message, contact.Ip))
+                Task.Run(() =>
                 {
+                    if (!NetworkBridge.SendMessage(message, contact.Ip))
+                        return;
+                    
                     MessagesXml.SaveMessage(message, contact.Id);
                     ChatScreen.HandleMessageDelivered(contact, message);
-                }
+                });
             };
         }
 
@@ -105,7 +109,14 @@ namespace ClausaComm.Forms
             if (contactToAdd is null)
                 throw new ArgumentNullException(nameof(contactToAdd));
 
-            void ClickActionIfUser(Contact contact) => ShowPopup(new EditInfoPopup(contactToAdd));
+            void ClickActionIfUser(Contact contact)
+            {
+                Task.Run(async () =>
+                {
+                    await Task.Delay(10);
+                    Invoke(() => new EditInfoPopup(contactToAdd).ShowDialog());
+                });
+            }
             void ClickActionIfContact(Contact contact) => ChangeChatContact(contact);
             
             _ = new ContactPanel(contactToAdd, PanelOfContactPanels) { OnClickAction = ClickActionIfContact };
@@ -126,29 +137,17 @@ namespace ClausaComm.Forms
 
         private void AddContactPictureBox_Click(object sender, EventArgs e)
         {
-            ShowPopup(new AddContactPopup(contact =>
+            new AddContactPopup(contact =>
             {
                 AddContact(contact);
                 NetworkBridge.Connect(contact);
-            }, this));
+            }, this).ShowDialog();
         }
 
         private void ChangeControlsEnabled(bool enabled)
         {
             foreach (Control control in Controls)
                 control.Enabled = enabled;
-        }
-
-        private void ShowPopup(Form popup)
-        {
-            //ChangeControlsEnabled(false);
-            // A workaround for a probable bug in Control event signaling in WF.
-            ThreadUtils.RunThread(() =>
-            {
-                Thread.Sleep(10);
-                Invoke(popup.ShowDialog);
-            });
-            //ChangeControlsEnabled(true);
         }
 
         protected override void OnKeyPress(KeyPressEventArgs e)
