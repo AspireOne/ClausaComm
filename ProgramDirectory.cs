@@ -6,13 +6,11 @@ namespace ClausaComm
 {
     public static class ProgramDirectory
     {
-        public static readonly string FileSavePath =
-            Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments);
         public static readonly string MainDirPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "ClausaComm");
-        public static readonly string ProfilePicsDirPath = GetPath("ProfilePictures");
-        public static readonly string MessagesPath = GetPath("messages.xml");
-        public static readonly string ConfigPath = GetPath("config.xml");
-        public static readonly string ContactsPath = GetPath("contacts.xml");
+        public static readonly string ProfilePicsDirPath = GetPathAndCreateFile("ProfilePictures");
+        public static readonly string MessagesPath = GetPathAndCreateFile("messages.xml");
+        public static readonly string ConfigPath = GetPathAndCreateFile("config.xml");
+        public static readonly string ContactsPath = GetPathAndCreateFile("contacts.xml");
         public const string XmlRoot = "doc";
 
         static ProgramDirectory()
@@ -30,8 +28,19 @@ namespace ClausaComm
             CreateNewXml(MessagesPath);
         }
 
-        private static string GetPath(string filename) => Path.Combine(MainDirPath, filename);
+        private static string GetPathAndCreateFile(string filename)
+        {
+            string path = Path.Combine(MainDirPath, filename);
+            bool isDirectory = !Path.GetFileName(path).Contains('.');
+            
+            if (isDirectory && !Directory.Exists(path))
+                Directory.CreateDirectory(path);
+            else if (!isDirectory && !File.Exists(path) && path.EndsWith("xml"))
+                CreateNewXml(path);
 
-        public static void CreateNewXml(string path) => new XDocument(new XElement(XmlRoot)).Save(path);
+            return path;
+        }
+
+        private static void CreateNewXml(string path) => new XDocument(new XElement(XmlRoot)).Save(path);
     }
 }
