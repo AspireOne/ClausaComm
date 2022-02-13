@@ -13,7 +13,7 @@ namespace ClausaComm.Components
     {
         public readonly Contact Contact;
         public readonly ChatMessage Message;
-        private bool IsLink;
+        private readonly bool IsLink;
 
         public ChatMessagePanel(ChatMessage message, Contact contact)
         {

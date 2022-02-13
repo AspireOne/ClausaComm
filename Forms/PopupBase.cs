@@ -7,7 +7,8 @@ namespace ClausaComm.Forms;
 public class PopupBase : FormBase
 {
     protected readonly MainForm ContainingForm;
-    public PopupBase(MainForm containingForm)
+
+    protected PopupBase(MainForm containingForm)
     {
         ContainingForm = containingForm;
     }
