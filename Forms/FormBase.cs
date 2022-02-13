@@ -9,7 +9,6 @@ namespace ClausaComm.Forms
     {
         protected static readonly Padding DraggableWindowBorderSize = new(3, 3, 3, 3);
         protected static readonly Padding NonDraggableWindowBorderSize = new(0, 0, 0, 0);
-
         protected readonly TitleBar TitleBar = new()
         {
             Dock = DockStyle.Top,
@@ -43,6 +42,7 @@ namespace ClausaComm.Forms
             }
         }
 
+        public bool Draggable { get; set; } = true;
         public bool Resizable
         {
             get => _resizable;

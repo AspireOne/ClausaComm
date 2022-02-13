@@ -9,7 +9,7 @@ using ClausaComm.Contacts;
 
 namespace ClausaComm.Forms
 {
-    public partial class AddContactPopup : FormBase
+    public partial class AddContactPopup : PopupBase
     {
         private struct IpBoxProps
         {
@@ -26,18 +26,16 @@ namespace ClausaComm.Forms
         private string IpTextBefore = "";
         private int CaretPositionBefore;
         private readonly Action<Contact> Callback;
-        private readonly MainForm MainForm;
+        private readonly Action<Contact, Action<bool>> Connect;
 
-        private AddContactPopup()
-        {
-            InitializeComponent();
-            InitializeComponentFurther();
-        }
-
-        public AddContactPopup(Action<Contact> callback, MainForm mainForm) : this()
+        public AddContactPopup(Action<Contact> callback, MainForm containingForm, Action<Contact, Action<bool>> connect) : base(containingForm)
         {
             Callback = callback;
-            MainForm = mainForm;
+            Connect = connect;
+
+            InitializeComponent();
+            InitializeComponentFurther();
+            Init();
         }
 
         private void InitializeComponentFurther()
@@ -49,8 +47,6 @@ namespace ClausaComm.Forms
             AddButton.Cursor = Cursors.No;
 
             IpBox.Textbox.TextChanged += (_, _) => OnIpTextChange();
-
-            InitTitleBar(this, "Add a Contact");
         }
 
         private void OnAddButtonClicked()
@@ -58,21 +54,26 @@ namespace ClausaComm.Forms
             if (AddButton.Cursor == AddButtonProps.AllowCursor)
             {
                 IPAddress ip = IPAddress.Parse(IpBox.Textbox.Text);
-                if (MainForm.Contacts.All(x => !x.Ip.Equals(ip)))
+                
+                if (ContainingForm.Contacts.Any(x => x.Ip.Equals(ip)))
                 {
-                    var contact = new Contact(ip);
-                    Callback(contact);
+                    NoteLabel.Text = "Contact already exists.";
+                    return;
                 }
-                else
+                
+                var contact = new Contact(ip);
+                NoteLabel.Text = "Connecting...";
+                Connect(contact, connected =>
                 {
-                    MainForm.NotificationPanel.ShowNotification(new Components.NotificationPanel.NotificationArgs
-                    {
-                        Content = "Cannot add, because a contact with the same IP already exists.",
-                        Title = "Cannot add contact",
-                        DurationMillis = 4500,
-                    });
-                }
-                Close();
+                    if (!connected)
+                        Invoke(() => NoteLabel.Text = "Contact is not online or doesn't exist.");
+                    else
+                        Invoke(() =>
+                        {
+                            Callback(contact);
+                            Close();
+                        });
+                });
             }
         }
 

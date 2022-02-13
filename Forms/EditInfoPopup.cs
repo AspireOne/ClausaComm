@@ -6,7 +6,7 @@ using ClausaComm.Utils;
 
 namespace ClausaComm.Forms
 {
-    public partial class EditInfoPopup : FormBase
+    public partial class EditInfoPopup : PopupBase
     {
         private readonly Contact User;
         private static readonly OpenFileDialog SelectImageDialog = new()
@@ -20,11 +20,12 @@ namespace ClausaComm.Forms
             Filter = "Image Files |*.jpg;*.jpeg;*.png;*.bmp;*.gif;*.exif;*.tiff;*.svg;"
         };
 
-        public EditInfoPopup(Contact user)
+        public EditInfoPopup(Contact user, MainForm containingForm) : base(containingForm)
         {
             User = user;
             InitializeComponent();
             InitializeComponentFurther();
+            Init();
         }
 
         private void InitializeComponentFurther()
@@ -42,8 +43,6 @@ namespace ClausaComm.Forms
             SaveButton.Paint += (_, _) => OnSaveButtonPaint();
             SaveButton.MouseDown += (_, _) => OnSaveButtonClick();
             SaveButton.LineColorOnHover = Constants.UiConstants.ElementOnHoverColor;
-
-            InitTitleBar(this, "Edit your info");
         }
 
         private void OnNameBoxTextChange()

@@ -1,4 +1,7 @@
 ﻿
+using System.Drawing;
+using System.Windows.Forms;
+
 namespace ClausaComm.Forms
 {
     partial class AddContactPopup
@@ -39,7 +42,7 @@ namespace ClausaComm.Forms
             // 
             // HeaderLabel
             // 
-            this.HeaderLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            this.HeaderLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.HeaderLabel.Font = new System.Drawing.Font("Segoe UI", 26.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.HeaderLabel.ForeColor = System.Drawing.Color.WhiteSmoke;
@@ -82,22 +85,21 @@ namespace ClausaComm.Forms
             // 
             // NoteLabel
             // 
-            this.NoteLabel.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
+            this.NoteLabel.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.NoteLabel.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.NoteLabel.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point);
-            this.NoteLabel.ForeColor = System.Drawing.SystemColors.Control;
-            this.NoteLabel.Location = new System.Drawing.Point(75, 345);
+            this.NoteLabel.Font = new System.Drawing.Font("Segoe UI", 13F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.NoteLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(200)))), ((int)(((byte)(200)))), ((int)(((byte)(200)))));
+            this.NoteLabel.Location = new System.Drawing.Point(0, 308);
             this.NoteLabel.MinimumSize = new System.Drawing.Size(371, 72);
             this.NoteLabel.Name = "NoteLabel";
-            this.NoteLabel.Size = new System.Drawing.Size(371, 72);
-            this.NoteLabel.TabIndex = 7;
-            this.NoteLabel.Text = "Note: If the user is offline, their data (such as name or profile picture) will n" +
-    "ot be available until they go online for the first time.";
+            this.NoteLabel.Size = new System.Drawing.Size(517, 77);
+            this.NoteLabel.TabIndex = 0;
+            this.NoteLabel.Text = "Write contact\'s IP.";
+            this.NoteLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // AddButton
             // 
             this.AddButton.Anchor = System.Windows.Forms.AnchorStyles.Top;
-            this.AddButton.AutoSize = true;
             this.AddButton.ColorLineOnHover = true;
             this.AddButton.Cursor = System.Windows.Forms.Cursors.Hand;
             this.AddButton.Font = new System.Drawing.Font("Segoe UI", 21.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
@@ -105,7 +107,7 @@ namespace ClausaComm.Forms
             this.AddButton.LineColor = System.Drawing.Color.White;
             this.AddButton.LineColorOnHover = System.Drawing.Color.FromArgb(((int)(((byte)(252)))), ((int)(((byte)(196)))), ((int)(((byte)(11)))));
             this.AddButton.LineWidth = 3F;
-            this.AddButton.Location = new System.Drawing.Point(215, 213);
+            this.AddButton.Location = new System.Drawing.Point(223, 227);
             this.AddButton.Name = "AddButton";
             this.AddButton.Size = new System.Drawing.Size(70, 40);
             this.AddButton.TabIndex = 8;
@@ -119,16 +121,15 @@ namespace ClausaComm.Forms
             this.AutoScroll = true;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(40)))), ((int)(((byte)(40)))), ((int)(((byte)(40)))));
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.ClientSize = new System.Drawing.Size(517, 426);
+            this.ClientSize = new System.Drawing.Size(517, 385);
             this.Controls.Add(this.AddButton);
             this.Controls.Add(this.NoteLabel);
             this.Controls.Add(this.IpBox);
             this.Controls.Add(this.IpLabel);
             this.Controls.Add(this.HeaderLabel);
-            this.DoubleBuffered = true;
             this.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(28)))), ((int)(((byte)(28)))), ((int)(((byte)(28)))));
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
-            this.MinimumSize = new System.Drawing.Size(383, 426);
+            this.Location = new System.Drawing.Point(0, 0);
             this.Name = "AddContactPopup";
             this.Text = "Add Contact";
             this.TopMost = true;

@@ -96,7 +96,7 @@ namespace ClausaComm.Forms
 
             MessagesXml.SaveMessage(message, contact.Id);
             
-            if (ChatScreen.Contact != contact) 
+            if (ChatScreen.Contact != contact || Form.ActiveForm != this)
                 Sound.PlayNotificationSound();
             
             Invoke(() => ChatScreen.HandleMessageReceived(contact, message));
@@ -114,7 +114,7 @@ namespace ClausaComm.Forms
                 Task.Run(async () =>
                 {
                     await Task.Delay(10);
-                    Invoke(() => new EditInfoPopup(contactToAdd).ShowDialog());
+                    Invoke(() => new EditInfoPopup(contactToAdd, this).ShowDialog());
                 });
             }
             void ClickActionIfContact(Contact contact) => ChangeChatContact(contact);
@@ -137,11 +137,7 @@ namespace ClausaComm.Forms
 
         private void AddContactPictureBox_Click(object sender, EventArgs e)
         {
-            new AddContactPopup(contact =>
-            {
-                AddContact(contact);
-                NetworkBridge.Connect(contact);
-            }, this).ShowDialog();
+            new AddContactPopup(AddContact, this, NetworkBridge.Connect).ShowDialog();
         }
 
         private void ChangeControlsEnabled(bool enabled)

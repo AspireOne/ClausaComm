@@ -217,7 +217,7 @@ namespace ClausaComm.Components
 
         private void Drag(object sender, MouseEventArgs e)
         {
-            if (Form is null || Form.WindowState == FormWindowState.Maximized)
+            if (Form is null || Form.WindowState == FormWindowState.Maximized || !Form.Draggable)
                 return;
 
             const int wmNclbuttondown = 0xA1;
