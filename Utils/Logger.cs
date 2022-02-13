@@ -8,7 +8,7 @@ namespace ClausaComm.Utils;
 public static class Logger
 {
     public static bool Disabled = false;
-    public const int MaxTextLength = 500;
+    public const int MaxTextLength = 2000;
     public static void Log(string? str)
     {
         if (Disabled)
