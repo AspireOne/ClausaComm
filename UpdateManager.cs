@@ -73,7 +73,7 @@ namespace ClausaComm
             ZipFile.ExtractToDirectory(BinarySavePath, ExtractedFilesTempDir, true);
             File.Delete(BinarySavePath);
 
-            string restartCommand = $" & start {Program.ThisProgramPath}";
+            string restartCommand = $" & start {Program.ExePath}";
 
             /*
             using RegistryKey key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\ClausaComm");

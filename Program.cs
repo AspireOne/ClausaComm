@@ -15,7 +15,7 @@ namespace ClausaComm
     {
         public const string Version = "1.0.0";
 
-        public static readonly string ThisProgramPath = Path.Combine(Directory.GetCurrentDirectory(),
+        public static readonly string ExePath = Path.Combine(Directory.GetCurrentDirectory(),
             Process.GetCurrentProcess().MainModule.FileName);
 
         /// <summary>The main entry point for the application.</summary>
