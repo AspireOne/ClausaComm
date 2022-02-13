@@ -217,7 +217,7 @@ namespace ClausaComm.Network_Communication
         {
             string filePath = string.IsNullOrEmpty(message.FilePath)
                 ? null
-                : Path.Combine(ProgramDirectory.FileSavePath, Path.GetFileName(message.FilePath));
+                : Path.Combine(Paths.FileSavePath, Path.GetFileName(message.FilePath));
             message = ChatMessage.ReconstructMessage(message.Text, ChatMessage.Ways.In, message.Id, message.Time, filePath);
             MessageReceived?.Invoke(message, sender);
         }

@@ -132,7 +132,7 @@ namespace ClausaComm.Network_Communication.Networking
                         
                         Logger.Log($"Received a file, reading data length.");
                         var file = (RemoteFile)obj.Data;
-                        string path = Path.Combine(ProgramDirectory.FileSavePath, file.FileName);
+                        string path = Path.Combine(Paths.FileSavePath, file.FileName);
                         ns.Read(lengthBuffer, 0, lengthBuffer.Length);
                         long dataLength = BitConverter.ToInt64(lengthBuffer);
                         Logger.Log($"Got data length, reading " + dataLength + " bytes of data.");
