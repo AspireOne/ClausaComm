@@ -25,9 +25,9 @@ namespace ClausaComm.Network_Communication
         public delegate void MessageReceivedEventHandler(ChatMessage message, Contact contact);
         public delegate void NewContactEventHandler(Contact contact);
         /// <summary>Invoked when a message is received from the network</summary>
-        public event MessageReceivedEventHandler MessageReceived;
+        public event MessageReceivedEventHandler? MessageReceived;
         /// <summary>Invoked when a new contact is sent from the network.</summary>
-        public event NewContactEventHandler NewContactReceived;
+        public event NewContactEventHandler? NewContactReceived;
         public bool Running { get; private set; }
         private readonly HashSet<Contact> AllContacts;
         private static bool InstanceCreated;
@@ -136,7 +136,7 @@ namespace ClausaComm.Network_Communication
             bool msgSendResult = NetworkManager.Send(ip, obj);
 
             if (message.FilePath is not null)
-                Task.Run(() => NetworkManager.Send(ip, new RemoteObject(new RemoteFile(message.FilePath))));
+                NetworkManager.Send(ip, new RemoteObject(new RemoteFile(message.FilePath)));
 
             return msgSendResult;
         }
