@@ -36,8 +36,6 @@ namespace ClausaComm.Network_Communication.Networking
         /// <returns>False if there was an error during (or before) listening. Otherwise true.</returns>
         public void Run(Action<bool> runningCallback)
         {
-            Logger.Log($"Server's Run method was called. Is already running: {Running}");
-            
             if (Running)
                 runningCallback.Invoke(false);
 

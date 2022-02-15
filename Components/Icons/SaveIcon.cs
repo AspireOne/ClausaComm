@@ -31,7 +31,6 @@ namespace ClausaComm.Components.Icons
              * This is a workaround for the Image bizzarely not displaying correctly until it's clicked on or hovered over.
              * Executing this code on the current thread does not solve it.
              */
-            // TODO: Fix this (Save Image not displaying correctly until clicked on or hovered over - replace the current workaround).
             Task.Run(async () => { await Task.Delay(50); Image = new Bitmap(Image); });
         }
 

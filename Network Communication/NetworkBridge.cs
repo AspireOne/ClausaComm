@@ -73,15 +73,12 @@ namespace ClausaComm.Network_Communication
             }
         }
 
-        public static void Connect(Contact contact, Action<bool>? callback = null)
+        public static bool Connect(Contact contact)
         {
-            ThreadUtils.RunThread(() =>
-            {
-                bool connected = PeerManager.CreateConnection(contact.Ip);
-                if (!connected)
-                    Logger.Log($"{nameof(NetworkBridge)}: Could not connect to {contact.Ip}");
-                callback?.Invoke(connected);
-            });
+            bool connected = PeerManager.CreateConnection(contact.Ip);
+            if (!connected)
+                Logger.Log($"{nameof(NetworkBridge)}: Could not connect to {contact.Ip}");
+            return connected;
         }
 
         // Send all user data on connection (both ongoing and ingoing).
@@ -104,10 +101,16 @@ namespace ClausaComm.Network_Communication
             }
 
             contact.Id ??= obj.ContactId;
-
-            // TODO: Handle IP collision
+            
             if (!contact.Ip.Equals(ip))
+            {
                 contact.Ip = ip;
+                Contact collidedContact = Contact.XmlFile.Contacts.FirstOrDefault(otherContact
+                    => ip.Equals(otherContact.Ip) && contact.Id != otherContact.Id);
+                
+                if (collidedContact is not null)
+                    collidedContact.Save = false;
+            }
 
             if (contact.CurrentStatus == Contact.Status.Offline)
                 contact.CurrentStatus = Contact.Status.Online;
@@ -126,6 +129,7 @@ namespace ClausaComm.Network_Communication
                     HandleMessageReceived((ChatMessage)obj.Data, contact);
                     break;
 
+                case RemoteObject.ObjectType.File: // Should never reach this switch statement, so we want to throw an exception if it does.
                 default:
                     throw new NotImplementedException($"One of {nameof(RemoteObject)}'s ObjectTypes weren't implemented in {nameof(NetworkBridge)}'s {nameof(HandleIncomingData)} method.");
             }

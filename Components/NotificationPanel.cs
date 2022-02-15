@@ -29,6 +29,7 @@ namespace ClausaComm.Components
         private const int InitialHeight = 92;
         private static readonly Pen BorderPen = new(Color.FromArgb(70, 70, 70), 1);
         private static readonly Size BorderSizeOffset = new(1, 1);
+        private NotificationArgs LastArgs;
 
         private readonly Timer NotificationAutoCloseTimer = new()
         {
@@ -52,6 +53,17 @@ namespace ClausaComm.Components
                 public EventHandler ClickCallback;
             }
 
+            public override bool Equals(object? obj)
+            {
+                return obj is NotificationArgs args
+                       && args.Title == Title
+                       && args.Content == Content
+                       && args.DurationMillis == DurationMillis;
+            }
+
+            public override int GetHashCode() 
+                => HashCode.Combine(DurationMillis, Title, Content, LeftButton, MiddleButton, RightButton);
+
             public int DurationMillis;
             public string Title;
             public string Content;
@@ -59,8 +71,7 @@ namespace ClausaComm.Components
             public ButtonArgs? MiddleButton;
             public ButtonArgs? RightButton;
         }
-
-        //TODO: Add acceleration
+        
         public NotificationPanel()
         {
             InitializeComponent();
@@ -88,7 +99,7 @@ namespace ClausaComm.Components
 
             ContentPanel.Controls.Add(Content);
             ContentPanel.AutoSize = true;
-            ContentPanel.Location = new Point(0, 22);
+            ContentPanel.Location = new Point(4, 25);
             ContentPanel.Name = "ContentPanel";
             ContentPanel.Size = new Size(265, 42);
             ContentPanel.TabIndex = 7;
@@ -153,7 +164,7 @@ namespace ClausaComm.Components
             Title.Size = new Size(218, 20);
             Title.TabIndex = 0;
             Title.Text = "A title";
-            Title.TextAlign = ContentAlignment.MiddleCenter;
+            Title.TextAlign = ContentAlignment.MiddleLeft;
 
             ButtonsPanel.Controls.Add(RightButt);
             ButtonsPanel.Controls.Add(LeftButt);
@@ -204,10 +215,14 @@ namespace ClausaComm.Components
 
         public void ShowNotification(NotificationArgs args)
         {
+            BringToFront();
+            NotificationArgs lastArgs = LastArgs;
+            LastArgs = args;
+            
             if (Visible)
             {
-                NotificationQueue.Enqueue(args);
-                Logger.Log("Returning notification");
+                if (!args.Equals(lastArgs))
+                    NotificationQueue.Enqueue(args);
                 return;
             }
 

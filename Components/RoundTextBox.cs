@@ -66,18 +66,13 @@ namespace ClausaComm.Components
 
         private int Radius = 15;
         public bool ColorBorderOnHover { get; set; } = true;
-        public TextBox Textbox = new();
+        public readonly TextBox Textbox = new();
         private GraphicsPath Shape;
         private GraphicsPath InnerRect;
         private readonly Color Br;
         private Color _borderColor = Color.Transparent;
         private Color _onHoverBorderColor = Constants.UiConstants.ElementOnHoverColor;
         private int _borderSize = 10;
-
-
-
-        //TODO: Fix this whole utterly fucking stupid class
-
 
         public RoundTextBox()
         {

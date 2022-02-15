@@ -8,8 +8,10 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Net.Mime;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using ClausaComm.Extensions;
 using ClausaComm.Utils;
 
@@ -36,7 +38,7 @@ namespace ClausaComm
             string highestVer = GetHighestVersion(availableVersions);
             Logger.Log("\nhighest version: " + highestVer);
 
-            bool highestIsHigherThanCurr = highestVer.IsHigherThan(Program.Version);
+            bool highestIsHigherThanCurr = IsVersionHigher(highestVer, Program.Version);
             Logger.Log("\nHighest available is higher than current: " + highestIsHigherThanCurr);
 
             return (highestIsHigherThanCurr, highestIsHigherThanCurr ? highestVer : null);
@@ -103,21 +105,13 @@ namespace ClausaComm
         private static string GetHighestVersion(IReadOnlyList<string> versions)
         {
             string lastHighest = versions[0];
-            versions.ForEach(ver => lastHighest = ver.IsHigherThan(lastHighest) ? ver : lastHighest);
+            versions.ForEach(ver => lastHighest = IsVersionHigher(ver, lastHighest) ? ver : lastHighest);
             return lastHighest;
         }
 
-        private static bool IsHigherThan(this string version, string secondVersion)
+        private static bool IsVersionHigher(string version, string other)
         {
-            if (version == secondVersion)
-                return false;
-
-            byte[] verNums = version.Split('.').Select(byte.Parse).ToArray();
-            byte[] secondVerNums = secondVersion.Split('.').Select(byte.Parse).ToArray();
-
-            return verNums[0] > secondVerNums[0]
-                   || verNums[0] == secondVerNums[0] && verNums[1] > secondVerNums[1]
-                   || verNums[0] == secondVerNums[0] && verNums[1] == secondVerNums[1] && verNums[2] > secondVerNums[2];
+            return int.Parse(version.Replace(".", "")) > int.Parse(other.Replace(".", ""));
         }
     }
 }

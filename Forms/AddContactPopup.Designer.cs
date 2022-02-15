@@ -132,7 +132,6 @@ namespace ClausaComm.Forms
             this.Location = new System.Drawing.Point(0, 0);
             this.Name = "AddContactPopup";
             this.Text = "Add Contact";
-            this.TopMost = true;
             this.ResumeLayout(false);
             this.PerformLayout();
 

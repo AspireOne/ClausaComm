@@ -14,6 +14,7 @@ namespace ClausaComm.Network_Communication.Networking
     internal class Client : NetworkPeer
     {
         private readonly TcpClient UnderlyingClient = new();
+        private const ushort ConnectTimeoutMillis = 1500;
         public readonly IPEndPoint TargetEndpoint;
 
         public Client(IPEndPoint targetEndpoint) => TargetEndpoint = targetEndpoint;
@@ -22,12 +23,11 @@ namespace ClausaComm.Network_Communication.Networking
         public override int GetHashCode() => int.Parse(TargetEndpoint.ToString().Replace(".", "").Replace(":", ""));
 
         /// <summary>
-        /// Connects to the host and starts reading from the network. Blocking.
+        /// Connects to the host and starts reading from the network. Non-blocking.
         /// </summary>
         /// <returns>True if successfully connected and not already running; false otherwise.</returns>
         public bool Run()
         {
-            Logger.Log($"{nameof(Client)}: Run method called. Already running: {Running} (endpoint: {TargetEndpoint})");
             if (Running)
                 return false;
             
@@ -35,7 +35,8 @@ namespace ClausaComm.Network_Communication.Networking
             
             try
             {
-                UnderlyingClient.Connect(TargetEndpoint);
+                if (!UnderlyingClient.ConnectAsync(TargetEndpoint).Wait(ConnectTimeoutMillis))
+                    return false;
             }
             catch (Exception e)
             {
@@ -54,9 +55,13 @@ namespace ClausaComm.Network_Communication.Networking
             
             Logger.Log($"{nameof(Client)}: Connected (endpoint: {TargetEndpoint})");
             RaiseConnect(TargetEndpoint);
-            StartReading(UnderlyingClient);
-            Logger.Log($"{nameof(Client)}: Disconnected (endpoint: {TargetEndpoint})");
-            Running = false;
+            ThreadUtils.RunThread(() =>
+            {
+                StartReading(UnderlyingClient);
+                Logger.Log($"{nameof(Client)}: Disconnected (endpoint: {TargetEndpoint})");
+                Running = false; 
+            });
+            
             return true;
         }
 

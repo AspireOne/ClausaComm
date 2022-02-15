@@ -160,6 +160,10 @@ namespace ClausaComm.Components
 
             SaveUnsaveContactIcon.Click += (_, _) =>
             {
+                // Cannot unsave the user contact.
+                if (Contact.IsUser && Contact.Save)
+                    return;
+                
                 if (Contact.Id is null)
                 {
                     MainForm.NotificationPanel.ShowNotification(new NotificationPanel.NotificationArgs()

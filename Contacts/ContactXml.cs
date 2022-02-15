@@ -57,7 +57,7 @@ namespace ClausaComm.Contacts
                         new XElement(InfoXmlRepresentation[XmlSavedInfo.Name], Contact.Name),
                         new XElement(InfoXmlRepresentation[XmlSavedInfo.Ip], Contact.IsUser ? null : Contact.Ip),
                         new XElement(InfoXmlRepresentation[XmlSavedInfo.Id], Contact.Id),
-                        new XElement(InfoXmlRepresentation[XmlSavedInfo.IsUser], Contact.IsUser)
+                        new XAttribute(InfoXmlRepresentation[XmlSavedInfo.IsUser], Contact.IsUser)
                     )
                 );
 
@@ -122,7 +122,8 @@ namespace ClausaComm.Contacts
 
                 foreach (var node in GetContactNodes())
                 {
-                    bool isUser = bool.Parse(node.Element(InfoXmlRepresentation[XmlSavedInfo.IsUser]).Value);
+                    string? isUserAttrValue = node.Attribute(InfoXmlRepresentation[XmlSavedInfo.IsUser])?.Value;
+                    bool isUser = isUserAttrValue is not null && bool.Parse(isUserAttrValue);
                     string? ip = node.Element(InfoXmlRepresentation[XmlSavedInfo.Ip])?.Value;
                     string? id = node.Element(InfoXmlRepresentation[XmlSavedInfo.Id])?.Value;
                     string name = node.Element(InfoXmlRepresentation[XmlSavedInfo.Name]).Value;
@@ -130,15 +131,14 @@ namespace ClausaComm.Contacts
                     yield return ReconstructContact(isUser: isUser, ip: isUser ? null : IPAddress.Parse(ip), id: id, name: name);
                 }
                 
-                Contact ReconstructContact(bool isUser, IPAddress ip, string id, string name)
+                Contact ReconstructContact(bool isUser, IPAddress? ip, string id, string name)
                 {
                     var contact = new Contact(isUser ? localIp : ip) { _name = name, _save = false, Id = id, IsUser = isUser };
                     TryGetProfilePicture(contact.ProfilePicPath, out Image profileImage);
 
                     contact.ProfilePic = profileImage;
                     contact._save = true;
-
-                    Logger.Log("Found contact from xml. Data: " + contact);
+                    
                     return contact;
                 }
             }
