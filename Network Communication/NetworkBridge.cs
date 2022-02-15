@@ -103,7 +103,14 @@ namespace ClausaComm.Network_Communication
             contact.Id ??= obj.ContactId;
             
             if (!contact.Ip.Equals(ip))
+            {
                 contact.Ip = ip;
+                Contact collidedContact = Contact.XmlFile.Contacts.FirstOrDefault(otherContact
+                    => ip.Equals(otherContact.Ip) && contact.Id != otherContact.Id);
+                
+                if (collidedContact is not null)
+                    collidedContact.Save = false;
+            }
 
             if (contact.CurrentStatus == Contact.Status.Offline)
                 contact.CurrentStatus = Contact.Status.Online;

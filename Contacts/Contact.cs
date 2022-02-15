@@ -82,13 +82,7 @@ namespace ClausaComm.Contacts
             get => _ip;
             set
             {
-                if (value is null)
-                    throw new ArgumentNullException(nameof(value), "The supplied IP was null.");
-
-                Contact collidedContact = XmlFile.Contacts?.FirstOrDefault(contact => value.Equals(contact.Ip));
-                if (collidedContact is not null)
-                    collidedContact.Save = false;
-                _ip = value;
+                _ip = value ?? throw new ArgumentNullException(nameof(value), "The supplied IP was null.");
             }
         }
 
