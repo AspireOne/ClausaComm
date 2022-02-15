@@ -73,15 +73,12 @@ namespace ClausaComm.Network_Communication
             }
         }
 
-        public static void Connect(Contact contact, Action<bool>? callback = null)
+        public static bool Connect(Contact contact)
         {
-            ThreadUtils.RunThread(() =>
-            {
-                bool connected = PeerManager.CreateConnection(contact.Ip);
-                if (!connected)
-                    Logger.Log($"{nameof(NetworkBridge)}: Could not connect to {contact.Ip}");
-                callback?.Invoke(connected);
-            });
+            bool connected = PeerManager.CreateConnection(contact.Ip);
+            if (!connected)
+                Logger.Log($"{nameof(NetworkBridge)}: Could not connect to {contact.Ip}");
+            return connected;
         }
 
         // Send all user data on connection (both ongoing and ingoing).

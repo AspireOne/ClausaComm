@@ -23,7 +23,7 @@ namespace ClausaComm.Network_Communication.Networking
         public override int GetHashCode() => int.Parse(TargetEndpoint.ToString().Replace(".", "").Replace(":", ""));
 
         /// <summary>
-        /// Connects to the host and starts reading from the network. Blocking.
+        /// Connects to the host and starts reading from the network. Non-blocking.
         /// </summary>
         /// <returns>True if successfully connected and not already running; false otherwise.</returns>
         public bool Run()
@@ -55,9 +55,13 @@ namespace ClausaComm.Network_Communication.Networking
             
             Logger.Log($"{nameof(Client)}: Connected (endpoint: {TargetEndpoint})");
             RaiseConnect(TargetEndpoint);
-            StartReading(UnderlyingClient);
-            Logger.Log($"{nameof(Client)}: Disconnected (endpoint: {TargetEndpoint})");
-            Running = false;
+            ThreadUtils.RunThread(() =>
+            {
+                StartReading(UnderlyingClient);
+                Logger.Log($"{nameof(Client)}: Disconnected (endpoint: {TargetEndpoint})");
+                Running = false; 
+            });
+            
             return true;
         }
 

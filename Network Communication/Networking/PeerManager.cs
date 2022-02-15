@@ -46,7 +46,7 @@ namespace ClausaComm.Network_Communication.Networking
         }
 
         /// <summary>
-        /// Blocking. Will create a Client, hook it to events and run it (connect it to the specified endpoint).
+        /// Non-Blocking. Will create a Client, hook it to events and run it (connect it to the specified endpoint).
         /// </summary>
         /// <returns>True if successfully connected. Otherwise false.</returns>
         public static bool CreateConnection(IPAddress ip)
