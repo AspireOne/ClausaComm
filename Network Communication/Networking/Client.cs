@@ -14,6 +14,7 @@ namespace ClausaComm.Network_Communication.Networking
     internal class Client : NetworkPeer
     {
         private readonly TcpClient UnderlyingClient = new();
+        private const ushort ConnectTimeoutMillis = 1500;
         public readonly IPEndPoint TargetEndpoint;
 
         public Client(IPEndPoint targetEndpoint) => TargetEndpoint = targetEndpoint;
@@ -27,7 +28,6 @@ namespace ClausaComm.Network_Communication.Networking
         /// <returns>True if successfully connected and not already running; false otherwise.</returns>
         public bool Run()
         {
-            Logger.Log($"{nameof(Client)}: Run method called. Already running: {Running} (endpoint: {TargetEndpoint})");
             if (Running)
                 return false;
             
@@ -35,7 +35,8 @@ namespace ClausaComm.Network_Communication.Networking
             
             try
             {
-                UnderlyingClient.Connect(TargetEndpoint);
+                if (!UnderlyingClient.ConnectAsync(TargetEndpoint).Wait(ConnectTimeoutMillis))
+                    return false;
             }
             catch (Exception e)
             {
