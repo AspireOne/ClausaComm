@@ -26,9 +26,9 @@ namespace ClausaComm.Forms
         private string IpTextBefore = "";
         private int CaretPositionBefore;
         private readonly Action<Contact> Callback;
-        private readonly Action<Contact, Action<bool>> Connect;
+        private readonly Func<Contact, bool> Connect;
 
-        public AddContactPopup(Action<Contact> callback, MainForm containingForm, Action<Contact, Action<bool>> connect) : base(containingForm)
+        public AddContactPopup(Action<Contact> callback, MainForm containingForm, Func<Contact, bool> connect) : base(containingForm)
         {
             Callback = callback;
             Connect = connect;
@@ -74,17 +74,17 @@ namespace ClausaComm.Forms
                 
             var contact = new Contact(ip);
             NoteLabel.Text = "Connecting...";
-            Connect(contact, connected =>
+            AddButton.Cursor = AddButtonProps.DisallowCursor;
+
+            if (Connect.Invoke(contact))
             {
-                if (!connected)
-                    Invoke(() => NoteLabel.Text = "Contact is not online or doesn't exist.");
-                else
-                    Invoke(() =>
-                    {
-                        Callback(contact);
-                        Close();
-                    });
-            });
+                Invoke(Close);
+                Callback(contact);
+            }
+            else
+            {
+                Invoke(() => NoteLabel.Text = "Contact is not online or doesn't exist.");
+            }
         }
 
         [DllImport("user32.dll")]
