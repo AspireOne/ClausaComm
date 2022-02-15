@@ -36,6 +36,16 @@ namespace ClausaComm.Forms
             InitializeComponent();
             InitializeComponentFurther();
             Init();
+            IpBox.KeyPress += (_, e) =>
+            {
+                if (e.KeyChar == (char)13)
+                    OnAddButtonClicked();
+            };
+        }
+
+        protected override void OnKeyPress(KeyPressEventArgs e)
+        {
+            base.OnKeyPress(e);
         }
 
         private void InitializeComponentFurther()
@@ -51,30 +61,30 @@ namespace ClausaComm.Forms
 
         private void OnAddButtonClicked()
         {
-            if (AddButton.Cursor == AddButtonProps.AllowCursor)
+            if (AddButton.Cursor != AddButtonProps.AllowCursor)
+                return;
+            
+            IPAddress ip = IPAddress.Parse(IpBox.Textbox.Text);
+                
+            if (ContainingForm.Contacts.Any(x => x.Ip.Equals(ip)))
             {
-                IPAddress ip = IPAddress.Parse(IpBox.Textbox.Text);
-                
-                if (ContainingForm.Contacts.Any(x => x.Ip.Equals(ip)))
-                {
-                    NoteLabel.Text = "Contact already exists.";
-                    return;
-                }
-                
-                var contact = new Contact(ip);
-                NoteLabel.Text = "Connecting...";
-                Connect(contact, connected =>
-                {
-                    if (!connected)
-                        Invoke(() => NoteLabel.Text = "Contact is not online or doesn't exist.");
-                    else
-                        Invoke(() =>
-                        {
-                            Callback(contact);
-                            Close();
-                        });
-                });
+                NoteLabel.Text = "Contact already exists.";
+                return;
             }
+                
+            var contact = new Contact(ip);
+            NoteLabel.Text = "Connecting...";
+            Connect(contact, connected =>
+            {
+                if (!connected)
+                    Invoke(() => NoteLabel.Text = "Contact is not online or doesn't exist.");
+                else
+                    Invoke(() =>
+                    {
+                        Callback(contact);
+                        Close();
+                    });
+            });
         }
 
         [DllImport("user32.dll")]

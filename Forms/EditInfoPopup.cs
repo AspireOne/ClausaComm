@@ -26,6 +26,15 @@ namespace ClausaComm.Forms
             InitializeComponent();
             InitializeComponentFurther();
             Init();
+            
+            foreach (Control control in Controls)
+            {
+                control.KeyPress += (_, e) =>
+                {
+                    if (e.KeyChar == (char)13)
+                        OnSaveButtonClick();
+                };
+            }
         }
 
         private void InitializeComponentFurther()
@@ -43,6 +52,13 @@ namespace ClausaComm.Forms
             SaveButton.Paint += (_, _) => OnSaveButtonPaint();
             SaveButton.MouseDown += (_, _) => OnSaveButtonClick();
             SaveButton.LineColorOnHover = Constants.UiConstants.ElementOnHoverColor;
+        }
+
+        protected override void OnKeyPress(KeyPressEventArgs e)
+        {
+            base.OnKeyPress(e);
+            if (e.KeyChar == (char)13)
+                OnSaveButtonClick();
         }
 
         private void OnNameBoxTextChange()
