@@ -41,8 +41,7 @@ namespace ClausaComm.Contacts
         public static Contact UserContact => _userContact ??=
             XmlFile.Contacts.FirstOrDefault(contact => contact.IsUser)
             ?? new Contact(IpUtils.LocalIp) { Id = IdGenerator.GenerateId(8), IsUser = true, Save = true };
-
-        // TODO: Rework the whole IsUser thing (save just UserId: id and remove he IsUser property)
+        
         public bool IsUser { get; private init; }
         public string ProfilePicPath => Path.Combine(ProgramDirectory.ProfilePicsDirPath, $"{Id}.png");
         private bool HasDefaultProfilePic { get; set; } = true;
@@ -83,7 +82,13 @@ namespace ClausaComm.Contacts
             get => _ip;
             set
             {
-                _ip = value ?? throw new ArgumentNullException(nameof(value), "The supplied IP was null.");
+                if (value is null)
+                    throw new ArgumentNullException(nameof(value), "The supplied IP was null.");
+
+                Contact collidedContact = XmlFile.Contacts?.FirstOrDefault(contact => value.Equals(contact.Ip));
+                if (collidedContact is not null)
+                    collidedContact.Save = false;
+                _ip = value;
             }
         }
 
