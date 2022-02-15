@@ -22,6 +22,7 @@ public class PopupBase : FormBase
         StartPosition = FormStartPosition.Manual;
         ShowInTaskbar = false;
         Draggable = false;
+        TopMost = false;
         
         Owner = ContainingForm;
         background.Owner = ContainingForm;
