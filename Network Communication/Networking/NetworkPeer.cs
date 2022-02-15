@@ -123,7 +123,6 @@ namespace ClausaComm.Network_Communication.Networking
                     try
                     {
                         RemoteObject obj = ReadObject((int)BitConverter.ToInt64(lengthBuffer), client);
-                        Logger.Log($"read object ({obj.Data.ObjectType}).");
                         if (obj.Data.ObjectType != RemoteObject.ObjectType.File)
                         {
                             Task.Run(() => OnReceive?.Invoke(obj, remoteHost));
@@ -155,7 +154,6 @@ namespace ClausaComm.Network_Communication.Networking
 
         private static void ReadFile(long fileLength, string filepath, NetworkStream ns)
         {
-            // TODO: Just rename.
             if (File.Exists(filepath))
                 File.Delete(filepath);
             
