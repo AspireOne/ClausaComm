@@ -109,6 +109,7 @@ namespace ClausaComm.Components
         {
             InitializeComponent();
             AllowDrop = true;
+            DoubleBuffered = true;
             NoContactLabel.Parent = this;
             ChatPanel.Parent = this;
 
