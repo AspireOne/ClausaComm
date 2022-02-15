@@ -17,6 +17,8 @@
     <PackageVersion>1.0.0</PackageVersion>
     <PackageProjectUrl>https://github.com/AspireOne/clausacomm</PackageProjectUrl>
     <LangVersion>10</LangVersion>
+    <FileVersion></FileVersion>
+    <AssemblyVersion></AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>
