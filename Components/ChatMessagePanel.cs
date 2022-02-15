@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -15,9 +16,16 @@ namespace ClausaComm.Components
         public readonly ChatMessage Message;
         private readonly bool IsLink;
 
+        private static readonly Dictionary<ComponentUtils.MouseEvent, Color> MouseEventColors = new()
+        {
+            {ComponentUtils.MouseEvent.Enter, Constants.UiConstants.ChatMessageOnHoverColor},
+            {ComponentUtils.MouseEvent.Leave, Constants.UiConstants.ChatBackColor},
+        };
+
         public ChatMessagePanel(ChatMessage message, Contact contact)
         {
             InitializeComponent();
+            this.DoubleBuffered = true;
             // Adding 3_600_000 milliseconds because the time is one hour late for some reason.
             DateTimeOffset date = DateTimeOffset.FromUnixTimeMilliseconds(message.Time + 3_600_000);
             ChatMessageName.Text = contact.Name;
@@ -46,6 +54,18 @@ namespace ClausaComm.Components
             SetDelivered(message.Way == ChatMessage.Ways.In || message.Delivered);
             if (message.Way == ChatMessage.Ways.Out)
                 message.DeliveredChanged += (_, delivered) => SetDelivered(delivered);
+            
+            
+            /*foreach (Control control in Controls)
+            {
+                ComponentUtils.SetDoubleBuffered(control);
+                control.MouseDown += (_, e) => OnMouseDown(e);
+                control.MouseUp += (_, e) => OnMouseUp(e);
+                control.MouseEnter += (_, e) => OnMouseEnter(e);
+                control.MouseLeave += (_, e) => OnMouseLeave(e);
+                control.Click += (_, e) => OnClick(e);
+            }
+            ComponentUtils.AddBackColorFilterOnMouseEvent(this,  MouseEventColors);*/
         }
         
         private void SetDelivered(bool delivered)
