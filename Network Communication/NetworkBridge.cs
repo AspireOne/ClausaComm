@@ -104,8 +104,7 @@ namespace ClausaComm.Network_Communication
             }
 
             contact.Id ??= obj.ContactId;
-
-            // TODO: Handle IP collision
+            
             if (!contact.Ip.Equals(ip))
                 contact.Ip = ip;
 
@@ -126,6 +125,7 @@ namespace ClausaComm.Network_Communication
                     HandleMessageReceived((ChatMessage)obj.Data, contact);
                     break;
 
+                case RemoteObject.ObjectType.File: // Should never reach this switch statement, so we want to throw an exception if it does.
                 default:
                     throw new NotImplementedException($"One of {nameof(RemoteObject)}'s ObjectTypes weren't implemented in {nameof(NetworkBridge)}'s {nameof(HandleIncomingData)} method.");
             }
