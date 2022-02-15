@@ -10,6 +10,7 @@ namespace ClausaComm.Components
         public SelectableTextBox()
         {
             InitializeComponent();
+            DoubleBuffered = true;
         }
 
         protected override void OnMouseWheel(MouseEventArgs e)
@@ -42,7 +43,7 @@ namespace ClausaComm.Components
                 return;
             
             BackColor = Parent.BackColor;
-            Parent.BackColorChanged += (_, ev) => this.BackColor = Parent.BackColor;
+            Parent.BackColorChanged += (_, ev) => BackColor = Parent.BackColor;
         }
 
         [DllImport("user32.dll")]
@@ -56,6 +57,17 @@ namespace ClausaComm.Components
         protected override void OnTextChanged(EventArgs e)
         {
             base.OnTextChanged(e);
+            AdjustHeightToText();
+        }
+
+        protected override void OnSizeChanged(EventArgs e)
+        {
+            base.OnSizeChanged(e);
+            AdjustHeightToText();
+        }
+
+        private void AdjustHeightToText()
+        {
             // amount of padding to add
             const int padding = 3;
             // get number of lines (first line is 0, so add 1)
@@ -75,7 +87,6 @@ namespace ClausaComm.Components
         public SelectableTextBox(IContainer container)
         {
             container.Add(this);
-
             InitializeComponent();
         }
     }
