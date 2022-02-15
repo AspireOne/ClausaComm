@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using ClausaComm.Components;
@@ -53,12 +54,12 @@ namespace ClausaComm
             NotificationPanel.NotificationArgs notifArgs = new()
             {
                 DurationMillis = 15000,
-                MiddleButton = new NotificationPanel.NotificationArgs.ButtonArgs
+                LeftButton = new NotificationPanel.NotificationArgs.ButtonArgs
                     {ClickCallback = (_, _) => Close(true), Name = "Update now"},
                 Title = "New update available",
                 Content = $"Version {newVersion} is now available!"
             };
-
+            
             mainForm.Invoke(() => mainForm.NotificationPanel.ShowNotification(notifArgs));
         }
 
