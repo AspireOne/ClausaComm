@@ -29,6 +29,10 @@ namespace ClausaComm.Forms
             InitializeComponent();
             InitializeComponentFurther();
             InitializeProgram();
+            int x = Screen.PrimaryScreen.Bounds.Width / 2 - Width / 2;  
+            int y = Screen.PrimaryScreen.Bounds.Height / 2 - Height / 2;  
+            Location = new Point(x, y); 
+            
             UserStatusWatcher = new UserStatusWatcher(Contact.UserContact);
             UserStatusWatcher.Run();
             NetworkBridge = new NetworkBridge(Contacts, this);
@@ -46,6 +50,7 @@ namespace ClausaComm.Forms
             ActionPanel1.MainForm = this;
             ChatScreen.ActionPanel = ActionPanel1;
             ChatScreen.SendIcon = SendIcon1;
+            ChatScreen.FileSelectorIcon = FileSelectorIcon1;
             ChatScreen.Textbox = ChatTextBox1;
 
             AddContactIcon.Click += AddContactPictureBox_Click;
@@ -104,10 +109,10 @@ namespace ClausaComm.Forms
 
         private void AddContact(Contact contactToAdd)
         {
-            Contacts.Add(contactToAdd);
-
             if (contactToAdd is null)
                 throw new ArgumentNullException(nameof(contactToAdd));
+            
+            Contacts.Add(contactToAdd);
 
             void ClickActionIfUser(Contact contact)
             {
