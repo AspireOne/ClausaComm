@@ -20,6 +20,7 @@ namespace ClausaComm.Components
     public partial class ChatScreen : Panel
     {
         private SendIcon _sendIcon;
+        private FileSelectorIcon _fileSelectorIcon;
         private ChatTextBox _textbox;
         private const int InitialMessages = 15;
         private const int MaxMessages = 20;
@@ -29,6 +30,17 @@ namespace ClausaComm.Components
         public delegate void SendPressedHandler(ChatMessage message, Contact contact);
 
         public event SendPressedHandler OnSendPressed;
+        
+        private static readonly OpenFileDialog SelectFileDialog = new()
+        {
+            CheckFileExists = true,
+            ValidateNames = true,
+            Title = "Select the files to send",
+            Multiselect = true,
+            CheckPathExists = true,
+            DereferenceLinks = true,
+            Filter = "All Files |*.*"
+        };
 
         private readonly Label NoContactLabel = new()
         {
@@ -70,6 +82,16 @@ namespace ClausaComm.Components
             }
         }
 
+        public FileSelectorIcon FileSelectorIcon
+        {
+            private get => _fileSelectorIcon;
+            set
+            {
+                _fileSelectorIcon = value;
+                value.Click += (_, _) => HandleSendFilePressed();
+            }
+        }
+
         public ChatTextBox Textbox
         {
             get => _textbox;
@@ -79,26 +101,26 @@ namespace ClausaComm.Components
                 if (Contact is null)
                     ChangeContactSpecificElementsVisibility(false);
 
-                if (value is not null)
+                if (value is null)
+                    return;
+                
+                bool handleNextEnter = false;
+                Textbox.KeyDown += (_, e) =>
                 {
-                    bool handleNextEnter = false;
-                    Textbox.KeyDown += (_, e) =>
-                    {
-                        if (e.KeyCode == Keys.Enter && !e.Shift)
-                        {
-                            handleNextEnter = true;
-                            HandleSendPressed();
-                        }
-                    };
-                    Textbox.KeyPress += (_, e) =>
-                    {
-                        if (handleNextEnter && e.KeyChar == (char)Keys.Enter)
-                        {
-                            handleNextEnter = false;
-                            e.Handled = true;
-                        }
-                    };
-                }
+                    if (e.KeyCode != Keys.Enter || e.Shift)
+                        return;
+                    
+                    handleNextEnter = true;
+                    HandleSendPressed();
+                };
+                Textbox.KeyPress += (_, e) =>
+                {
+                    if (!handleNextEnter || e.KeyChar != (char)Keys.Enter)
+                        return;
+                    
+                    handleNextEnter = false;
+                    e.Handled = true;
+                };
             }
         }
 
@@ -224,9 +246,15 @@ namespace ClausaComm.Components
             SendMessage(textTrimmed);
         }
 
-        private void SendMessage(string text, string? filePath = null)
+        private void HandleSendFilePressed()
         {
-            ChatMessage msg = new(text) { Delivered = false, FilePath = filePath };
+            SelectFileDialog.ShowDialog();
+            SelectFileDialog.FileNames.ForEach(filename => SendMessage(null, filename));
+        }
+
+        private void SendMessage(string? text, string? filePath = null)
+        {
+            ChatMessage msg = new(text ?? "") { Delivered = false, FilePath = filePath };
             AddMessage(Contact, msg);
             OnSendPressed?.Invoke(msg, Contact);
         }
