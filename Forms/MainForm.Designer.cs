@@ -47,6 +47,7 @@ namespace ClausaComm.Forms
             this.ActionPanel1 = new ClausaComm.Components.ActionPanel(this.components);
             this.ChatTextBoxContainer = new System.Windows.Forms.Panel();
             this.ChatTextBox1 = new ClausaComm.Components.ChatTextBox();
+            this.FileSelectorIcon1 = new ClausaComm.Components.Icons.FileSelectorIcon(this.components);
             this.SendIcon1 = new ClausaComm.Components.Icons.SendIcon(this.components);
             this.panel2 = new System.Windows.Forms.Panel();
             this.LeftPanel = new System.Windows.Forms.Panel();
@@ -59,6 +60,7 @@ namespace ClausaComm.Forms
             ((System.ComponentModel.ISupportInitialize)(this.ProfilePicture)).BeginInit();
             this.ChatScreen.SuspendLayout();
             this.ChatTextBoxContainer.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.FileSelectorIcon1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.SendIcon1)).BeginInit();
             this.LeftPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.AddContactIcon)).BeginInit();
@@ -72,7 +74,7 @@ namespace ClausaComm.Forms
             this.IpLbl.Name = "IpLbl";
             this.IpLbl.Size = new System.Drawing.Size(148, 65);
             this.IpLbl.TabIndex = 9;
-            this.IpLbl.Text = "192.168.125.151";
+            this.IpLbl.Text = "xxx.xxx.xxx.xxx";
             this.IpLbl.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // Status
@@ -95,7 +97,7 @@ namespace ClausaComm.Forms
             this.NameLbl.Name = "NameLbl";
             this.NameLbl.Size = new System.Drawing.Size(226, 64);
             this.NameLbl.TabIndex = 6;
-            this.NameLbl.Text = "Samalama dumaluma gertruda";
+            this.NameLbl.Text = "Name";
             this.NameLbl.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // contextMenuStrip1
@@ -138,14 +140,15 @@ namespace ClausaComm.Forms
             // ChatScreen
             // 
             this.ChatScreen.ActionPanel = null;
+            this.ChatScreen.AllowDrop = true;
             this.ChatScreen.Controls.Add(this.NotificationPanel);
             this.ChatScreen.Controls.Add(this.ActionPanel1);
             this.ChatScreen.Controls.Add(this.ChatTextBoxContainer);
             this.ChatScreen.Controls.Add(this.panel2);
             this.ChatScreen.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.ChatScreen.Location = new System.Drawing.Point(184, 26);
+            this.ChatScreen.Location = new System.Drawing.Point(184, 1);
             this.ChatScreen.Name = "ChatScreen";
-            this.ChatScreen.Size = new System.Drawing.Size(882, 680);
+            this.ChatScreen.Size = new System.Drawing.Size(882, 705);
             this.ChatScreen.TabIndex = 28;
             this.ChatScreen.Textbox = null;
             this.ChatScreen.Paint += new System.Windows.Forms.PaintEventHandler(this.ChatPanel1_Paint);
@@ -157,16 +160,16 @@ namespace ClausaComm.Forms
             this.NotificationPanel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(31)))), ((int)(((byte)(31)))), ((int)(((byte)(33)))));
             this.NotificationPanel.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.NotificationPanel.Form = null;
-            this.NotificationPanel.Location = new System.Drawing.Point(609, 504);
+            this.NotificationPanel.Location = new System.Drawing.Point(605, 529);
             this.NotificationPanel.Name = "NotificationPanel";
             this.NotificationPanel.Padding = new System.Windows.Forms.Padding(2);
-            this.NotificationPanel.Size = new System.Drawing.Size(270, 90);
+            this.NotificationPanel.Size = new System.Drawing.Size(274, 90);
             this.NotificationPanel.TabIndex = 11;
             this.NotificationPanel.Visible = false;
             // 
             // ActionPanel1
             // 
-            this.ActionPanel1.BackColor = Constants.UiConstants.UiColor;
+            this.ActionPanel1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(42)))), ((int)(((byte)(42)))), ((int)(((byte)(44)))));
             this.ActionPanel1.Contact = null;
             this.ActionPanel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.ActionPanel1.Location = new System.Drawing.Point(0, 0);
@@ -177,33 +180,54 @@ namespace ClausaComm.Forms
             // 
             // ChatTextBoxContainer
             // 
+            this.ChatTextBoxContainer.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(49)))), ((int)(((byte)(49)))), ((int)(((byte)(52)))));
+            this.ChatTextBoxContainer.Controls.Add(this.FileSelectorIcon1);
             this.ChatTextBoxContainer.Controls.Add(this.ChatTextBox1);
             this.ChatTextBoxContainer.Controls.Add(this.SendIcon1);
             this.ChatTextBoxContainer.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.ChatTextBoxContainer.Location = new System.Drawing.Point(0, 609);
+            this.ChatTextBoxContainer.Location = new System.Drawing.Point(0, 630);
             this.ChatTextBoxContainer.Name = "ChatTextBoxContainer";
             this.ChatTextBoxContainer.Size = new System.Drawing.Size(882, 75);
             this.ChatTextBoxContainer.TabIndex = 2;
-            this.ChatTextBoxContainer.BackColor = Constants.UiConstants.ChatBackColor;
             // 
-            // chatTextBox1
+            // ChatTextBox1
             // 
-            this.ChatTextBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.ChatTextBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.ChatTextBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(62)))), ((int)(((byte)(62)))), ((int)(((byte)(64)))));
             this.ChatTextBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.ChatTextBox1.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.ChatTextBox1.MaxLength = ChatMessage.MaxTextLength;
+            this.ChatTextBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(190)))), ((int)(((byte)(190)))), ((int)(((byte)(190)))));
+            this.ChatTextBox1.Location = new System.Drawing.Point(4, 1);
+            this.ChatTextBox1.MaxLength = 6000;
             this.ChatTextBox1.Multiline = true;
             this.ChatTextBox1.Name = "ChatTextBox1";
             this.ChatTextBox1.PlaceholderText = " Write a message...";
             this.ChatTextBox1.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.ChatTextBox1.Location = new System.Drawing.Point(4, 1);
-            this.ChatTextBox1.Size = new System.Drawing.Size(820, 70);
-            this.ChatTextBox1.Padding = new Padding(3);
+            this.ChatTextBox1.Size = new System.Drawing.Size(776, 70);
             this.ChatTextBox1.TabIndex = 3;
             this.ChatTextBox1.Visible = false;
-            this.ChatTextBox1.BackColor = Constants.UiConstants.ChatTextBoxBackColor;
+            // 
+            // FileSelectorIcon1
+            // 
+            this.FileSelectorIcon1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.FileSelectorIcon1.ClickIconColor = System.Drawing.Color.FromArgb(((int)(((byte)(253)))), ((int)(((byte)(152)))), ((int)(((byte)(10)))));
+            this.FileSelectorIcon1.ColorBoxOnHover = false;
+            this.FileSelectorIcon1.ColorIconOnClick = true;
+            this.FileSelectorIcon1.ColorIconOnHover = true;
+            this.FileSelectorIcon1.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.FileSelectorIcon1.HoverIconColor = System.Drawing.Color.FromArgb(((int)(((byte)(253)))), ((int)(((byte)(172)))), ((int)(((byte)(10)))));
+            this.FileSelectorIcon1.IconColor = System.Drawing.Color.FromArgb(((int)(((byte)(1)))), ((int)(((byte)(250)))), ((int)(((byte)(250)))), ((int)(((byte)(250)))));
+            this.FileSelectorIcon1.Image = ((System.Drawing.Image)(resources.GetObject("FileSelectorIcon1.Image")));
+            this.FileSelectorIcon1.Location = new System.Drawing.Point(786, 19);
+            this.FileSelectorIcon1.Name = "FileSelectorIcon1";
+            this.FileSelectorIcon1.Padding = new System.Windows.Forms.Padding(3);
+            this.FileSelectorIcon1.Size = new System.Drawing.Size(36, 37);
+            this.FileSelectorIcon1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.FileSelectorIcon1.TabIndex = 2;
+            this.FileSelectorIcon1.TabStop = false;
+            this.FileSelectorIcon1.UnderlineOnHover = false;
             // 
             // SendIcon1
             // 
@@ -214,7 +238,7 @@ namespace ClausaComm.Forms
             this.SendIcon1.ColorIconOnHover = true;
             this.SendIcon1.Cursor = System.Windows.Forms.Cursors.Hand;
             this.SendIcon1.HoverIconColor = System.Drawing.Color.FromArgb(((int)(((byte)(253)))), ((int)(((byte)(172)))), ((int)(((byte)(10)))));
-            this.SendIcon1.IconColor = System.Drawing.Color.FromArgb(((int)(((byte)(1)))), ((int)(((byte)(250)))), ((int)(((byte)(250)))), ((int)(((byte)(250)))));
+            this.SendIcon1.IconColor = System.Drawing.Color.FromArgb(((int)(((byte)(1)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
             this.SendIcon1.Image = ((System.Drawing.Image)(resources.GetObject("SendIcon1.Image")));
             this.SendIcon1.Location = new System.Drawing.Point(830, 19);
             this.SendIcon1.Name = "SendIcon1";
@@ -237,15 +261,15 @@ namespace ClausaComm.Forms
             // 
             // LeftPanel
             // 
-            this.LeftPanel.BackColor = Constants.UiConstants.UiColor;
+            this.LeftPanel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(42)))), ((int)(((byte)(42)))), ((int)(((byte)(44)))));
             this.LeftPanel.Controls.Add(this.AddContactIcon);
             this.LeftPanel.Controls.Add(this.PanelOfContactPanels);
             this.LeftPanel.Controls.Add(this.ContactSearchBox);
             this.LeftPanel.Controls.Add(this.OwnProfilePanel);
             this.LeftPanel.Dock = System.Windows.Forms.DockStyle.Left;
-            this.LeftPanel.Location = new System.Drawing.Point(1, 26);
+            this.LeftPanel.Location = new System.Drawing.Point(1, 1);
             this.LeftPanel.Name = "LeftPanel";
-            this.LeftPanel.Size = new System.Drawing.Size(183, 680);
+            this.LeftPanel.Size = new System.Drawing.Size(183, 705);
             this.LeftPanel.TabIndex = 27;
             // 
             // AddContactIcon
@@ -281,7 +305,7 @@ namespace ClausaComm.Forms
             this.PanelOfContactPanels.AutoScroll = true;
             this.PanelOfContactPanels.Location = new System.Drawing.Point(0, 125);
             this.PanelOfContactPanels.Name = "PanelOfContactPanels";
-            this.PanelOfContactPanels.Size = new System.Drawing.Size(183, 555);
+            this.PanelOfContactPanels.Size = new System.Drawing.Size(183, 580);
             this.PanelOfContactPanels.TabIndex = 7;
             // 
             // ContactSearchBox
@@ -316,7 +340,6 @@ namespace ClausaComm.Forms
             this.ClientSize = new System.Drawing.Size(1067, 707);
             this.Controls.Add(this.ChatScreen);
             this.Controls.Add(this.LeftPanel);
-            this.DoubleBuffered = true;
             this.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -324,6 +347,7 @@ namespace ClausaComm.Forms
             this.MinimumSize = new System.Drawing.Size(700, 500);
             this.Name = "MainForm";
             this.Padding = new System.Windows.Forms.Padding(1);
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "ClausaComm";
             ((System.ComponentModel.ISupportInitialize)(this.Status)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.CallContactIcon)).EndInit();
@@ -332,6 +356,7 @@ namespace ClausaComm.Forms
             this.ChatScreen.PerformLayout();
             this.ChatTextBoxContainer.ResumeLayout(false);
             this.ChatTextBoxContainer.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.FileSelectorIcon1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.SendIcon1)).EndInit();
             this.LeftPanel.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.AddContactIcon)).EndInit();
@@ -358,6 +383,7 @@ namespace ClausaComm.Forms
         private Components.RoundTextBox ContactSearchBox;
         private System.Windows.Forms.Panel OwnProfilePanel;
         private Components.Icons.SendIcon SendIcon1;
+        private Components.Icons.FileSelectorIcon FileSelectorIcon1;
         public Components.NotificationPanel NotificationPanel;
     }
 }
