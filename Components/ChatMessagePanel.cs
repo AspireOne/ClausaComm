@@ -85,7 +85,7 @@ namespace ClausaComm.Components
             Parent.BackColorChanged += (_, _) => BackColor = Parent.BackColor;
         }
 
-        public static void OpenDirAndSelectFile(string filePath)
+        private static void OpenDirAndSelectFile(string filePath)
         {
             IntPtr pidl = ILCreateFromPathW(filePath);
             SHOpenFolderAndSelectItems(pidl, 0, IntPtr.Zero, 0);

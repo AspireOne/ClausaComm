@@ -145,6 +145,8 @@ namespace ClausaComm.Components
                     IpLbl.Text = value.Ip.ToString();
                     ChangeContactSpecificElementsVisibility(true);
                     ChangeSaveIconStateAccordingly();
+                    // Hide it for the time being.
+                    IpLbl.Visible = false;
                 }
             }
         }
