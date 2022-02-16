@@ -21,11 +21,8 @@ namespace ClausaComm.Contacts
         public enum Status { Online, Idle, Offline }
 
         public static readonly (int min, int max) NameLength = new(3, 25);
-
-        //public readonly HashSet<Contact> UnreadMessages = new HashSet<Contact>();
-
+        // public bool IsNew { get; private set; } = true;
         #region backing fields
-
         private Status _status = Status.Offline;
         private Image _profileImage = Resources.default_pfp;
         private string _name = "Unknown";
@@ -33,11 +30,9 @@ namespace ClausaComm.Contacts
         private bool _save;
         private static Contact _userContact;
         private string? _id;
-
         #endregion backing fields
 
         #region Properties
-
         public static Contact UserContact => _userContact ??=
             XmlFile.Contacts.FirstOrDefault(contact => contact.IsUser)
             ?? new Contact(IpUtils.LocalIp) { Id = IdGenerator.GenerateId(8), IsUser = true, Save = true };
@@ -158,7 +153,6 @@ namespace ClausaComm.Contacts
                 }
             }
         }
-
         #endregion Properties
 
         // Note: the contact doesn't have to have an ID! The user can add the contact via IP, and at that point,
