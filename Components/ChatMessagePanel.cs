@@ -14,65 +14,80 @@ namespace ClausaComm.Components
     {
         public readonly Contact Contact;
         public readonly ChatMessage Message;
-        private readonly bool IsLink;
+        public readonly bool IsFile;
 
-        private static readonly Dictionary<ComponentUtils.MouseEvent, Color> MouseEventColors = new()
+        private static readonly Dictionary<ControlUtils.MouseEvent, Color> MouseEventColors = new()
         {
-            {ComponentUtils.MouseEvent.Enter, Constants.UiConstants.ChatMessageOnHoverColor},
-            {ComponentUtils.MouseEvent.Leave, Constants.UiConstants.ChatBackColor},
+            {ControlUtils.MouseEvent.Enter, Constants.UiConstants.ChatMessageOnHoverColor},
+            {ControlUtils.MouseEvent.Leave, Constants.UiConstants.ChatBackColor},
         };
 
         public ChatMessagePanel(ChatMessage message, Contact contact)
         {
             InitializeComponent();
-            this.DoubleBuffered = true;
-            // Adding 3_600_000 milliseconds because the time is one hour late for some reason.
-            DateTimeOffset date = DateTimeOffset.FromUnixTimeMilliseconds(message.Time + 3_600_000);
-            ChatMessageName.Text = contact.Name;
-            ChatMessageTime.Text = date.ToString("dd/MM/yyyy HH:mm");
-            ChatMessageText.Text = message.Text;
-            
-            if (IsLink = !string.IsNullOrEmpty(message.FilePath))
-            {
-                ChatMessageText.Text = message.FilePath;
-                ChatMessageText.Click += (_, _) => OpenDirAndSelectFile(message.FilePath);
-                ChatMessageText.Cursor = Cursors.Hand;
-            }
+            (Message, Contact, IsFile) = (message, contact, !string.IsNullOrEmpty(message.FilePath));
+            FillData();
+            RegisterContactDataChanges();
+            RegisterBackgroundChangeOnMouseEvent();
 
-            lock (contact.ProfilePic)
-                ChatMessagePicture.Image = contact.ProfilePic;
-
-            contact.NameChange += (_, name) => ChatMessageName.Text = name;
-            contact.ProfilePicChange += (_, pic) =>
-            {
-                lock (contact.ProfilePic)
-                    ChatMessagePicture.Image = pic;
-            };
-
-            Contact = contact;
-            Message = message;
             SetDelivered(message.Way == ChatMessage.Ways.In || message.Delivered);
             if (message.Way == ChatMessage.Ways.Out)
                 message.DeliveredChanged += (_, delivered) => SetDelivered(delivered);
-            
-            
-            /*foreach (Control control in Controls)
+        }
+
+        private void RegisterContactDataChanges()
+        {
+            Contact.NameChange += (_, name) => ChatMessageName.Text = name;
+            Contact.ProfilePicChange += (_, pic) =>
             {
-                ComponentUtils.SetDoubleBuffered(control);
-                control.MouseDown += (_, e) => OnMouseDown(e);
-                control.MouseUp += (_, e) => OnMouseUp(e);
-                control.MouseEnter += (_, e) => OnMouseEnter(e);
-                control.MouseLeave += (_, e) => OnMouseLeave(e);
-                control.Click += (_, e) => OnClick(e);
-            }
-            ComponentUtils.AddBackColorFilterOnMouseEvent(this,  MouseEventColors);*/
+                lock (Contact.ProfilePic)
+                    ChatMessagePicture.Image = pic;
+            };
+        }
+
+        private void FillData()
+        {
+            // Adding 3_600_000 milliseconds because the time is one hour late for some reason.
+            DateTimeOffset date = DateTimeOffset.FromUnixTimeMilliseconds(Message.Time + 3_600_000);
+            ChatMessageName.Text = Contact.Name;
+            ChatMessageTime.Text = date.ToString("dd/MM/yyyy HH:mm");
+            ChatMessageText.Text = Message.Text;
+            lock (Contact.ProfilePic)
+                ChatMessagePicture.Image = Contact.ProfilePic;
+
+            if (!IsFile)
+                return;
+            
+            ChatMessageText.Text = Message.FilePath;
+            ChatMessageText.Click += (_, _) => OpenDirAndSelectFile(Message.FilePath);
+            ChatMessageText.Cursor = Cursors.Hand;
+        }
+        
+        private void RegisterBackgroundChangeOnMouseEvent()
+        {
+            foreach (Control control in ChatMessageHeader.Controls)
+                PropagateMouseEvents(control);
+            foreach (Control control in Controls)
+                PropagateMouseEvents(control);
+
+            ControlUtils.AddBackColorFilterOnMouseEvent(this,  MouseEventColors);
+        }
+        
+        private void PropagateMouseEvents(Control control)
+        {
+            ControlUtils.SetDoubleBuffered(control);
+            control.MouseDown += (_, e) => OnMouseDown(e);
+            control.MouseUp += (_, e) => OnMouseUp(e);
+            control.MouseEnter += (_, e) => OnMouseEnter(e);
+            control.MouseLeave += (_, e) => OnMouseLeave(e);
+            control.Click += (_, e) => OnClick(e);
         }
         
         private void SetDelivered(bool delivered)
         {
             ChatMessageText.ForeColor = delivered
-                ? (IsLink ? Constants.UiConstants.ChatTextColorLink : Constants.UiConstants.ChatTextColor)
-                : (IsLink ? Constants.UiConstants.ChatTextColorLinkUndelivered : Constants.UiConstants.ChatTextColorUndelivered);
+                ? (IsFile ? Constants.UiConstants.ChatTextColorLink : Constants.UiConstants.ChatTextColor)
+                : (IsFile ? Constants.UiConstants.ChatTextColorLinkUndelivered : Constants.UiConstants.ChatTextColorUndelivered);
         }
         
         protected override void OnParentChanged(EventArgs e)
