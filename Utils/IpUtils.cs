@@ -49,11 +49,4 @@ namespace ClausaComm.Utils
         public static bool IsIpCorrect(string? ip) =>
             ip is not null && IpRegex.IsMatch(ip) && IPAddress.TryParse(ip, out _);
     }
-
-    /*public class InvalidIpException : Exception
-    {
-        public InvalidIpException() : base() { }
-        public InvalidIpException(string message) : base(message) { }
-        public InvalidIpException(string message, Exception inner) : base(message, inner) { }
-    }*/
 }

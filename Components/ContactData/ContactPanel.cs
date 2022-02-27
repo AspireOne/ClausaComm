@@ -30,11 +30,11 @@ namespace ClausaComm.Components.ContactData
 
         #endregion selected panel
 
-        private static readonly Dictionary<ComponentUtils.MouseEvent, Color> MouseEventBackColor = new()
+        private static readonly Dictionary<ControlUtils.MouseEvent, Color> MouseEventBackColor = new()
         {
-            { ComponentUtils.MouseEvent.Enter, Color.FromArgb(15, 255, 255, 255) },
-            { ComponentUtils.MouseEvent.Leave, Color.Transparent },
-            { ComponentUtils.MouseEvent.Down, Color.FromArgb(40, 255, 255, 255) },
+            { ControlUtils.MouseEvent.Enter, Color.FromArgb(15, 255, 255, 255) },
+            { ControlUtils.MouseEvent.Leave, Color.Transparent },
+            { ControlUtils.MouseEvent.Down, Color.FromArgb(40, 255, 255, 255) },
         };
         
         public Action<Contact> OnClickAction { get; set; }
@@ -109,7 +109,7 @@ namespace ClausaComm.Components.ContactData
                 control.Click += (_, e) => OnClick(e);
             }
 
-            ComponentUtils.AddBackColorFilterOnMouseEvent(this, MouseEventBackColor);
+            ControlUtils.AddBackColorFilterOnMouseEvent(this, MouseEventBackColor);
         }
 
         protected override void OnClick(EventArgs e)
@@ -127,7 +127,7 @@ namespace ClausaComm.Components.ContactData
 
         private void ChangeBackgroundColor(Color newColor)
         {
-            ComponentUtils.ChangeControlsBackColor(newColor, Controls);
+            ControlUtils.ChangeControlsBackColor(newColor, Controls);
             BackColor = Color.Transparent;
         }
 

@@ -48,30 +48,28 @@ namespace ClausaComm.Components.Icons
         protected override void OnPaint(PaintEventArgs pe)
         {
             base.OnPaint(pe);
-            if (IsHovering)
+            if (!IsHovering)
+                return;
+            
+            if (UnderlineOnHover)
             {
-                if (UnderlineOnHover)
-                {
-                    Point horizontalLineStart = new(0, Height);
-                    Point horizontalLineStop = new(Width, Height);
-                    pe.Graphics.DrawLine(UnderlineAppearance, horizontalLineStart, horizontalLineStop);
-                }
-
-                if (ColorBoxOnHover)
-                {
-                    pe.Graphics.FillRectangle(BoxOnHoverBrush, ClientRectangle);
-                }
-                /*
-                if (!string.IsNullOrEmpty(Info))
-                {
-                    var rect = new Rectangle(InfoIconX - 2, InfoIconY, InfoIconSize - 2, InfoIconSize);
-                    Pen p = new(new SolidBrush(Color.White), 1);
-                    pe.Graphics.DrawEllipse(p, rect);
-                    // pe.Graphics.DrawIcon(InfoIcon, new Rectangle(InfoIconX, InfoIconY, InfoIconSize, InfoIconSize));
-                    pe.Graphics.DrawImage(InfoIcon, new Rectangle(InfoIconX, InfoIconY, InfoIconSize, InfoIconSize));
-                }
-                */
+                Point horizontalLineStart = new(0, Height);
+                Point horizontalLineStop = new(Width, Height);
+                pe.Graphics.DrawLine(UnderlineAppearance, horizontalLineStart, horizontalLineStop);
             }
+
+            if (ColorBoxOnHover)
+                pe.Graphics.FillRectangle(BoxOnHoverBrush, ClientRectangle);
+            /*
+            if (!string.IsNullOrEmpty(Info))
+            {
+                var rect = new Rectangle(InfoIconX - 2, InfoIconY, InfoIconSize - 2, InfoIconSize);
+                Pen p = new(new SolidBrush(Color.White), 1);
+                pe.Graphics.DrawEllipse(p, rect);
+                // pe.Graphics.DrawIcon(InfoIcon, new Rectangle(InfoIconX, InfoIconY, InfoIconSize, InfoIconSize));
+                pe.Graphics.DrawImage(InfoIcon, new Rectangle(InfoIconX, InfoIconY, InfoIconSize, InfoIconSize));
+            }
+            */
         }
         /*
         protected override void OnMouseMove(MouseEventArgs e)

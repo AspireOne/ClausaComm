@@ -1,12 +1,14 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using Microsoft.VisualBasic.ApplicationServices;
 using static System.Windows.Forms.Control;
 
 namespace ClausaComm.Utils
 {
-    public static class ComponentUtils
+    public static class ControlUtils
     {
         public enum MouseEvent { Enter, Leave, Down }
 
@@ -36,6 +38,16 @@ namespace ClausaComm.Utils
                     System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
 
             aProp.SetValue(c, true, null); 
+        }
+        
+        [DllImport("user32.dll")]
+        public static extern int SendMessage(IntPtr hWnd, int wMsg, bool wParam, int lParam);
+        private const int WM_SETREDRAW = 11;
+        public static void SuspendDrawing(this Control parent) => SendMessage(parent.Handle, WM_SETREDRAW, false, 0);
+        public static void ResumeDrawing(this Control parent)
+        {
+            SendMessage(parent.Handle, WM_SETREDRAW, true, 0);
+            parent.Refresh();
         }
 
         public static void ChangeControlsBackColor(Color color, IEnumerable<Control> controls)
