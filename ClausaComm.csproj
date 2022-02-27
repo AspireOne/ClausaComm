@@ -30,6 +30,12 @@
     <Compile Update="Components\Icons\FileSelectorIcon.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Update="Components\Icons\SettingsIcon.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Forms\SettingsPopup.cs">
+      <SubType>Form</SubType>
+    </Compile>
   </ItemGroup>
 
   <ItemGroup>
