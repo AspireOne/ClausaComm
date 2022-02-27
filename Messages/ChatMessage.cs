@@ -65,6 +65,7 @@ namespace ClausaComm.Messages
         public override int GetHashCode() => Time.GetHashCode();
         // "Way" check is there because when the user is chatting with themselves, the messages will have the exact
         // same properties (including time, id...) and the only difference will be their way "out / in".
+        public bool Equals(ChatMessage message) => message.Id == Id/* && message.Way == Way*/;
         public override bool Equals(object? obj) => obj is ChatMessage message && message.Id == Id/* && message.Way == Way*/;
         public static bool operator ==(ChatMessage left, ChatMessage right) => left.Equals(right);
         public static bool operator !=(ChatMessage left, ChatMessage right) => !left.Equals(right);
