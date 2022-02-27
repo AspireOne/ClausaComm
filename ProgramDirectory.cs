@@ -6,7 +6,7 @@ namespace ClausaComm
 {
     public static class ProgramDirectory
     {
-        public static readonly string MainDirPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "ClausaComm");
+        public static readonly string ThisPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "ClausaComm");
         public static readonly string ProfilePicsDirPath = GetPathAndCreateFile("ProfilePictures");
         public static readonly string MessagesPath = GetPathAndCreateFile("messages.xml");
         public static readonly string ConfigPath = GetPathAndCreateFile("config.xml");
@@ -15,13 +15,13 @@ namespace ClausaComm
 
         static ProgramDirectory()
         {
-            if (!Directory.Exists(MainDirPath))
+            if (!Directory.Exists(ThisPath))
                 CreateProgramDirectory();
         }
 
         private static void CreateProgramDirectory()
         {
-            Directory.CreateDirectory(MainDirPath);
+            Directory.CreateDirectory(ThisPath);
             Directory.CreateDirectory(ProfilePicsDirPath).Attributes = FileAttributes.Hidden | FileAttributes.NotContentIndexed;
             CreateNewXml(ConfigPath);
             CreateNewXml(ContactsPath);
@@ -30,7 +30,7 @@ namespace ClausaComm
 
         private static string GetPathAndCreateFile(string filename)
         {
-            string path = Path.Combine(MainDirPath, filename);
+            string path = Path.Combine(ThisPath, filename);
             bool isDirectory = !Path.GetFileName(path).Contains('.');
             
             if (isDirectory && !Directory.Exists(path))
