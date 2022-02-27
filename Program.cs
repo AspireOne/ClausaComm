@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Threading;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using ClausaComm.Components;
@@ -16,22 +16,26 @@ namespace ClausaComm
     {
         public const string Name = "ClausaComm";
         public const string Version = "1.0.0";
-        public static readonly string ExePath
-            = Path.Combine(Directory.GetCurrentDirectory(), Process.GetCurrentProcess().MainModule.FileName);
+        public const string MinimizedArgument = "minimized";
+
+        public static readonly string ExePath = Assembly.GetEntryAssembly().Location;
 
         /// <summary>The main entry point for the application.</summary>
         [STAThread]
-        private static void Main()
+        private static void Main(string[] args)
         {
-#if !DEBUG
-            if (IsAnotherInstanceRunning())
+            var instances = Process.GetProcessesByName(Path.GetFileNameWithoutExtension(ExePath));
+            if (instances.Length > 1)
+            {
+                Utils.Utils.BringToFront(instances[0]);
                 Close();
-#endif
+            }
 
             Application.SetHighDpiMode(HighDpiMode.SystemAware);
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            var mainForm = new MainForm();
+            
+            var mainForm = new MainForm(args.Contains(MinimizedArgument));
 #if !DEBUG
             CheckAndDownloadNewVersionAsync(mainForm);
 #endif
@@ -76,8 +80,5 @@ namespace ClausaComm
             Application.Exit();
             Environment.Exit(0);
         }
-
-        private static bool IsAnotherInstanceRunning()
-            => Process.GetProcessesByName(Path.GetFileNameWithoutExtension(Assembly.GetEntryAssembly()?.Location)).Length > 1;
     }
 }
