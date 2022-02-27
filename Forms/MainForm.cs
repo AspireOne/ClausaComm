@@ -11,6 +11,7 @@ using System.Net;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using ClausaComm.Components.Icons;
 using ClausaComm.Contacts;
 using ClausaComm.Messages;
 using ClausaComm.Network_Communication;
@@ -23,16 +24,18 @@ namespace ClausaComm.Forms
         public readonly HashSet<Contact> Contacts = new();
         private readonly NetworkBridge NetworkBridge;
         private readonly UserStatusWatcher UserStatusWatcher;
+        private readonly bool StartPinned;
 
-        public MainForm()
+        public MainForm(bool startPinned)
         {
             InitializeComponent();
             InitializeComponentFurther();
             InitializeProgram();
             int x = Screen.PrimaryScreen.Bounds.Width / 2 - Width / 2;  
             int y = Screen.PrimaryScreen.Bounds.Height / 2 - Height / 2;  
-            Location = new Point(x, y); 
+            Location = new Point(x, y);
             
+            StartPinned = startPinned;
             UserStatusWatcher = new UserStatusWatcher(Contact.UserContact);
             UserStatusWatcher.Run();
             NetworkBridge = new NetworkBridge(Contacts, this);
@@ -41,10 +44,21 @@ namespace ClausaComm.Forms
             NetworkBridge.Run();
         }
 
+        protected override void OnShown(EventArgs e)
+        {
+            Pinned = StartPinned;
+            base.OnShown(e);
+        }
+
         private void InitializeComponentFurther()
         {
             SetStyle(ControlStyles.ResizeRedraw, true);
+            
             InitTitleBar(this);
+            var settingsIcon = new SettingsIcon();
+            settingsIcon.Click += (_, _) => new SettingsPopup(this).ShowDialog();
+            TitleBar.AddAdditionalElement(settingsIcon);
+            TitleBar.Tooltip.SetToolTip(settingsIcon, "Settings");
 
             // ChatPanel
             ActionPanel1.MainForm = this;
@@ -52,6 +66,8 @@ namespace ClausaComm.Forms
             ChatScreen.SendIcon = SendIcon1;
             ChatScreen.FileSelectorIcon = FileSelectorIcon1;
             ChatScreen.Textbox = ChatTextBox1;
+            
+            ToolTip1.SetToolTip(FileSelectorIcon1, "Send a file");
 
             AddContactIcon.Click += AddContactPictureBox_Click;
             ContactSearchBox.TextChanged += ContactSearchBox_TextChanged;
