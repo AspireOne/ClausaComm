@@ -31,7 +31,6 @@ namespace ClausaComm.Forms
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EditInfoPopup));
-            this.HeaderLabel = new System.Windows.Forms.Label();
             this.NameLbl = new System.Windows.Forms.Label();
             this.NameBox = new ClausaComm.Components.RoundTextBox();
             this.ProfilePictureLbl = new System.Windows.Forms.Label();
@@ -41,17 +40,6 @@ namespace ClausaComm.Forms
             this.SaveButton = new ClausaComm.Components.SimpleLineButton(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.ProfilePictureBox)).BeginInit();
             this.SuspendLayout();
-            // 
-            // HeaderLabel
-            // 
-            this.HeaderLabel.Font = new System.Drawing.Font("Segoe UI", 26.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.HeaderLabel.ForeColor = System.Drawing.Color.WhiteSmoke;
-            this.HeaderLabel.Location = new System.Drawing.Point(0, 37);
-            this.HeaderLabel.Name = "HeaderLabel";
-            this.HeaderLabel.Size = new System.Drawing.Size(471, 41);
-            this.HeaderLabel.TabIndex = 2;
-            this.HeaderLabel.Text = "Info";
-            this.HeaderLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // NameLbl
             // 
@@ -164,9 +152,7 @@ namespace ClausaComm.Forms
             this.Controls.Add(this.ProfilePictureLbl);
             this.Controls.Add(this.NameBox);
             this.Controls.Add(this.NameLbl);
-            this.Controls.Add(this.HeaderLabel);
             this.DoubleBuffered = true;
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Location = new System.Drawing.Point(0, 0);
             this.Name = "EditInfoPopup";
@@ -178,8 +164,7 @@ namespace ClausaComm.Forms
         }
 
         #endregion
-
-        private System.Windows.Forms.Label HeaderLabel;
+        
         private System.Windows.Forms.Label NameLbl;
         private Components.RoundTextBox NameBox;
         private System.Windows.Forms.Label ProfilePictureLbl;

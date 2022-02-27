@@ -28,7 +28,7 @@ namespace ClausaComm.Forms
         private readonly Action<Contact> Callback;
         private readonly Func<Contact, bool> Connect;
 
-        public AddContactPopup(Action<Contact> callback, MainForm containingForm, Func<Contact, bool> connect) : base(containingForm)
+        public AddContactPopup(Action<Contact> callback, MainForm containingForm, Func<Contact, bool> connect) : base(containingForm, "Add a contact")
         {
             Callback = callback;
             Connect = connect;

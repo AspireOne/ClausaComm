@@ -33,25 +33,11 @@ namespace ClausaComm.Forms
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.HeaderLabel = new System.Windows.Forms.Label();
             this.IpLabel = new System.Windows.Forms.Label();
             this.IpBox = new ClausaComm.Components.RoundTextBox();
             this.NoteLabel = new System.Windows.Forms.Label();
             this.AddButton = new ClausaComm.Components.SimpleLineButton(this.components);
             this.SuspendLayout();
-            // 
-            // HeaderLabel
-            // 
-            this.HeaderLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.HeaderLabel.Font = new System.Drawing.Font("Segoe UI", 26.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.HeaderLabel.ForeColor = System.Drawing.Color.WhiteSmoke;
-            this.HeaderLabel.Location = new System.Drawing.Point(12, 37);
-            this.HeaderLabel.Name = "HeaderLabel";
-            this.HeaderLabel.Size = new System.Drawing.Size(493, 41);
-            this.HeaderLabel.TabIndex = 1;
-            this.HeaderLabel.Text = "Add a Contact";
-            this.HeaderLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // IpLabel
             // 
@@ -126,7 +112,6 @@ namespace ClausaComm.Forms
             this.Controls.Add(this.NoteLabel);
             this.Controls.Add(this.IpBox);
             this.Controls.Add(this.IpLabel);
-            this.Controls.Add(this.HeaderLabel);
             this.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(28)))), ((int)(((byte)(28)))), ((int)(((byte)(28)))));
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Location = new System.Drawing.Point(0, 0);
@@ -138,8 +123,7 @@ namespace ClausaComm.Forms
         }
 
         #endregion
-
-        private System.Windows.Forms.Label HeaderLabel;
+        
         private System.Windows.Forms.Label IpLabel;
         private System.Windows.Forms.Label NoteLabel;
         private Components.RoundTextBox IpBox;

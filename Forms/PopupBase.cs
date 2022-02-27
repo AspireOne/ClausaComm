@@ -1,6 +1,5 @@
 ﻿using System.Drawing;
 using System.Windows.Forms;
-using ClausaComm.Utils;
 
 namespace ClausaComm.Forms;
 
@@ -8,18 +7,35 @@ public class PopupBase : FormBase
 {
     protected readonly MainForm ContainingForm;
 
-    protected PopupBase(MainForm containingForm)
+    private readonly Label HeaderLabel = new()
+    {
+        Font = new Font("Segoe UI", 26.25F, FontStyle.Regular, GraphicsUnit.Point),
+        ForeColor = Color.WhiteSmoke,
+        Dock = DockStyle.Top,
+        Location = new Point(0, 0),
+        Height = 50,
+        Name = "HeaderLabel",
+        Text = "",
+        TextAlign = ContentAlignment.MiddleCenter,
+    };
+
+    protected PopupBase(MainForm containingForm, string label)
     {
         ContainingForm = containingForm;
+        HeaderLabel.Text = label;
     }
 
     protected void Init()
     {
         var background = new DimBackground { Size = ContainingForm.Size, Location = ContainingForm.Location, StartPosition = FormStartPosition.Manual};
         
+        Controls.Add(HeaderLabel);
+        // Add the title bar AFTER the header, so that they don't fight over docking priority.
         InitTitleBar(this, "");
         TitleBar.BackColor = BackColor;
+
         StartPosition = FormStartPosition.Manual;
+        FormBorderStyle = FormBorderStyle.None;
         ShowInTaskbar = false;
         Draggable = false;
         TopMost = false;
@@ -28,7 +44,7 @@ public class PopupBase : FormBase
         background.Owner = ContainingForm;
         background.Show();
 
-        this.Closed += OnClose;
+        Closed += OnClose;
 
         void OnClose(object b, object a)
         {
