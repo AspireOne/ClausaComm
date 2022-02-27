@@ -11,6 +11,7 @@ namespace ClausaComm.Messages;
 public class MessageCollection
 {
     private readonly List<ChatMessage> Messages = new();
+    public int Count => Messages.Count;
 
     /// <summary>Adds a message to the collection in a sorted manner.</summary>
     /// <param name="message">The message to add</param>
@@ -32,13 +33,18 @@ public class MessageCollection
         Messages.Add(message);
         return true;
     }
-    
+
     /// <param name="amount">The amount of messages to return from the latest (0 for all).</param>
+    /// <param name="startIndex">The index to start from.</param>
     /// <returns>First {amount} latest messages.</returns>
-    public IEnumerable<ChatMessage> Get(int amount)
+    public IEnumerable<ChatMessage> Get(int amount, int startIndex = 0)
     {
-        int cycles = amount == 0 || amount > Messages.Count ? Messages.Count : amount;
-        for (int i = 0; i < cycles; ++i) 
+        int endIndex = amount == 0 || amount > Messages.Count ? Messages.Count : amount;
+        endIndex += startIndex;
+        if (endIndex > Messages.Count)
+            endIndex = Messages.Count;
+        
+        for (int i = startIndex; i < endIndex; ++i) 
             yield return Messages[i];
     }
 }
