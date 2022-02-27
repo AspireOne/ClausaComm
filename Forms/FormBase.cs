@@ -15,11 +15,28 @@ namespace ClausaComm.Forms
             Location = new Point(0, 0),
             Title = "ClausaComm"
         };
+        protected readonly NotifyIcon PinNotifyIcon = new()
+        {
+            Text = "Click to open ClausaComm",
+            Icon = Properties.Resources.program_icon,
+            Visible = false
+        };
+
+        public bool Pinned
+        {
+            get => PinNotifyIcon.Visible = true;
+            set
+            {
+                PinNotifyIcon.Visible = value;
+                Visible = !value;
+            }
+        }
+        
         public event EventHandler<bool> ResizableChanged;
         public event EventHandler<bool> PinnableChanged;
 
-        private bool _resizable = false;
-        private bool _pinnable = false;
+        private bool _resizable;
+        private bool _pinnable;
         private Padding? PaddingBeforeMaximize;
 
         public new FormWindowState WindowState
@@ -75,7 +92,12 @@ namespace ClausaComm.Forms
             DoubleBuffered = true;
             Padding = Resizable ? DraggableWindowBorderSize : NonDraggableWindowBorderSize;
             MaximizedBounds = Screen.FromHandle(Handle).WorkingArea;
-            BackColor = Constants.UiConstants.TitleBarColor; 
+            BackColor = Constants.UiConstants.TitleBarColor;
+            PinNotifyIcon.Click += (_, _) =>
+            {
+                Visible = true;
+                PinNotifyIcon.Visible = false;
+            };
 
             /*
             DraggableSpace = new(false)
