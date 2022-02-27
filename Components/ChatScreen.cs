@@ -20,13 +20,19 @@ namespace ClausaComm.Components
 {
     public partial class ChatScreen : Panel
     {
-        private SendIcon _sendIcon;
-        private FileSelectorIcon _fileSelectorIcon;
-        private ChatTextBox _textbox;
+        private enum Place { Prepend, Append }
         // Set the initial amount of messages lower so that it doesn't take long to load them when switching chats.
         private const int InitialMessages = 15;
-        private const int MaxMessages = 20;
+        private const int MaxMessages = 15;
         private const int MessagesToLoad = 1000;
+        private const int MessageScrollAmount = 5;
+
+        private int ChunksScrolled = 0;
+
+        private FileSelectorIcon _fileSelectorIcon;
+        private ChatTextBox _textbox;
+        private SendIcon _sendIcon;
+
         private readonly Dictionary<Contact, MessageCollection> CachedChats = new();
         private readonly Dictionary<Contact, string> CachedTextboxes = new();
 
@@ -67,7 +73,7 @@ namespace ClausaComm.Components
             Location = new Point(248, 293),
             Dock = DockStyle.Fill,
             HorizontalScroll = { Enabled = false, Visible = false, Maximum = 0 },
-            VerticalScroll = {Enabled = true},
+            VerticalScroll = { Enabled = true },
             AutoScroll = true,
         };
 
@@ -137,7 +143,12 @@ namespace ClausaComm.Components
             DoubleBuffered = true;
             NoContactLabel.Parent = this;
             ChatPanel.Parent = this;
+            ChatPanel.MouseWheel += (_, e) => OnScroll();
+            RegisterDragDrop();
+        }
 
+        private void RegisterDragDrop()
+        {
             DragEnter += (_, e) =>
             {
                 if (e.Data.GetDataPresent(DataFormats.FileDrop))
@@ -152,40 +163,92 @@ namespace ClausaComm.Components
             };
         }
 
-        private void AddMessage(Contact contact, ChatMessage message, bool loading = false, bool addToChat = true)
+        private void OnScroll()
         {
-            if (!CachedChats.TryGetValue(contact, out MessageCollection messages))
-                CachedChats.Add(contact, messages = new MessageCollection());
-            
-            messages.Add(message);
+            Control lastPanel = ChatPanel.Controls[^1];
+            Control firstPanel = ChatPanel.Controls[0];
 
-            // To prevent duplicate messages in a chat with itself.
-            if (Contact.IsUser && message.Way == ChatMessage.Ways.Out)
-                return;
-            
-            if (addToChat && ReferenceEquals(Contact, contact))
-                AddMessageToChat();
+            int messagesScrolled = ChunksScrolled * MessageScrollAmount;
 
-            void AddMessageToChat()
+            CachedChats.TryGetValue(Contact, out MessageCollection messages);
+
+            if (ChatPanel.VerticalScroll.Value == 0 && messages.Count - (messagesScrolled + MaxMessages) > MessageScrollAmount)
             {
-                var panel = new ChatMessagePanel(message, message.Way == ChatMessage.Ways.Out ? Contact.UserContact : contact);
-                panel.Dock = DockStyle.Top;
-                panel.Parent = ChatPanel;
-                ChatPanel.Controls.Add(panel);
-                
-                if (loading)
-                    return;
-                
                 this.SuspendDrawing();
-                ChatPanel.Controls.SetChildIndex(panel, 0);
-                if (ChatPanel.Controls.Count > MaxMessages)
-                    ChatPanel.Controls.RemoveAt(ChatPanel.Controls.Count - 1);
-                ChatPanel.ScrollControlIntoView(panel);
+                messages.Get(MessageScrollAmount, messagesScrolled + MaxMessages).ForEach(msg => 
+                    AddMessageToChat(Contact, msg, false, false, Place.Prepend, false));
+                    
+                ++ChunksScrolled;
+                ChatPanel.AutoScrollPosition = lastPanel.Location;
+                this.ResumeDrawing();   
+            } 
+            else if (ChatPanel.VerticalScroll.Value == GetScrollMax() && messagesScrolled >= MessageScrollAmount)
+            {
+                this.SuspendDrawing();
+                messages.Get(MessageScrollAmount, messagesScrolled - MessageScrollAmount).Reverse().ForEach(msg => 
+                    AddMessageToChat(Contact, msg, false, false, Place.Append, false));
+
+                --ChunksScrolled;
+                ChatPanel.AutoScrollPosition = new Point(0, GetScrollMax());
                 this.ResumeDrawing();
+            }
+            
+            int GetScrollMax()
+            {
+                int beginning = lastPanel.Location.Y;
+                int end = firstPanel.Location.Y + firstPanel.Height;
+                return end - beginning - ChatPanel.Height;
             }
         }
 
-        public void HandleMessageReceived(Contact contact, ChatMessage message) => AddMessage(contact, message);
+        private void CacheMessage(Contact contact, ChatMessage message, MessageCollection messages = null)
+        {
+            if (messages is not null)
+            {
+                messages.Add(message);
+                return;
+            }
+            
+            if (!CachedChats.TryGetValue(contact, out messages))
+                CachedChats.Add(contact, messages = new MessageCollection());
+            
+            messages.Add(message);
+        }
+        
+        private void AddMessageToChat(Contact contact, ChatMessage message, bool focus = true, bool checkUnique = true, Place place = Place.Append, bool alterSuspend = true)
+        {
+            if (!ReferenceEquals(Contact, contact))
+                return;
+            
+            if (checkUnique && ChatPanel.Controls.Cast<ChatMessagePanel>().Any(control => control.Message == message))
+                return;
+            
+            var panel = new ChatMessagePanel(message, message.Way == ChatMessage.Ways.Out ? Contact.UserContact : contact);
+            panel.Dock = DockStyle.Top;
+            panel.Parent = ChatPanel;
+            ChatPanel.Controls.Add(panel);
+
+            if (alterSuspend)
+                this.SuspendDrawing();
+            
+            if (place == Place.Append)
+                ChatPanel.Controls.SetChildIndex(panel, 0);
+            
+            if (ChatPanel.Controls.Count > MaxMessages)
+                ChatPanel.Controls.RemoveAt(place == Place.Append ? ChatPanel.Controls.Count - 1 : 0);
+            
+            if (focus)
+                ChatPanel.ScrollControlIntoView(panel);
+            
+            if (alterSuspend)
+                this.ResumeDrawing();
+        }
+
+        public void HandleMessageReceived(Contact contact, ChatMessage message)
+        {
+            CacheMessage(contact, message);
+            AddMessageToChat(contact, message);
+        }
 
         // This is to change the message's status from "sending" or "not sent" to "sent".
         public void HandleMessageDelivered(Contact contact, ChatMessage message)
@@ -198,6 +261,8 @@ namespace ClausaComm.Components
         {
             if (ReferenceEquals(Contact, contact))
                 return;
+
+            ChunksScrolled = 0;
 
             if (Contact is not null)
             {
@@ -233,15 +298,17 @@ namespace ClausaComm.Components
                 // The XML takes it from the oldest.
                 if (!CachedChats.TryGetValue(contact, out MessageCollection messages))
                 {
-                    MessagesXml.GetMessages(contact.Id, MessagesToLoad).Reverse().ForEach(message => AddMessage(contact, message, true, false));
-                    if (!CachedChats.TryGetValue(contact, out messages))
-                        return;
+                    CachedChats.Add(contact, messages = new MessageCollection());
+                    MessagesXml.GetMessages(contact.Id, MessagesToLoad).Reverse().ForEach(message => CacheMessage(contact, message, messages));
                 }
 
-                messages.Get(InitialMessages).ForEach(message => AddMessage(contact, message, true, true));
+                this.SuspendDrawing();
+                messages.Get(InitialMessages).ForEach(message => AddMessageToChat(contact, message, false, false, Place.Prepend, false));
 
                 if (ChatPanel.Controls.Count > 1)
                     ChatPanel.ScrollControlIntoView(ChatPanel.Controls[0]);
+                
+                this.ResumeDrawing();
             }
         }
 
@@ -270,7 +337,8 @@ namespace ClausaComm.Components
         private void SendMessage(string? text, string? filePath = null)
         {
             ChatMessage msg = new(text ?? "") { Delivered = false, FilePath = filePath };
-            AddMessage(Contact, msg);
+            CacheMessage(Contact, msg);
+            AddMessageToChat(Contact, msg);
             OnSendPressed?.Invoke(msg, Contact);
         }
 
