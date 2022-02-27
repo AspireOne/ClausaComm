@@ -4,36 +4,35 @@ using System.Diagnostics;
 using System.Windows.Forms;
 using System.Drawing;
 using ClausaComm.Components.Icons;
+using ClausaComm.Extensions;
 using ClausaComm.Forms;
 
 namespace ClausaComm.Components
 {
     public partial class TitleBar : Panel
     {
+        public readonly ToolTip Tooltip = new()
+        {
+            AutoPopDelay = 1500,
+            InitialDelay = 500,
+            ReshowDelay = 10000,
+        };
         public string Title
         {
             get => TitleText.Text;
             set => TitleText.Text = value;
         }
 
-        private NotifyIcon _notifyIcon;
-
-        protected readonly NotifyIcon PinNotifyIcon = new()
-        {
-            Text = "Click to open ClausaComm",
-            Icon = Properties.Resources.program_icon,
-            Visible = false
-        };
-
 
         #region title bar elements initialization
         private const byte ElementSize = 24;
         private const byte ElementWidth = 1;
-        private const byte BoxColorOpacity = 60;
+        private const byte BoxColorOpacity = 40;
         private static readonly Color ElementColor = Color.FromArgb(182, 182, 182);
-        private static readonly Color CloseButtonColor = Color.FromArgb(210, 210, 200);
+        private static readonly Color AdditionalElementColor = Color.FromArgb(244, 244, 244);
+        private static readonly Color CloseButtonColor = Color.FromArgb(250, 250, 250);
         private static readonly Color ElementColorOnHover = Color.FromArgb(255, 255, 255);
-        private static readonly SolidBrush ElementBackgroundBrush = new(Color.FromArgb(BoxColorOpacity, Color.FromArgb(225, 165, 46)));
+        private static readonly SolidBrush ElementBackgroundBrush = new(Color.FromArgb(BoxColorOpacity, Color.FromArgb(225, 255, 255)));
         private static readonly SolidBrush CloseButtonBackgroundBrush = new(Color.FromArgb(240, 255, 51, 58));
         // The "Location" property indicates in what order the elements should be. 0 = first.
         private readonly Label TitleText = new()
@@ -41,10 +40,10 @@ namespace ClausaComm.Components
             Font = new Font("Segoe UI", 11f, FontStyle.Regular, GraphicsUnit.Point),
             Location = new Point(1, 0),
             Dock = DockStyle.Bottom,
-            Margin = new Padding(3, 0, 3, 0),
+            Margin = new Padding(6, 0, 3, 0),
             Name = "TitleText",
             Text = "ClausaComm",
-            TextAlign = ContentAlignment.MiddleLeft,
+            TextAlign = ContentAlignment.MiddleCenter,
             ForeColor = Color.FromArgb(174, 174, 174)
         };
 
@@ -62,14 +61,6 @@ namespace ClausaComm.Components
             BoxOnHoverBrush = ElementBackgroundBrush,
             ColorIconOnHover = true,
             HoverIconColor = ElementColorOnHover
-        };
-
-        private readonly PictureBox ProgramIconBox = new()
-        {
-            Dock = DockStyle.Left,
-            Location = new Point(0, 0),
-            Name = "ProgramIconBox",
-            Size = new Size(ElementSize, ElementSize),
         };
 
         private readonly MinimizeIcon MinimizeButton = new()
@@ -145,18 +136,29 @@ namespace ClausaComm.Components
         {
             InitializeComponent();
             InitializeComponentFurther();
-            PinNotifyIcon.Click += (_, _) => UnpinForm();
+        }
+
+        public void AddAdditionalElement(IconBase element)
+        {
+            element.Dock = DockStyle.Left;
+            element.Width = ElementSize;
+            element.Height = ElementSize;
+            if (element is ImageIconBase imageIcon)
+                imageIcon.IconColor = AdditionalElementColor;
+            else if (element is LineIconBase lineIcon)
+                lineIcon.LineColor = AdditionalElementColor;
+            Controls.Add(element);
         }
 
         private void InitializeComponentFurther()
         {
-            Controls.Add(ProgramIconBox);
             Controls.Add(TitleText);
             Controls.Add(Pin);
             Controls.Add(MinimizeButton);
             Controls.Add(MaximizeButton);
             Controls.Add(CloseButton);
-            
+            Padding = new Padding(5, 0, 0, 0);
+
             Name = "TitleBar";
             MinimumSize = new Size(0, BarHeight);
             MaximumSize = new Size(int.MaxValue, BarHeight);
@@ -164,11 +166,10 @@ namespace ClausaComm.Components
 
             MouseDown += Drag;
             TitleText.MouseDown += Drag;
-            ProgramIconBox.MouseDown += Drag;
             Pin.Click += (_, _) =>
             {
                 if (Form?.Pinnable == true)
-                    PinForm();
+                    Form.Pinned = true;
             };
         }
         #endregion
@@ -183,22 +184,6 @@ namespace ClausaComm.Components
             Form.WindowState == FormWindowState.Maximized
             ? FormWindowState.Normal
             : FormWindowState.Maximized;
-        }
-
-        private void PinForm()
-        {
-            if (PinNotifyIcon is not null)
-            {
-                Form.Visible = false;
-                PinNotifyIcon.Visible = true;
-            }
-        }
-
-        private void UnpinForm()
-        {
-            Form.Visible = true;
-            if (PinNotifyIcon is not null)
-                PinNotifyIcon.Visible = false;
         }
 
         private void ChangeSizingElementsVisibility(bool visible)
