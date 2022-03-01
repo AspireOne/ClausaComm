@@ -70,7 +70,7 @@ namespace ClausaComm.Components
             foreach (Control control in Controls)
                 PropagateMouseEvents(control);
 
-            ControlUtils.AddBackColorFilterOnMouseEvent(this,  MouseEventColors);
+            //ControlUtils.AddBackColorFilterOnMouseEvent(this,  MouseEventColors);
         }
         
         private void PropagateMouseEvents(Control control)
