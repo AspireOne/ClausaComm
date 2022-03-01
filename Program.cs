@@ -34,7 +34,7 @@ namespace ClausaComm
             Application.SetHighDpiMode(HighDpiMode.SystemAware);
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            
+
             var mainForm = new MainForm(args.Contains(MinimizedArgument));
 #if !DEBUG
             CheckAndDownloadNewVersionAsync(mainForm);
@@ -59,9 +59,9 @@ namespace ClausaComm
             {
                 DurationMillis = 15000,
                 LeftButton = new NotificationPanel.NotificationArgs.ButtonArgs
-                    {ClickCallback = (_, _) => Close(true), Name = "Update now"},
+                    {ClickCallback = (_, _) => Close(true), Name = "restart now"},
                 Title = "New update available",
-                Content = $"Version {newVersion} is now available!"
+                Content = $"Version {newVersion} is now available and will be installed on the next restart."
             };
             
             mainForm.Invoke(() => mainForm.NotificationPanel.ShowNotification(notifArgs));
