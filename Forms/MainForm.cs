@@ -117,7 +117,7 @@ namespace ClausaComm.Forms
 
             MessagesXml.SaveMessage(message, contact.Id);
             
-            if (ChatScreen.Contact != contact || Form.ActiveForm != this)
+            if (ActiveForm != this)
                 Sound.PlayNotificationSound();
             
             Invoke(() => ChatScreen.HandleMessageReceived(contact, message));
