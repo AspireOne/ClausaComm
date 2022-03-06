@@ -93,11 +93,7 @@ namespace ClausaComm.Forms
             Padding = Resizable ? DraggableWindowBorderSize : NonDraggableWindowBorderSize;
             MaximizedBounds = Screen.FromHandle(Handle).WorkingArea;
             BackColor = Constants.UiConstants.TitleBarColor;
-            PinNotifyIcon.Click += (_, _) =>
-            {
-                Visible = true;
-                PinNotifyIcon.Visible = false;
-            };
+            PinNotifyIcon.Click += OnPinNotifyIconClick;
 
             /*
             DraggableSpace = new(false)
@@ -114,6 +110,12 @@ namespace ClausaComm.Forms
             this.LocationChanged += (_, _) => DraggableSpace.Location = new(this.Location.X - (offset / 2), this.Location.Y - (offset / 2));
             DraggableSpace.SizeChanged += (_, _) => Size = DraggableSpace.Size - new Size(offset, offset);
             */
+        }
+
+        protected virtual void OnPinNotifyIconClick(object sender, EventArgs e)
+        {
+            Visible = true;
+            PinNotifyIcon.Visible = false;
         }
 
         // Allows the form to be hid and shown by clicking on it's taskbar icon.
