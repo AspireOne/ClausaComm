@@ -30,8 +30,8 @@ namespace ClausaComm.Components
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
+            this.BackColor = Constants.UiConstants.ChatTextBoxBackColor;
         }
-
         #endregion
     }
 }

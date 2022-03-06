@@ -105,7 +105,6 @@ namespace ClausaComm.Forms
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoScroll = true;
-            this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(40)))), ((int)(((byte)(40)))), ((int)(((byte)(40)))));
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.ClientSize = new System.Drawing.Size(517, 385);
             this.Controls.Add(this.AddButton);
@@ -119,7 +118,6 @@ namespace ClausaComm.Forms
             this.Text = "Add Contact";
             this.ResumeLayout(false);
             this.PerformLayout();
-
         }
 
         #endregion

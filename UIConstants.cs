@@ -12,26 +12,27 @@ namespace ClausaComm
             // and make it a substitute for "default".
             /// <summary>A designer substitute for "default".</summary>
             public static readonly Color DefaultDesignerColorSignalizer = Color.FromArgb(0, 0, 0, 1);
-            
+
+            public const int BlueTint = 5;
             public static readonly Color SecondaryColor = Color.FromArgb(253, 172, 10);
             public static readonly Color ElementOnHoverColor = Color.FromArgb(253, 172, 10);
             public static readonly Color ElementOnClickColor = Color.FromArgb(253, 152, 10);
-
-            public static readonly Color ChatBackColor = Color.FromArgb(49, 49, 52);
-            public static readonly Color ChatTextColor = Color.FromArgb(220, 220, 220);
-            public static readonly Color ChatTextColorUndelivered = Color.FromArgb(120, 120, 120);
             
-            public static readonly Color ChatMessageOnHoverColor = Color.FromArgb(46, 46, 49);
-
+            public static readonly Color ChatBackColor = Color.FromArgb(55, 55, 55 + BlueTint);
+            public static readonly Color ChatTextColor = Color.FromArgb(220, 220, 220);
+            public static readonly Color ChatTextColorUndelivered = Color.FromArgb(140, 140, 140);
             public static readonly Color ChatTextColorLink = Color.FromArgb(28, 158, 255);
             public static readonly Color ChatTextColorLinkUndelivered = Color.FromArgb(91, 115, 185);
             
-            public static readonly Color ChatTextBoxBackColor = Color.FromArgb(62, 62, 64);
-            public static readonly Color ChatTextBoxTextColor = Color.FromArgb(190, 190, 190);
+            public static readonly Color ChatMessageOnHoverColor = Color.FromArgb(46, 46, 46 + BlueTint);
+
+            public static readonly Color ChatTextBoxBackColor = Color.FromArgb(68, 68, 68 + BlueTint);
+            public static readonly Color ChatTextBoxTextColor = Color.FromArgb(215, 215, 215);
+            public static readonly Color ChatTextBoxContainerBackColor = ChatBackColor;
             
-            public static readonly Color TitleBarColor = Color.FromArgb(34, 34, 36);
-            public static readonly Color NotificationPanelColor = Color.FromArgb(29, 29, 31);
-            public static readonly Color UiColor = Color.FromArgb(42, 42, 44);
+            public static readonly Color TitleBarColor = Color.FromArgb(28, 28, 28 + BlueTint);
+            public static readonly Color NotificationPanelColor = Color.FromArgb(29, 29, 29 + BlueTint);
+            public static readonly Color UiColor = Color.FromArgb(42, 42, 42 + BlueTint);
 
             public static Color ReturnNewOrDefaultColor(Color defaultColor, Color newColor)
                 => newColor == DefaultDesignerColorSignalizer ? defaultColor : newColor;

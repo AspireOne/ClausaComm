@@ -169,7 +169,7 @@ namespace ClausaComm.Forms
             // 
             // ActionPanel1
             // 
-            this.ActionPanel1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(42)))), ((int)(((byte)(42)))), ((int)(((byte)(44)))));
+            this.ActionPanel1.BackColor = Constants.UiConstants.UiColor;
             this.ActionPanel1.Contact = null;
             this.ActionPanel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.ActionPanel1.Location = new System.Drawing.Point(0, 0);
@@ -180,7 +180,7 @@ namespace ClausaComm.Forms
             // 
             // ChatTextBoxContainer
             // 
-            this.ChatTextBoxContainer.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(49)))), ((int)(((byte)(49)))), ((int)(((byte)(52)))));
+            this.ChatTextBoxContainer.BackColor = Constants.UiConstants.ChatTextBoxContainerBackColor;
             this.ChatTextBoxContainer.Controls.Add(this.FileSelectorIcon1);
             this.ChatTextBoxContainer.Controls.Add(this.ChatTextBox1);
             this.ChatTextBoxContainer.Controls.Add(this.SendIcon1);
@@ -261,7 +261,7 @@ namespace ClausaComm.Forms
             // 
             // LeftPanel
             // 
-            this.LeftPanel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(42)))), ((int)(((byte)(42)))), ((int)(((byte)(44)))));
+            this.LeftPanel.BackColor = Constants.UiConstants.UiColor;
             this.LeftPanel.Controls.Add(this.AddContactIcon);
             this.LeftPanel.Controls.Add(this.PanelOfContactPanels);
             this.LeftPanel.Controls.Add(this.ContactSearchBox);

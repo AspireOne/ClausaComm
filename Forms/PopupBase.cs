@@ -36,6 +36,8 @@ public class PopupBase : FormBase
 
         StartPosition = FormStartPosition.Manual;
         FormBorderStyle = FormBorderStyle.None;
+        BackColor = Constants.UiConstants.UiColor;
+        TitleBar.BackColor = Constants.UiConstants.UiColor; 
         ShowInTaskbar = false;
         Draggable = false;
         TopMost = false;
