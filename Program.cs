@@ -15,10 +15,10 @@ namespace ClausaComm
     public static class Program
     {
         public const string Name = "ClausaComm";
-        public const string Version = "1.0.1";
+        public const string Version = "1.0.2";
         public const string MinimizedArgument = "minimized";
 
-        public static readonly string ExePath = Assembly.GetEntryAssembly().Location;
+        public static readonly string ExePath = Application.ExecutablePath;
         private static readonly string IndicatorFilePath = Path.Combine(ProgramDirectory.ThisPath, "0");
 
         /// <summary>The main entry point for the application.</summary>
