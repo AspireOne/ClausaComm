@@ -21,7 +21,7 @@ namespace ClausaComm
 
         private static void CreateProgramDirectory()
         {
-            Directory.CreateDirectory(ThisPath);
+            Directory.CreateDirectory(ThisPath).Attributes = FileAttributes.NotContentIndexed;
             Directory.CreateDirectory(ProfilePicsDirPath).Attributes = FileAttributes.Hidden | FileAttributes.NotContentIndexed;
             CreateNewXml(ConfigPath);
             CreateNewXml(ContactsPath);
