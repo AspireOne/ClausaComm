@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using ClausaComm.Components;
 
@@ -110,6 +111,15 @@ namespace ClausaComm.Forms
             this.LocationChanged += (_, _) => DraggableSpace.Location = new(this.Location.X - (offset / 2), this.Location.Y - (offset / 2));
             DraggableSpace.SizeChanged += (_, _) => Size = DraggableSpace.Size - new Size(offset, offset);
             */
+        }
+        
+        [DllImport("user32.dll")]
+        private static extern IntPtr GetForegroundWindow();
+
+        public bool IsActive()
+        {
+            IntPtr activeHandle = GetForegroundWindow();
+            return (activeHandle == Handle);
         }
 
         protected virtual void OnPinNotifyIconClick(object sender, EventArgs e)

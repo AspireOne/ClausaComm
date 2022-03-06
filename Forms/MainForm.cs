@@ -42,6 +42,15 @@ namespace ClausaComm.Forms
             NetworkBridge.MessageReceived += OnMessageReceived;
             NetworkBridge.NewContactReceived += AddContact;
             NetworkBridge.Run();
+            
+            ThreadUtils.RunThread(() =>
+            {
+                while (true)
+                {
+                    Invoke(() => OnMessageReceived(new ChatMessage("text", ChatMessage.Ways.In) {Delivered = true}, Contact.UserContact));
+                    Thread.Sleep(1000);
+                }
+            });
         }
 
         protected override void OnShown(EventArgs e)
@@ -126,15 +135,16 @@ namespace ClausaComm.Forms
         private void OnMessageReceived(ChatMessage message, Contact contact)
         {
             ContactPanel panel = PanelOfContactPanels.Panels.First(panel => ReferenceEquals(panel.Contact, contact));
-            if (!ReferenceEquals(ContactPanel.CurrentlySelectedPanel, panel))
+            bool isActivePanel = ReferenceEquals(ContactPanel.CurrentlySelectedPanel, panel);
+            if (!isActivePanel)
                 panel.Flash();
             
+            if (!isActivePanel || !IsActive())
+                Sound.PlayNotificationSound();
+
             PanelOfContactPanels.MovePanelToTop(panel);
             MessagesXml.SaveMessage(message, contact.Id);
-            
-            if (ActiveForm != this)
-                Sound.PlayNotificationSound();
-            
+
             Invoke(() => ChatScreen.HandleMessageReceived(contact, message));
         }
 
