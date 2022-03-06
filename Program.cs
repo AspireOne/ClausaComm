@@ -15,15 +15,25 @@ namespace ClausaComm
     public static class Program
     {
         public const string Name = "ClausaComm";
-        public const string Version = "1.0.0";
+        public const string Version = "1.0.1";
         public const string MinimizedArgument = "minimized";
 
         public static readonly string ExePath = Assembly.GetEntryAssembly().Location;
+        private static readonly string IndicatorFilePath = Path.Combine(ProgramDirectory.ThisPath, "0");
 
         /// <summary>The main entry point for the application.</summary>
         [STAThread]
         private static void Main(string[] args)
         {
+            // Check if program launched for the first time.
+            if (!File.Exists(IndicatorFilePath))
+            {
+                Logger.Log("Launched for the first time, setting defaults.");
+                File.Create(IndicatorFilePath).Dispose();
+                File.SetAttributes(IndicatorFilePath, FileAttributes.Hidden);
+                Settings.SetDefaults();
+            }
+            
             var instances = Process.GetProcessesByName(Path.GetFileNameWithoutExtension(ExePath));
             if (instances.Length > 1)
             {
