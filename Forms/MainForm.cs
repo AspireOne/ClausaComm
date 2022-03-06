@@ -98,6 +98,8 @@ namespace ClausaComm.Forms
             PanelOfContactPanels.SelectFirstPanel();
             ChatScreen.OnSendPressed += (message, contact) =>
             {
+                PanelOfContactPanels.MovePanelToTop(contact);
+                
                 Task.Run(() =>
                 {
                     if (!NetworkBridge.SendMessage(message, contact.Ip))
@@ -114,7 +116,8 @@ namespace ClausaComm.Forms
             ContactPanel panel = PanelOfContactPanels.Panels.First(panel => ReferenceEquals(panel.Contact, contact));
             if (!ReferenceEquals(ContactPanel.CurrentlySelectedPanel, panel))
                 panel.Flash();
-
+            
+            PanelOfContactPanels.MovePanelToTop(panel);
             MessagesXml.SaveMessage(message, contact.Id);
             
             if (ActiveForm != this)

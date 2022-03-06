@@ -26,6 +26,11 @@ namespace ClausaComm.Components
                 Controls.Remove(panel);
         }
 
+        public void MovePanelToTop(Contact contact)
+            => MovePanelToTop(Panels.First(panel => ReferenceEquals(panel.Contact, contact)));
+        
+        public void MovePanelToTop(ContactPanel panel) => Controls.SetChildIndex(panel, Controls.Count - 1);
+
         public void SelectFirstPanel()
         {
             if (Panels.Any())
