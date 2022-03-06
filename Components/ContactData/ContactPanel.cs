@@ -73,11 +73,13 @@ namespace ClausaComm.Components.ContactData
 
             #region child controls initialization
 
+            int imagePadding = userPanel ? 10 : 14;
             ContactProfilePicture profilePictureBox = new(Contact)
             {
                 Dock = DockStyle.Left,
                 Parent = this,
-                Size = new Size(this.Height, this.Height)
+                Size = new Size(Height - imagePadding, Height),
+                Padding = new Padding(0, imagePadding/2, 0, imagePadding/2),
             };
 
             const int nameOffset = 2;
@@ -85,7 +87,8 @@ namespace ClausaComm.Components.ContactData
             {
                 Location = new Point(profilePictureBox.Width + nameOffset, 0),
                 Size = new Size(Width - profilePictureBox.Width - nameOffset, Height),
-                Font = new Font(userPanel ? "Sans UI" : "Segoe UI", 13, FontStyle.Regular),
+                Font = new Font(userPanel ? "Sans UI" : "Segoe UI", 12, FontStyle.Regular),
+                TextAlign = ContentAlignment.MiddleLeft,
                 Parent = this,
                 ForeColor = Color.FromArgb(225, 225, 225)
             };
