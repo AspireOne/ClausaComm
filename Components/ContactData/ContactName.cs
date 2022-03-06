@@ -30,10 +30,6 @@ namespace ClausaComm.Components.ContactData
         {
             InitializeComponent();
             Name = "Name";
-            AutoSize = false;
-            TextAlign = ContentAlignment.MiddleLeft;
-            BorderStyle = BorderStyle.None;
-            Font = new Font("Segoe UI", 13, FontStyle.Regular);
         }
 
         public ContactName(IContainer container) : this() => container.Add(this);
