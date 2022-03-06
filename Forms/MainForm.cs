@@ -49,6 +49,18 @@ namespace ClausaComm.Forms
             Pinned = StartPinned;
             base.OnShown(e);
         }
+        
+        protected override void OnPinNotifyIconClick(object sender, EventArgs e)
+        {
+            base.OnPinNotifyIconClick(sender, e);
+            if (!StartPinned)
+                return;
+            
+            // Workaround for the form not going to front when started silently on startup and then pin icon clicked. 
+            WindowState = FormWindowState.Minimized;
+            Show();
+            WindowState = FormWindowState.Normal;
+        }
 
         private void InitializeComponentFurther()
         {
