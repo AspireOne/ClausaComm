@@ -14,12 +14,12 @@ public static class Sound
         {
             using var audioFile =
                 new AudioFileReader(Path.Combine(Directory.GetCurrentDirectory(), @"Resources\notification_sound.mp3"));
-            audioFile.Volume = 0.8f;
+            audioFile.Volume = 0.6f;
             using var outputDevice = new WaveOutEvent();
             outputDevice.Init(audioFile);
             outputDevice.Play();
             while (outputDevice.PlaybackState == PlaybackState.Playing)
-                Thread.Sleep(190);
+                Thread.Sleep(50);
         });
     }
 }
