@@ -18,40 +18,40 @@ namespace ClausaComm.Components
 
         #region properties
 
-        public int RectLeft
+        private int RectLeft
         {
             get => _nLeftRect;
-            private set
+            set
             {
                 _nLeftRect = value;
                 Invalidate();
             }
         }
 
-        public int RectTop
+        private int RectTop
         {
             get => _nTopRect;
-            private set
+            set
             {
                 _nTopRect = value;
                 Invalidate();
             }
         }
 
-        public int RectHeight
+        private int RectHeight
         {
             get => _nHeightRect;
-            private set
+            set
             {
                 _nHeightRect = value;
                 Invalidate();
             }
         }
 
-        public int RectWidth
+        private int RectWidth
         {
             get => _nWeightRect;
-            private set
+            set
             {
                 _nWeightRect = value;
                 Invalidate();
@@ -82,6 +82,8 @@ namespace ClausaComm.Components
         {
             base.OnResize(e);
             Region = Region.FromHrgn(CreateRoundRectRgn(RectLeft, RectTop, Width, Height, RectHeight, RectWidth));
+            BackColor = Constants.UiConstants.ChatTextBoxBackColor;
+            ForeColor = Constants.UiConstants.ChatTextBoxTextColor;
         }
     }
 }

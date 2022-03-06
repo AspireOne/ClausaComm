@@ -20,13 +20,12 @@ namespace ClausaComm.Components
 {
     public partial class ChatScreen : Panel
     {
-        private enum Place { Prepend, Append }
+        private enum MessagePlace { Prepend, Append }
         // Set the initial amount of messages lower so that it doesn't take long to load them when switching chats.
         private const int InitialMessages = 15;
         private const int MaxMessages = 15;
         private const int MessagesToLoad = 1000;
         private const int MessageScrollAmount = 5;
-
         private int ChunksScrolled = 0;
 
         private FileSelectorIcon _fileSelectorIcon;
@@ -37,7 +36,6 @@ namespace ClausaComm.Components
         private readonly Dictionary<Contact, string> CachedTextboxes = new();
 
         public delegate void SendPressedHandler(ChatMessage message, Contact contact);
-
         public event SendPressedHandler OnSendPressed;
         
         private static readonly OpenFileDialog SelectFileDialog = new()
@@ -176,7 +174,7 @@ namespace ClausaComm.Components
             {
                 this.SuspendDrawing();
                 messages.Get(MessageScrollAmount, messagesScrolled + MaxMessages).ForEach(msg => 
-                    AddMessageToChat(Contact, msg, false, false, Place.Prepend, false));
+                    AddMessageToChat(Contact, msg, false, false, MessagePlace.Prepend, false));
                     
                 ++ChunksScrolled;
                 ChatPanel.AutoScrollPosition = lastPanel.Location;
@@ -186,7 +184,7 @@ namespace ClausaComm.Components
             {
                 this.SuspendDrawing();
                 messages.Get(MessageScrollAmount, messagesScrolled - MessageScrollAmount).Reverse().ForEach(msg => 
-                    AddMessageToChat(Contact, msg, false, false, Place.Append, false));
+                    AddMessageToChat(Contact, msg, false, false, MessagePlace.Append, false));
 
                 --ChunksScrolled;
                 ChatPanel.AutoScrollPosition = new Point(0, GetScrollMax());
@@ -215,7 +213,7 @@ namespace ClausaComm.Components
             messages.Add(message);
         }
         
-        private void AddMessageToChat(Contact contact, ChatMessage message, bool focus = true, bool checkUnique = true, Place place = Place.Append, bool alterSuspend = true)
+        private void AddMessageToChat(Contact contact, ChatMessage message, bool focus = true, bool checkUnique = true, MessagePlace place = MessagePlace.Append, bool alterSuspend = true)
         {
             if (!ReferenceEquals(Contact, contact))
                 return;
@@ -231,11 +229,11 @@ namespace ClausaComm.Components
             if (alterSuspend)
                 this.SuspendDrawing();
             
-            if (place == Place.Append)
+            if (place == MessagePlace.Append)
                 ChatPanel.Controls.SetChildIndex(panel, 0);
             
             if (ChatPanel.Controls.Count > MaxMessages)
-                ChatPanel.Controls.RemoveAt(place == Place.Append ? ChatPanel.Controls.Count - 1 : 0);
+                ChatPanel.Controls.RemoveAt(place == MessagePlace.Append ? ChatPanel.Controls.Count - 1 : 0);
             
             if (focus)
                 ChatPanel.ScrollControlIntoView(panel);
@@ -303,7 +301,7 @@ namespace ClausaComm.Components
                 }
 
                 this.SuspendDrawing();
-                messages.Get(InitialMessages).ForEach(message => AddMessageToChat(contact, message, false, false, Place.Prepend, false));
+                messages.Get(InitialMessages).ForEach(message => AddMessageToChat(contact, message, false, false, MessagePlace.Prepend, false));
 
                 if (ChatPanel.Controls.Count > 1)
                     ChatPanel.ScrollControlIntoView(ChatPanel.Controls[0]);
