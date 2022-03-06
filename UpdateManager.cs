@@ -75,20 +75,15 @@ namespace ClausaComm
             ZipFile.ExtractToDirectory(BinarySavePath, ExtractedFilesTempDir, true);
             File.Delete(BinarySavePath);
 
-            string restartCommand = $" & start {Program.ExePath}";
+            string restartCommand = $" & start \"\" \"{Program.ExePath}\"";
 
-            /*
-            using RegistryKey key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\ClausaComm");
-            string installPath = key?.GetValue("InstallLocation")?.ToString()?.Replace("\"", "");
-            */
             new Process
             {
                 StartInfo = ConsoleUtils.GetProcessStartInfo(
                     $"{ConsoleUtils.GetDelay(1)}" +
                         $" & taskkill /f /im {Environment.ProcessId}" + // Even tho the process should be terminated before this command runs, we'll make sure.
-                        $" & rmdir /s /q \"{Directory.GetCurrentDirectory()}\"" +
-                        $" & move /y \"{ExtractedFilesTempDir}\" \"{Directory.GetCurrentDirectory()}\"" +
-                        $"{(restart ? restartCommand : "")}",
+                        $" & xcopy /y /e \"{ExtractedFilesTempDir}\" \"{Paths.InstallationDir}\"" +
+                        (restart ? restartCommand : ""),
                     true, true)
             }.Start();
         }
