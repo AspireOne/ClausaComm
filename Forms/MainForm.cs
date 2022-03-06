@@ -126,15 +126,16 @@ namespace ClausaComm.Forms
         private void OnMessageReceived(ChatMessage message, Contact contact)
         {
             ContactPanel panel = PanelOfContactPanels.Panels.First(panel => ReferenceEquals(panel.Contact, contact));
-            if (!ReferenceEquals(ContactPanel.CurrentlySelectedPanel, panel))
+            bool isActivePanel = ReferenceEquals(ContactPanel.CurrentlySelectedPanel, panel);
+            if (!isActivePanel)
                 panel.Flash();
             
+            if (!isActivePanel || !IsActive())
+                Sound.PlayNotificationSound();
+
             PanelOfContactPanels.MovePanelToTop(panel);
             MessagesXml.SaveMessage(message, contact.Id);
-            
-            if (ActiveForm != this)
-                Sound.PlayNotificationSound();
-            
+
             Invoke(() => ChatScreen.HandleMessageReceived(contact, message));
         }
 
