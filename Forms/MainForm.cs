@@ -42,15 +42,6 @@ namespace ClausaComm.Forms
             NetworkBridge.MessageReceived += OnMessageReceived;
             NetworkBridge.NewContactReceived += AddContact;
             NetworkBridge.Run();
-            
-            ThreadUtils.RunThread(() =>
-            {
-                while (true)
-                {
-                    Invoke(() => OnMessageReceived(new ChatMessage("text", ChatMessage.Ways.In) {Delivered = true}, Contact.UserContact));
-                    Thread.Sleep(1000);
-                }
-            });
         }
 
         protected override void OnShown(EventArgs e)
