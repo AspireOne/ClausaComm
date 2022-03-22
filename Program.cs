@@ -15,7 +15,7 @@ namespace ClausaComm
     public static class Program
     {
         public const string Name = "ClausaComm";
-        public const string Version = "1.1.1";
+        public const string Version = "1.1.2";
         public const string MinimizedArgument = "minimized";
 
         public static readonly string ExePath = Application.ExecutablePath;
