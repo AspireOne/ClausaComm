@@ -74,16 +74,16 @@ namespace ClausaComm
             Directory.CreateDirectory(ExtractedFilesTempDir);
             ZipFile.ExtractToDirectory(BinarySavePath, ExtractedFilesTempDir, true);
             File.Delete(BinarySavePath);
-
-            string restartCommand = $" & start \"\" \"{Program.ExePath}\"";
+            
+            string restartCommand = $"start \"\" \"{Program.ExePath}\"";
 
             new Process
             {
                 StartInfo = ConsoleUtils.GetProcessStartInfo(
                     $"{ConsoleUtils.GetDelay(1)}" +
                         $" & taskkill /f /im {Environment.ProcessId}" + // Even tho the process should be terminated before this command runs, we'll make sure.
-                        $" & xcopy /y /e \"{ExtractedFilesTempDir}\" \"{Paths.InstallationDir}\"" +
-                        (restart ? restartCommand : ""),
+                        $" & xcopy /y /e \"{ExtractedFilesTempDir}\" \"{Path.GetFullPath(Path.GetDirectoryName(Program.ExePath))}\"" +
+                        (restart ? $" & {restartCommand}" : ""),
                     true, true)
             }.Start();
         }
