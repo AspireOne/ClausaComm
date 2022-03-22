@@ -52,8 +52,7 @@ namespace ClausaComm.Components
             ChatMessageName.Text = Contact.Name;
             ChatMessageTime.Text = date.ToString("dd/MM/yyyy HH:mm");
             ChatMessageText.Text = Message.Text;
-            lock (Contact.ProfilePic)
-                ChatMessagePicture.Image = Contact.ProfilePic;
+            ChatMessagePicture.Image = (Image)Contact.ProfilePic.Clone();
 
             if (!IsFile)
                 return;
