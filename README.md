@@ -24,7 +24,6 @@ My guess was that it would take me just about two weeks, but not too soon it bec
 - FAST Sending of files (archives, photos, files, folders...) with UNLIMITED size (50gb? no problem)
 - Messaging (chat history, delivery status, sounds and notifications, send error handling...)
 - Exportable chatlog and contact list
-- Start at startup, taskbar pinning
 - Automatic updates
 - All the other basic functionality a chatting app should have.
 
