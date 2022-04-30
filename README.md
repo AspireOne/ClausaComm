@@ -31,6 +31,6 @@ My guess was that it would take me just about two weeks, but not too soon it bec
 Clone the repo, download nuget dependencies, install the appropriate .NET SDK (if needed) and you are set. To contribute, create an appropriate branch for the changes you are going to make, and when you are done, create a pull request.
 
 ## Rant
-Choosing Windows Forms for a new and such a large and complex project was an insane idea. Everything must be done from scratch there (every millimeter of every control and it's functionality), things don't work the way they should (e.g. layouts), componenets are buggy (e.g. the notorious flickering on repaints), the designer is unusable at times...
+Choosing Windows Forms for a new and such a large and complex project was an insane idea. Everything must be done from scratch there (every millimeter of every control and it's functionality), things don't work the way they should (e.g. layouts), componenets are buggy (e.g. the notorious flickering on repaints), the designer is unusable at times... Ridiculously basic things wasted me an unbelievable amount of time.
 
-Don't get me wrong, Windows Forms is definitely nice in a lot of ways; but it's not suitable for larger projects.
+Don't get me wrong, Windows Forms is definitely nice in a lot of ways; but it's not ideal for larger and mainly new projects. There are newer and better things out there.
