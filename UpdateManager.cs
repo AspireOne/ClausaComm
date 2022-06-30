@@ -75,14 +75,14 @@ namespace ClausaComm
             ZipFile.ExtractToDirectory(BinarySavePath, ExtractedFilesTempDir, true);
             File.Delete(BinarySavePath);
             
-            string restartCommand = $"start \"\" \"{Program.ExePath}\"";
+            string restartCommand = $"start \"\" \"{Application.ExecutablePath}\"";
 
             new Process
             {
                 StartInfo = ConsoleUtils.GetProcessStartInfo(
                     $"{ConsoleUtils.GetDelay(1)}" +
                         $" & taskkill /f /im {Environment.ProcessId}" + // Even tho the process should be terminated before this command runs, we'll make sure.
-                        $" & xcopy /y /e \"{ExtractedFilesTempDir}\" \"{Path.GetFullPath(Path.GetDirectoryName(Program.ExePath))}\"" +
+                        $" & xcopy /y /e \"{ExtractedFilesTempDir}\" \"{Path.GetFullPath(Path.GetDirectoryName(Application.ExecutablePath))}\"" +
                         (restart ? $" & {restartCommand}" : ""),
                     true, true)
             }.Start();

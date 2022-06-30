@@ -153,7 +153,7 @@ namespace ClausaComm.Components
         private void InitializeComponentFurther()
         {
             Controls.Add(TitleText);
-            Controls.Add(Pin);
+            //Controls.Add(Pin);
             Controls.Add(MinimizeButton);
             Controls.Add(MaximizeButton);
             Controls.Add(CloseButton);
@@ -178,7 +178,13 @@ namespace ClausaComm.Components
         {
             Form.ResizableChanged += (_, resizable) => ChangeSizingElementsVisibility(resizable);
             Form.PinnableChanged += (_, pinnable) => Pin.Visible = pinnable;
-            CloseButton.Click += (_, _) => Form.Close();
+            CloseButton.Click += (_, _) =>
+            {
+                if (Form.Pinnable)
+                    Form.Pinned = true;
+                else
+                    Form.Close();
+            };
             MinimizeButton.Click += (_, _) => Form.WindowState = FormWindowState.Minimized;
             MaximizeButton.Click += (_, _) => Form.WindowState =
             Form.WindowState == FormWindowState.Maximized

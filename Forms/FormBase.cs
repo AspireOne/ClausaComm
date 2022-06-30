@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using ClausaComm.Components;
@@ -94,7 +95,11 @@ namespace ClausaComm.Forms
             Padding = Resizable ? DraggableWindowBorderSize : NonDraggableWindowBorderSize;
             MaximizedBounds = Screen.FromHandle(Handle).WorkingArea;
             BackColor = Constants.UiConstants.TitleBarColor;
-            PinNotifyIcon.Click += OnPinNotifyIconClick;
+            PinNotifyIcon.MouseClick += OnPinNotifyIconClick;
+            
+            ContextMenuStrip contextMenu = new();
+            contextMenu.Items.Add("Zavřít", null, (_, _) => Program.Close());
+            PinNotifyIcon.ContextMenuStrip = contextMenu;
 
             /*
             DraggableSpace = new(false)
@@ -122,8 +127,11 @@ namespace ClausaComm.Forms
             return (activeHandle == Handle);
         }
 
-        protected virtual void OnPinNotifyIconClick(object sender, EventArgs e)
+        protected virtual void OnPinNotifyIconClick(object sender, MouseEventArgs e)
         {
+            if (e.Button == MouseButtons.Right)
+                return;
+            
             Visible = true;
             PinNotifyIcon.Visible = false;
         }
