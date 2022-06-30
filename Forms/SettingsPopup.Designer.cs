@@ -52,7 +52,7 @@ partial class SettingsPopup
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(349, 450);
-            this.Controls.Add(this.RunAtStartupCheckbox);
+            //this.Controls.Add(this.RunAtStartupCheckbox);
             this.Location = new System.Drawing.Point(0, 0);
             this.Name = "SettingsPopup";
             this.Text = "SettingsPopup";
