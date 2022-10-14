@@ -1,8 +1,10 @@
 # ClausaComm
 ## a Skype-like LAN chatting app
-important disclaimer: The UI sucks because it was done in old Windows Forms. I spent a huge amount of time optimizing it and building abstractions to improve what should already been there in the framework, but it was a pain to work in it. Every little feature took hours of work and some things (like flickering and some bugging) just cannot be eliminated.
+### important disclaimer:
 
-There is also some scaling incompatibility of Windows Forms and Windows 11 - Its needed to click right on the exe -> properties -> Compatibility tab -> Change settings for high DPI resolution -> "Override high DPI scaling behavior. Scaling performed by:", and from the dropdown select "System" instead of "Application" ([tutorial with pictures](https://thegeekpage.com/disable-display-scaling-on-high-dpi-settings/)).
+The UI sucks because it was done in old Windows Forms. I spent a huge amount of time optimizing it and building abstractions to improve what should already been there in the framework, but it was a pain to work in it. Every little feature took hours of work and some things (like flickering and some bugging) just cannot be eliminated.
+
+**There is also some scaling incompatibility** of Windows Forms and Windows 11 - Its needed to click right on the exe -> properties -> Compatibility tab -> Change settings for high DPI resolution -> "Override high DPI scaling behavior. Scaling performed by:", and from the dropdown select "System" instead of "Application" ([tutorial with pictures](https://thegeekpage.com/disable-display-scaling-on-high-dpi-settings/)).
 
 ![ab](https://user-images.githubusercontent.com/57546404/153777989-38f5bb60-687f-4936-88ec-42428c8f02c2.jpg)
 
