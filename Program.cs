@@ -32,8 +32,10 @@ namespace ClausaComm
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
-            var mainForm = new MainForm(args.Contains(MinimizedArgument));
+            bool startPinned = args.Contains(MinimizedArgument);
+            var mainForm = new MainForm(startPinned);
 #if !DEBUG
+// Do not check for update in debug mode so that no unnecesarry requests are made.
             CheckAndDownloadNewVersionAsync(mainForm);
 #endif
             Application.Run(mainForm);
